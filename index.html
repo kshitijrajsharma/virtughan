@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>NDVI Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+      #map {
+        height: 100vh;
+      }
+      #info {
+        position: absolute;
+        bottom: 10px;
+        z-index: 1000;
+        left: 10px;
+        background: white;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="info">
+      <strong>Computation Time:</strong>
+      <span id="computation-time"></span> seconds<br />
+      <strong>Coordinates:</strong> <span id="coords"></span><br />
+      <strong>Zoom Level:</strong> <span id="zoom-level"></span>
+    </div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+      var map = L.map("map").setView([0, 0], 2);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+      }).addTo(map);
+
+      var ndviLayer;
+
+      map.on("moveend", function () {
+        var bounds = map.getBounds();
+        var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+        var zoom = map.getZoom();
+
+        document.getElementById("coords").textContent = bbox;
+        document.getElementById("zoom-level").textContent = zoom;
+        if (zoom < 10) {
+          return;
+        }
+
+        fetch(`http://127.0.0.1:8000/ndvi?bbox=${bbox}&zoom=${zoom}`)
+          .then((response) => response.json())
+          .then((data) => {
+            if (ndviLayer) {
+              map.removeLayer(ndviLayer);
+            }
+
+            var imageUrl = `data:image/png;base64,${data.ndvi_image}`;
+            var imageBounds = [
+              [bounds.getSouth(), bounds.getWest()],
+              [bounds.getNorth(), bounds.getEast()],
+            ];
+            document.getElementById("computation-time").textContent =
+              data.computation_time.toFixed(2);
+            document.getElementById("coords").textContent =
+              data.coords.join(", ");
+            document.getElementById("zoom-level").textContent = data.zoom;
+            console.log("Loading image to map");
+            ndviLayer = L.imageOverlay(imageUrl, imageBounds).addTo(map);
+            console.log("Image loaded");
+          })
+          .catch((error) => console.error("Error fetching NDVI data:", error));
+      });
+    </script>
+  </body>
+</html>
