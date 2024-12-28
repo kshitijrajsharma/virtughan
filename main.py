@@ -1,11 +1,12 @@
 import time
 from datetime import datetime, timedelta
+from functools import lru_cache
 from io import BytesIO
 
 import mercantile
 import numpy as np
 import requests
-from fastapi import FastAPI, Query, Response
+from fastapi import FastAPI, HTTPException, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from matplotlib import pyplot as plt
@@ -24,6 +25,7 @@ app.add_middleware(
 )
 
 
+@lru_cache(maxsize=50)
 @app.get("/search")
 async def search_images(
     bbox: str = Query(
@@ -62,34 +64,14 @@ async def search_images(
     return results
 
 
-@app.get("/tile/{z}/{x}/{y}")
-async def get_tile(
-    z: int,
-    x: int,
-    y: int,
-    band: str = Query("rgb", enum=["rgb", "ndvi"]),
-    start_date: str = Query(None),
-    end_date: str = Query(None),
-    cloud_cover: int = Query(30),
-):
-    if z < 10 or z > 16:
-        return JSONResponse(
-            content={"error": "Zoom level must be between 8 and 17"},
-            status_code=400,
-        )
-    start_time = time.time()
-
-    if not start_date:
-        start_date = (datetime.now() - timedelta(days=30 * 12)).strftime("%Y-%m-%d")
-    if not end_date:
-        end_date = datetime.now().strftime("%Y-%m-%d")
-
-    # cog_path = "sentinel_r10_cog.tif"
+@lru_cache(maxsize=500)  # Adjust the maxsize based on your needs
+def cached_generate_tile(
+    x: int, y: int, z: int, start_date: str, end_date: str, cloud_cover: int
+) -> bytes:
+    # Logic to generate the PNG image data on the fly
     tile = mercantile.Tile(x, y, z)
     bbox = mercantile.bounds(tile)
     bbox_polygon = box(bbox.west, bbox.south, bbox.east, bbox.north)
-
-    # Convert the polygon to GeoJSON format
     bbox_geojson = mapping(bbox_polygon)
     STAC_API_URL = "https://earth-search.aws.element84.com/v1/search"
     search_params = {
@@ -101,17 +83,12 @@ async def get_tile(
     }
     response = requests.post(STAC_API_URL, json=search_params)
     if response.status_code != 200:
-
-        return JSONResponse(
-            content={"error": "Error searching STAC API"},
-            status_code=404,
-        )
+        raise HTTPException(status_code=404, detail="Error searching STAC API")
 
     results = response.json()
     if not results["features"]:
-        return JSONResponse(
-            content={"error": "No images found for the given parameters"},
-            status_code=404,
+        raise HTTPException(
+            status_code=404, detail="No images found for the given parameters"
         )
 
     feature = results["features"][0]
@@ -123,26 +100,55 @@ async def get_tile(
             red_tile, _ = red_cog.tile(x, y, z)
             nir_tile, _ = nir_cog.tile(x, y, z)
     except Exception as e:
-        print(f"Error: {e}")
-        return JSONResponse(
-            content={"error": str(e)},
-            status_code=500,
-        )
+        raise HTTPException(status_code=500, detail=str(e))
+
     r = red_tile[0]
     nir = nir_tile[0]
     image = process_ndvi(r, nir)
-    computation_time = time.time() - start_time
 
     buffered = BytesIO()
     image.save(buffered, format="PNG")
     image_bytes = buffered.getvalue()
 
-    headers = {
-        "X-Computation-Time": str(computation_time),
-        "X-Image-Date": feature["properties"]["datetime"],
-        "X-Cloud-Cover": str(feature["properties"]["eo:cloud_cover"]),
-    }
-    return Response(content=image_bytes, media_type="image/png", headers=headers)
+    return image_bytes, feature
+
+
+@app.get("/tile/{z}/{x}/{y}")
+async def get_tile(
+    z: int,
+    x: int,
+    y: int,
+    start_date: str = Query(None),
+    end_date: str = Query(None),
+    cloud_cover: int = Query(30),
+):
+    if z < 10 or z > 16:
+        return JSONResponse(
+            content={"error": "Zoom level must be between 8 and 17"},
+            status_code=400,
+        )
+
+    if not start_date:
+        start_date = (datetime.now() - timedelta(days=30 * 12)).strftime("%Y-%m-%d")
+    if not end_date:
+        end_date = datetime.now().strftime("%Y-%m-%d")
+
+    try:
+        start_time = time.time()
+        image_bytes, feature = cached_generate_tile(
+            x, y, z, start_date, end_date, cloud_cover
+        )
+        computation_time = time.time() - start_time
+
+        headers = {
+            "X-Computation-Time": str(computation_time),
+            "X-Image-Date": feature["properties"]["datetime"],
+            "X-Cloud-Cover": str(feature["properties"]["eo:cloud_cover"]),
+        }
+
+        return Response(content=image_bytes, media_type="image/png", headers=headers)
+    except HTTPException as e:
+        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
 def process_ndvi(r, nir):

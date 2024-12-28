@@ -113,7 +113,7 @@
               }
 
               ndviLayer = L.tileLayer(
-                `http://127.0.0.1:8000/tile/{z}/{x}/{y}?band=ndvi&start_date=${startDate}&end_date=${endDate}&cloud_cover=${cloudCover}`,
+                `http://127.0.0.1:8000/tile/{z}/{x}/{y}?start_date=${startDate}&end_date=${endDate}&cloud_cover=${cloudCover}`,
                 {
                   tileSize: 256,
                   opacity: 0.8,
