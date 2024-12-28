@@ -1,12 +1,9 @@
-## env
 
-```bash
-pip install fastapi uvicorn rasterio numpy
-```
+## Sentinel COG Compute
 
-## Purpose 
+## Purpose
 
-To efficiently compute on different zoomlevel like google earth engine for sentinel 2 using COG
+The goal of this project is to efficiently do raster computation  on different zoom levels, similar to Google Earth Engine, but using Cloud Optimized GeoTIFFs (COGs) for Sentinel-2 imagery. When you zoom in and out on Google Earth Engine, it efficiently processes large images on the fly. We aim to replicate this capability in an open-source and scalable manner using COGs. This experiment demonstrates that on-the-fly computation at various zoom levels can be achieved with minimal and scalable hardware. Additionally, by leveraging a data cube, this approach can be expanded to include temporal dimensions.
 
 ## Understand COG 
 
@@ -65,6 +62,7 @@ When a client requests a view of the image at a low zoom level, the client can:
 - **Flexibility**: Supports a wide range of applications, from web mapping to scientific analysis.
 
 
+
 ## Generate 
 
 Sentinel 2 Raw Image 
@@ -119,6 +117,12 @@ GDAL info
 ![image](https://github.com/user-attachments/assets/19283513-41f5-4d1e-a4b7-20c212c43625)
 
 ## Run API 
+
+## env
+
+```bash
+pip install fastapi uvicorn rasterio numpy mercantile rio-tiler
+```
 
 ```bash
 uvicorn main:app --reload
