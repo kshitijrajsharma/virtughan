@@ -127,7 +127,7 @@
       // Set default dates
       var today = new Date().toISOString().split("T")[0];
       var lastYear = new Date();
-      lastYear.setFullYear(lastYear.getFullYear() - 2);
+      lastYear.setFullYear(lastYear.getFullYear() - 1);
       var lastYearDate = lastYear.toISOString().split("T")[0];
 
       document.getElementById("start-date").value = lastYearDate;
