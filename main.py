@@ -1,13 +1,12 @@
-import base64
 import time
 from io import BytesIO
 
-import matplotlib.pyplot as plt
 import mercantile
 import numpy as np
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from matplotlib import pyplot as plt
 from PIL import Image
 from rio_tiler.io import COGReader
 
@@ -22,36 +21,17 @@ app.add_middleware(
 )
 
 
-@app.get("/image")
-async def get_image(
-    bbox: str, zoom: int, band: str = Query("rgb", enum=["rgb", "ndvi"])
+@app.get("/tile/{z}/{x}/{y}")
+async def get_tile(
+    z: int, x: int, y: int, band: str = Query("rgb", enum=["rgb", "ndvi"])
 ):
-    if zoom < 5:
-        return JSONResponse(
-            content={
-                "error": "Zoom level must be greater than 10",
-                "zoom": zoom,
-            },
-            status_code=400,
-        )
-
     start_time = time.time()
-    coords = list(map(float, bbox.split(",")))
-    min_lon, min_lat, max_lon, max_lat = coords
-
-    # Calculate the centroid of the bounding box
-    center_lon = (min_lon + max_lon) / 2
-    center_lat = (min_lat + max_lat) / 2
-
-    # Get the center tile
-    center_tile = mercantile.tile(center_lon, center_lat, zoom)
 
     cog_path = "sentinel_r10_cog.tif"
-    images_base64 = []
 
     with COGReader(cog_path) as cog:
         try:
-            tile_data, mask = cog.tile(center_tile.x, center_tile.y, zoom)
+            tile_data, mask = cog.tile(x, y, z)
         except Exception as e:
             print(f"Error: {e}")
             return JSONResponse(
@@ -64,24 +44,19 @@ async def get_image(
         nir = tile_data[4]
 
         if band == "rgb":
-            tile_image_base64 = process_rgb(r, g, b)
+            image = process_rgb(r, g, b)
         elif band == "ndvi":
-            tile_image_base64 = process_ndvi(r, nir)
-
-        images_base64.append(
-            {"tile": (center_tile.x, center_tile.y, zoom), "image": tile_image_base64}
-        )
+            image = process_ndvi(r, nir)
 
     computation_time = time.time() - start_time
 
-    return JSONResponse(
-        content={
-            "images": images_base64,
-            "computation_time": computation_time,
-            "coords": coords,
-            "zoom": zoom,
-        }
-    )
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    image_bytes = buffered.getvalue()
+
+    headers = {"X-Computation-Time": str(computation_time)}
+
+    return Response(content=image_bytes, media_type="image/png", headers=headers)
 
 
 def process_rgb(r, g, b):
@@ -93,11 +68,7 @@ def process_rgb(r, g, b):
     rgb_image = (rgb * 255).astype(np.uint8)
     image = Image.fromarray(rgb_image)
 
-    buffered = BytesIO()
-    image.save(buffered, format="PNG")
-    image_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
-
-    return image_base64
+    return image
 
 
 def process_ndvi(r, nir):
@@ -111,11 +82,7 @@ def process_ndvi(r, nir):
     ndvi_image = (ndvi_colored[:, :, :3] * 255).astype(np.uint8)
     image = Image.fromarray(ndvi_image)
 
-    buffered = BytesIO()
-    image.save(buffered, format="PNG")
-    image_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
-
-    return image_base64
+    return image
 
 
 if __name__ == "__main__":

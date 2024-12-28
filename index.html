@@ -32,65 +32,48 @@
   <body>
     <div id="map"></div>
     <div id="info">
-      <strong>Computation Time:</strong>
-      <span id="computation-time"></span> seconds<br />
       <strong>Coordinates:</strong> <span id="coords"></span><br />
       <strong>Zoom Level:</strong> <span id="zoom-level"></span>
     </div>
     <div id="controls">
-      <label for="image-type">Image Type:</label>
-      <select id="image-type">
-        <option value="rgb">RGB</option>
-        <option value="ndvi">NDVI</option>
-      </select>
+      <label> <input type="checkbox" id="ndvi-layer" /> NDVI Layer </label>
     </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
       var map = L.map("map").setView([0, 0], 2);
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-      }).addTo(map);
+      var openStreetMapLayer = L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          maxZoom: 19,
+        }
+      ).addTo(map);
 
-      var imageLayer;
+      var ndviLayer = L.tileLayer(
+        "http://127.0.0.1:8000/tile/{z}/{x}/{y}?band=ndvi",
+        {
+          tileSize: 256,
+          opacity: 0.8,
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }
+      );
+
+      document
+        .getElementById("ndvi-layer")
+        .addEventListener("change", function () {
+          if (this.checked) {
+            map.addLayer(ndviLayer);
+          } else {
+            map.removeLayer(ndviLayer);
+          }
+        });
 
       map.on("moveend", function () {
         var bounds = map.getBounds();
         var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
-        var zoom = map.getZoom();
-        var imageType = document.getElementById("image-type").value;
-
         document.getElementById("coords").textContent = bbox;
-        document.getElementById("zoom-level").textContent = zoom;
-        if (zoom < 5) {
-          return;
-        }
-
-        fetch(
-          `http://127.0.0.1:8000/image?bbox=${bbox}&zoom=${zoom}&band=${imageType}`
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            if (imageLayer) {
-              map.removeLayer(imageLayer);
-            }
-
-            data.images.forEach((tile) => {
-              var imageUrl = `data:image/png;base64,${tile.image}`;
-              var tileBounds = [
-                [bounds.getSouth(), bounds.getWest()],
-                [bounds.getNorth(), bounds.getEast()],
-              ];
-              imageLayer = L.imageOverlay(imageUrl, tileBounds).addTo(map);
-            });
-
-            document.getElementById("computation-time").textContent =
-              data.computation_time.toFixed(2);
-            document.getElementById("coords").textContent =
-              data.coords.join(", ");
-            document.getElementById("zoom-level").textContent = data.zoom;
-          })
-          .catch((error) => console.error("Error fetching image data:", error));
+        document.getElementById("zoom-level").textContent = map.getZoom();
       });
     </script>
   </body>
