@@ -42,9 +42,9 @@ async def search_images(
     bbox_polygon = box(west, south, east, north)
     bbox_geojson = mapping(bbox_polygon)
 
-    STAC_API_URL = "https://earth-search.aws.element84.com/v0/search"
+    STAC_API_URL = "https://earth-search.aws.element84.com/v1/search"
     search_params = {
-        "collections": ["sentinel-s2-l2a-cogs"],
+        "collections": ["sentinel-2-l2a"],
         "datetime": f"{start_date}T00:00:00Z/{end_date}T23:59:59Z",
         "query": {"eo:cloud_cover": {"lt": cloud_cover}},
         "intersects": bbox_geojson,
@@ -91,9 +91,9 @@ async def get_tile(
 
     # Convert the polygon to GeoJSON format
     bbox_geojson = mapping(bbox_polygon)
-    STAC_API_URL = "https://earth-search.aws.element84.com/v0/search"
+    STAC_API_URL = "https://earth-search.aws.element84.com/v1/search"
     search_params = {
-        "collections": ["sentinel-s2-l2a-cogs"],
+        "collections": ["sentinel-2-l2a"],
         "datetime": f"{start_date}T00:00:00Z/{end_date}T23:59:59Z",
         "query": {"eo:cloud_cover": {"lt": cloud_cover}},
         "intersects": bbox_geojson,
@@ -115,8 +115,8 @@ async def get_tile(
         )
 
     feature = results["features"][0]
-    red_band_url = feature["assets"]["B04"]["href"]
-    nir_band_url = feature["assets"]["B08"]["href"]
+    red_band_url = feature["assets"]["red"]["href"]
+    nir_band_url = feature["assets"]["nir"]["href"]
 
     try:
         with COGReader(red_band_url) as red_cog, COGReader(nir_band_url) as nir_cog:
@@ -143,18 +143,6 @@ async def get_tile(
         "X-Cloud-Cover": str(feature["properties"]["eo:cloud_cover"]),
     }
     return Response(content=image_bytes, media_type="image/png", headers=headers)
-
-
-def process_rgb(r, g, b):
-    r_norm = (r - np.min(r)) / (np.max(r) - np.min(r))
-    g_norm = (g - np.min(g)) / (np.max(g) - np.min(g))
-    b_norm = (b - np.min(b)) / (np.max(b) - np.min(b))
-
-    rgb = np.stack((r_norm, g_norm, b_norm), axis=-1)
-    rgb_image = (rgb * 255).astype(np.uint8)
-    image = Image.fromarray(rgb_image)
-
-    return image
 
 
 def process_ndvi(r, nir):

@@ -73,11 +73,11 @@ def main(args):
     start_date = args.sd
     end_date = args.ed
 
-    STAC_API_URL = "https://earth-search.aws.element84.com/v0/search"
+    STAC_API_URL = "https://earth-search.aws.element84.com/v1/search"
 
     # Search parameters
     search_params = {
-        "collections": ["sentinel-s2-l2a-cogs"],
+        "collections": ["sentinel-2-l2a"],
         "datetime": f"{start_date}T00:00:00Z/{end_date}T23:59:59Z",
         "query": {"eo:cloud_cover": {"lt": cc}},
         "bbox": [bbox.west, bbox.south, bbox.east, bbox.north],
@@ -89,31 +89,40 @@ def main(args):
         raise Exception("Error searching STAC API")
 
     results = response.json()
-    print(len(results["features"]))
     red_band_urls = [
-        feature["assets"]["B04"]["href"] for feature in results["features"]
+        feature["assets"]["red"]["href"] for feature in results["features"]
     ]
     nir_band_urls = [
-        feature["assets"]["B08"]["href"] for feature in results["features"]
+        feature["assets"]["nir"]["href"] for feature in results["features"]
     ]
 
-    ndvi_list = []
+    print(f"Processing {len(red_band_urls)} images...using {os.cpu_count()} cores")
 
     num_cores = os.cpu_count()
     max_workers = max(1, num_cores - 2)  # Leave 2 cores for other processes
+    ndvi_list = []
+    # Batch processing
+    batch_size = max(10, max_workers)
+    for i in range(0, len(red_band_urls), batch_size):
+        batch_red_urls = red_band_urls[i : i + batch_size]
+        batch_nir_urls = nir_band_urls[i : i + batch_size]
 
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = [
-            executor.submit(fetch_and_process_tile, red_url, nir_url, tile.x, tile.y, z)
-            for red_url, nir_url in zip(red_band_urls, nir_band_urls)
-        ]
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = [
+                executor.submit(
+                    fetch_and_process_tile, red_url, nir_url, tile.x, tile.y, z
+                )
+                for red_url, nir_url in zip(batch_red_urls, batch_nir_urls)
+            ]
 
-        for future in tqdm(
-            as_completed(futures), total=len(futures), desc="Processing tiles"
-        ):
-            ndvi = future.result()
-            if ndvi is not None:
-                ndvi_list.append(ndvi)
+            for future in tqdm(
+                as_completed(futures),
+                total=len(futures),
+                desc=f"Processing tiles : Batch {i}",
+            ):
+                ndvi = future.result()
+                if ndvi is not None:
+                    ndvi_list.append(ndvi)
 
     if ndvi_list:
         ndvi_stack = np.ma.stack(ndvi_list)
