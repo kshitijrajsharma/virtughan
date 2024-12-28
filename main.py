@@ -3,17 +3,15 @@ import time
 from io import BytesIO
 
 import matplotlib.pyplot as plt
+import mercantile
 import numpy as np
-import rasterio
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from PIL import Image
-from pyproj import Transformer
-from rasterio.windows import from_bounds
+from rio_tiler.io import COGReader
 
 app = FastAPI()
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,9 +22,11 @@ app.add_middleware(
 )
 
 
-@app.get("/ndvi")
-async def get_ndvi(bbox: str, zoom: int):
-    if zoom < 2:
+@app.get("/image")
+async def get_image(
+    bbox: str, zoom: int, band: str = Query("rgb", enum=["rgb", "ndvi"])
+):
+    if zoom < 5:
         return JSONResponse(
             content={
                 "error": "Zoom level must be greater than 10",
@@ -34,28 +34,77 @@ async def get_ndvi(bbox: str, zoom: int):
             },
             status_code=400,
         )
+
     start_time = time.time()
     coords = list(map(float, bbox.split(",")))
     min_lon, min_lat, max_lon, max_lat = coords
 
-    transformer = Transformer.from_crs("epsg:4326", "epsg:3857", always_xy=True)
+    # Calculate the centroid of the bounding box
+    center_lon = (min_lon + max_lon) / 2
+    center_lat = (min_lat + max_lat) / 2
 
-    # Transform to EPSG:3857
-    min_x, min_y = transformer.transform(min_lon, min_lat)
-    max_x, max_y = transformer.transform(max_lon, max_lat)
+    # Get the center tile
+    center_tile = mercantile.tile(center_lon, center_lat, zoom)
 
-    with rasterio.open("sentinel_r10_cog.tif") as src:
-        window = from_bounds(min_x, min_y, max_x, max_y, src.transform)
-        red = src.read(4, window=window)
-        nir = src.read(5, window=window)
+    cog_path = "sentinel_r10_cog.tif"
+    images_base64 = []
 
-        ndvi = (nir.astype(float) - red.astype(float)) / (nir + red)
-        ndvi = np.ma.masked_invalid(ndvi)
+    with COGReader(cog_path) as cog:
+        try:
+            tile_data, mask = cog.tile(center_tile.x, center_tile.y, zoom)
+        except Exception as e:
+            print(f"Error: {e}")
+            return JSONResponse(
+                content={"error": str(e)},
+                status_code=500,
+            )
+        r = tile_data[1]
+        g = tile_data[2]
+        b = tile_data[3]
+        nir = tile_data[4]
+
+        if band == "rgb":
+            tile_image_base64 = process_rgb(r, g, b)
+        elif band == "ndvi":
+            tile_image_base64 = process_ndvi(r, nir)
+
+        images_base64.append(
+            {"tile": (center_tile.x, center_tile.y, zoom), "image": tile_image_base64}
+        )
 
     computation_time = time.time() - start_time
 
-    # Normalize NDVI values to 0-1 for color mapping
+    return JSONResponse(
+        content={
+            "images": images_base64,
+            "computation_time": computation_time,
+            "coords": coords,
+            "zoom": zoom,
+        }
+    )
+
+
+def process_rgb(r, g, b):
+    r_norm = (r - np.min(r)) / (np.max(r) - np.min(r))
+    g_norm = (g - np.min(g)) / (np.max(g) - np.min(g))
+    b_norm = (b - np.min(b)) / (np.max(b) - np.min(b))
+
+    rgb = np.stack((r_norm, g_norm, b_norm), axis=-1)
+    rgb_image = (rgb * 255).astype(np.uint8)
+    image = Image.fromarray(rgb_image)
+
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    image_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+    return image_base64
+
+
+def process_ndvi(r, nir):
+    ndvi = (nir.astype(float) - r.astype(float)) / (nir + r)
+    ndvi = np.ma.masked_invalid(ndvi)
     ndvi_normalized = (ndvi + 1) / 2
+
     colormap = plt.get_cmap("RdYlGn")
     ndvi_colored = colormap(ndvi_normalized)
 
@@ -66,14 +115,7 @@ async def get_ndvi(bbox: str, zoom: int):
     image.save(buffered, format="PNG")
     image_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
 
-    return JSONResponse(
-        content={
-            "ndvi_image": image_base64,
-            "computation_time": computation_time,
-            "coords": coords,
-            "zoom": zoom,
-        }
-    )
+    return image_base64
 
 
 if __name__ == "__main__":

@@ -17,6 +17,16 @@
         border-radius: 5px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
       }
+      #controls {
+        position: absolute;
+        top: 10px;
+        z-index: 1000;
+        left: 10px;
+        background: white;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      }
     </style>
   </head>
   <body>
@@ -27,6 +37,13 @@
       <strong>Coordinates:</strong> <span id="coords"></span><br />
       <strong>Zoom Level:</strong> <span id="zoom-level"></span>
     </div>
+    <div id="controls">
+      <label for="image-type">Image Type:</label>
+      <select id="image-type">
+        <option value="rgb">RGB</option>
+        <option value="ndvi">NDVI</option>
+      </select>
+    </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
       var map = L.map("map").setView([0, 0], 2);
@@ -35,41 +52,45 @@
         maxZoom: 19,
       }).addTo(map);
 
-      var ndviLayer;
+      var imageLayer;
 
       map.on("moveend", function () {
         var bounds = map.getBounds();
         var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
         var zoom = map.getZoom();
+        var imageType = document.getElementById("image-type").value;
 
         document.getElementById("coords").textContent = bbox;
         document.getElementById("zoom-level").textContent = zoom;
-        if (zoom < 10) {
+        if (zoom < 5) {
           return;
         }
 
-        fetch(`http://127.0.0.1:8000/ndvi?bbox=${bbox}&zoom=${zoom}`)
+        fetch(
+          `http://127.0.0.1:8000/image?bbox=${bbox}&zoom=${zoom}&band=${imageType}`
+        )
           .then((response) => response.json())
           .then((data) => {
-            if (ndviLayer) {
-              map.removeLayer(ndviLayer);
+            if (imageLayer) {
+              map.removeLayer(imageLayer);
             }
 
-            var imageUrl = `data:image/png;base64,${data.ndvi_image}`;
-            var imageBounds = [
-              [bounds.getSouth(), bounds.getWest()],
-              [bounds.getNorth(), bounds.getEast()],
-            ];
+            data.images.forEach((tile) => {
+              var imageUrl = `data:image/png;base64,${tile.image}`;
+              var tileBounds = [
+                [bounds.getSouth(), bounds.getWest()],
+                [bounds.getNorth(), bounds.getEast()],
+              ];
+              imageLayer = L.imageOverlay(imageUrl, tileBounds).addTo(map);
+            });
+
             document.getElementById("computation-time").textContent =
               data.computation_time.toFixed(2);
             document.getElementById("coords").textContent =
               data.coords.join(", ");
             document.getElementById("zoom-level").textContent = data.zoom;
-            console.log("Loading image to map");
-            ndviLayer = L.imageOverlay(imageUrl, imageBounds).addTo(map);
-            console.log("Image loaded");
           })
-          .catch((error) => console.error("Error fetching NDVI data:", error));
+          .catch((error) => console.error("Error fetching image data:", error));
       });
     </script>
   </body>
