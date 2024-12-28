@@ -64,11 +64,6 @@ When a client requests a view of the image at a low zoom level, the client can:
 - **Scalability**: Ideal for cloud environments where data is accessed over the network.
 - **Flexibility**: Supports a wide range of applications, from web mapping to scientific analysis.
 
-### Example Tools and Libraries
-
-- **GDAL**: The Geospatial Data Abstraction Library (GDAL) provides tools like `gdal_translate` and `gdaladdo` to create and manage COGs.
-- **rasterio**: A Python library that supports reading and writing COGs, as well as efficient data access and processing.
-- **rio-tiler**: A library for extracting tiles from COGs, often used in web mapping applications.
 
 ## Generate 
 
