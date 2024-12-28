@@ -1,6 +1,9 @@
 matplotlib 
-rio-titler 
+rio-tiler 
 fastapi
 pillow
 tqdm
 requests
+mercantile
+numpy
+shapely
