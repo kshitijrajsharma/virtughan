@@ -135,3 +135,8 @@ uvicorn main:app --reload
 ## Run frontend 
 
 Directly launch webserver pointed to index.html
+
+
+## Resources and Credits 
+
+- https://registry.opendata.aws/sentinel-2-l2a-cogs/ COGS Stac API for sentinel-2
