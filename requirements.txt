@@ -1,0 +1,6 @@
+matplotlib 
+rio-titler 
+fastapi
+pillow
+tqdm
+requests

@@ -36,7 +36,12 @@
       <strong>Zoom Level:</strong> <span id="zoom-level"></span>
     </div>
     <div id="controls">
-      <label> <input type="checkbox" id="ndvi-layer" /> NDVI Layer </label>
+      <label>Start Date: <input type="date" id="start-date" /></label><br />
+      <label>End Date: <input type="date" id="end-date" /></label><br />
+      <label
+        >Cloud Cover: <input type="number" id="cloud-cover" value="30" /></label
+      ><br />
+      <button id="search-button">Search</button>
     </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
@@ -49,25 +54,8 @@
         }
       ).addTo(map);
 
-      var ndviLayer = L.tileLayer(
-        "http://127.0.0.1:8000/tile/{z}/{x}/{y}?band=ndvi",
-        {
-          tileSize: 256,
-          opacity: 0.8,
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        }
-      );
-
-      document
-        .getElementById("ndvi-layer")
-        .addEventListener("change", function () {
-          if (this.checked) {
-            map.addLayer(ndviLayer);
-          } else {
-            map.removeLayer(ndviLayer);
-          }
-        });
+      var geojsonLayer;
+      var ndviLayer;
 
       map.on("moveend", function () {
         var bounds = map.getBounds();
@@ -75,6 +63,75 @@
         document.getElementById("coords").textContent = bbox;
         document.getElementById("zoom-level").textContent = map.getZoom();
       });
+
+      document
+        .getElementById("search-button")
+        .addEventListener("click", function () {
+          var startDate = document.getElementById("start-date").value;
+          var endDate = document.getElementById("end-date").value;
+          var cloudCover = document.getElementById("cloud-cover").value;
+          var bounds = map.getBounds();
+          var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+
+          var zoomLevel = map.getZoom();
+
+          if (zoomLevel < 10) {
+            alert("Please zoom in to a level greater than 10 to search.");
+            return;
+          }
+          if (geojsonLayer) {
+            map.removeLayer(geojsonLayer);
+          }
+
+          fetch(
+            `http://127.0.0.1:8000/search?bbox=${bbox}&start_date=${startDate}&end_date=${endDate}&cloud_cover=${cloudCover}`
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              geojsonLayer = L.geoJSON(data, {
+                style: function (feature) {
+                  return {
+                    fillOpacity: 0,
+                    color: "red",
+                    weight: 1,
+                  };
+                },
+                onEachFeature: function (feature, layer) {
+                  layer.on("click", function () {
+                    var popupContent = `
+                    <strong>ID:</strong> ${feature.id}<br />
+                    <strong>Date:</strong> ${feature.properties.datetime}<br />
+                    <strong>Cloud Cover:</strong> ${feature.properties["eo:cloud_cover"]}<br />
+                  `;
+                    layer.bindPopup(popupContent).openPopup();
+                  });
+                },
+              }).addTo(map);
+
+              if (ndviLayer) {
+                map.removeLayer(ndviLayer);
+              }
+
+              ndviLayer = L.tileLayer(
+                `http://127.0.0.1:8000/tile/{z}/{x}/{y}?band=ndvi&start_date=${startDate}&end_date=${endDate}&cloud_cover=${cloudCover}`,
+                {
+                  tileSize: 256,
+                  opacity: 0.8,
+                  attribution:
+                    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                }
+              ).addTo(map);
+            });
+        });
+
+      // Set default dates
+      var today = new Date().toISOString().split("T")[0];
+      var lastYear = new Date();
+      lastYear.setFullYear(lastYear.getFullYear() - 2);
+      var lastYearDate = lastYear.toISOString().split("T")[0];
+
+      document.getElementById("start-date").value = lastYearDate;
+      document.getElementById("end-date").value = today;
     </script>
   </body>
 </html>

@@ -1,14 +1,17 @@
 import time
+from datetime import datetime, timedelta
 from io import BytesIO
 
 import mercantile
 import numpy as np
+import requests
 from fastapi import FastAPI, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from matplotlib import pyplot as plt
 from PIL import Image
 from rio_tiler.io import COGReader
+from shapely.geometry import box, mapping
 
 app = FastAPI()
 
@@ -21,41 +24,124 @@ app.add_middleware(
 )
 
 
+@app.get("/search")
+async def search_images(
+    bbox: str = Query(
+        ..., description="Bounding box in the format 'west,south,east,north'"
+    ),
+    cloud_cover: int = Query(30, description="Maximum cloud cover percentage"),
+    start_date: str = Query(None, description="Start date in YYYY-MM-DD format"),
+    end_date: str = Query(None, description="End date in YYYY-MM-DD format"),
+):
+    if not start_date:
+        start_date = (datetime.now() - timedelta(days=60)).strftime("%Y-%m-%d")
+    if not end_date:
+        end_date = datetime.now().strftime("%Y-%m-%d")
+
+    west, south, east, north = map(float, bbox.split(","))
+    bbox_polygon = box(west, south, east, north)
+    bbox_geojson = mapping(bbox_polygon)
+
+    STAC_API_URL = "https://earth-search.aws.element84.com/v0/search"
+    search_params = {
+        "collections": ["sentinel-s2-l2a-cogs"],
+        "datetime": f"{start_date}T00:00:00Z/{end_date}T23:59:59Z",
+        "query": {"eo:cloud_cover": {"lt": cloud_cover}},
+        "intersects": bbox_geojson,
+        "limit": 100,
+    }
+
+    response = requests.post(STAC_API_URL, json=search_params)
+    if response.status_code != 200:
+        return JSONResponse(
+            content={"error": "Error searching STAC API"},
+            status_code=500,
+        )
+
+    results = response.json()
+    return results
+
+
 @app.get("/tile/{z}/{x}/{y}")
 async def get_tile(
-    z: int, x: int, y: int, band: str = Query("rgb", enum=["rgb", "ndvi"])
+    z: int,
+    x: int,
+    y: int,
+    band: str = Query("rgb", enum=["rgb", "ndvi"]),
+    start_date: str = Query(None),
+    end_date: str = Query(None),
+    cloud_cover: int = Query(30),
 ):
+    if z < 10 or z > 16:
+        return JSONResponse(
+            content={"error": "Zoom level must be between 8 and 17"},
+            status_code=400,
+        )
     start_time = time.time()
 
-    cog_path = "sentinel_r10_cog.tif"
+    if not start_date:
+        start_date = (datetime.now() - timedelta(days=30 * 12)).strftime("%Y-%m-%d")
+    if not end_date:
+        end_date = datetime.now().strftime("%Y-%m-%d")
 
-    with COGReader(cog_path) as cog:
-        try:
-            tile_data, mask = cog.tile(x, y, z)
-        except Exception as e:
-            print(f"Error: {e}")
-            return JSONResponse(
-                content={"error": str(e)},
-                status_code=500,
-            )
-        r = tile_data[1]
-        g = tile_data[2]
-        b = tile_data[3]
-        nir = tile_data[4]
+    # cog_path = "sentinel_r10_cog.tif"
+    tile = mercantile.Tile(x, y, z)
+    bbox = mercantile.bounds(tile)
+    bbox_polygon = box(bbox.west, bbox.south, bbox.east, bbox.north)
 
-        if band == "rgb":
-            image = process_rgb(r, g, b)
-        elif band == "ndvi":
-            image = process_ndvi(r, nir)
+    # Convert the polygon to GeoJSON format
+    bbox_geojson = mapping(bbox_polygon)
+    STAC_API_URL = "https://earth-search.aws.element84.com/v0/search"
+    search_params = {
+        "collections": ["sentinel-s2-l2a-cogs"],
+        "datetime": f"{start_date}T00:00:00Z/{end_date}T23:59:59Z",
+        "query": {"eo:cloud_cover": {"lt": cloud_cover}},
+        "intersects": bbox_geojson,
+        "limit": 1,
+    }
+    response = requests.post(STAC_API_URL, json=search_params)
+    if response.status_code != 200:
 
+        return JSONResponse(
+            content={"error": "Error searching STAC API"},
+            status_code=404,
+        )
+
+    results = response.json()
+    if not results["features"]:
+        return JSONResponse(
+            content={"error": "No images found for the given parameters"},
+            status_code=404,
+        )
+
+    feature = results["features"][0]
+    red_band_url = feature["assets"]["B04"]["href"]
+    nir_band_url = feature["assets"]["B08"]["href"]
+
+    try:
+        with COGReader(red_band_url) as red_cog, COGReader(nir_band_url) as nir_cog:
+            red_tile, _ = red_cog.tile(x, y, z)
+            nir_tile, _ = nir_cog.tile(x, y, z)
+    except Exception as e:
+        print(f"Error: {e}")
+        return JSONResponse(
+            content={"error": str(e)},
+            status_code=500,
+        )
+    r = red_tile[0]
+    nir = nir_tile[0]
+    image = process_ndvi(r, nir)
     computation_time = time.time() - start_time
 
     buffered = BytesIO()
     image.save(buffered, format="PNG")
     image_bytes = buffered.getvalue()
 
-    headers = {"X-Computation-Time": str(computation_time)}
-
+    headers = {
+        "X-Computation-Time": str(computation_time),
+        "X-Image-Date": feature["properties"]["datetime"],
+        "X-Cloud-Cover": str(feature["properties"]["eo:cloud_cover"]),
+    }
     return Response(content=image_bytes, media_type="image/png", headers=headers)
 
 
