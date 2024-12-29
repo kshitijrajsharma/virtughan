@@ -28,7 +28,7 @@ from rio_tiler.io import COGReader
 from shapely.geometry import box, mapping
 from starlette.requests import Request
 
-from src.scog_compute.engine import compute_engine
+from src.scog_compute.engine import compute as compute_engine
 
 app = FastAPI()
 
