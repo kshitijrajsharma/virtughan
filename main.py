@@ -86,8 +86,8 @@ async def compute_aoi_over_time(
     max_x: float = Query(..., description="Maximum longitude of the bounding box"),
     max_y: float = Query(..., description="Maximum latitude of the bounding box"),
     start_date: str = Query(
-        (datetime.now() - timedelta(days=365 * 2)).strftime("%Y-%m-%d"),
-        description="Start date in YYYY-MM-DD format (default: two years ago)",
+        (datetime.now() - timedelta(days=365 * 1)).strftime("%Y-%m-%d"),
+        description="Start date in YYYY-MM-DD format (default: 1 years ago)",
     ),
     end_date: str = Query(
         datetime.now().strftime("%Y-%m-%d"),
