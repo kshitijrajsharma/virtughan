@@ -14,31 +14,31 @@ Learn about COG and how to generate one for this project [Here](./cog.md)
 ### Prerequisites
 
 - Python 3.10 or higher
-- [PDM](https://pdm-project.org/en/latest/) 
+- [poetry](https://python-poetry.org/) 
 
 ### Install PDM
 
-If you don't have PDM installed, you can install it using the following command:
+If you don't have poetry installed, you can install it using the following command:
 
 ```bash
-pip install pdm
+pip install poetry
 ```
 
-#### Activate your venv with pdm 
-
-``` bash 
-pdm venv activate
-```
 
 #### Install 
 ```bash
-pdm install
+poetry install
+```
+
+#### Activate virtualenv 
+```bash
+poetry shell
 ```
 
 #### Run 
 
 ```bash
-pdm run uvicorn main:app --reload
+poetry run uvicorn main:app --reload
 ```
 
 
