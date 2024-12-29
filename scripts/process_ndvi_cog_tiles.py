@@ -1,67 +1,70 @@
-"""
-Script to process NDVI tiles from a STAC API over the time. Give median output of the ndvi in the region
-
-Usage:
-    python process_ndvi_cog_tiles.py --lat <latitude> --lon <longitude> --z <zoom_level> --sd <start_date> --ed <end_date> --cc <cloud_cover>
-
-Arguments:
-    --lat       Latitude (default: 28.202082)
-    --lon       Longitude (default: 83.987222)
-    --z         Zoom level (default: 10)
-    --sd        Start date in YYYY-MM-DD format (default: first day of last 2 month)
-    --ed        End date in YYYY-MM-DD format (default: today)
-    --cc        Cloud cover percentage (default: 30)
-
-Requirements:
-    - requests
-    - matplotlib
-    - mercantile
-    - numpy
-    - Pillow
-    - rio-tiler
-    - tqdm
-
-Install the required packages using:
-    pip install requests matplotlib mercantile numpy Pillow rio-tiler tqdm
-
-Author : Kshitij Raj Sharma @ 2025
-"""
-
 import argparse
+import asyncio
 import os
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from io import BytesIO
 
+import httpx
 import matplotlib.pyplot as plt
 import mercantile
 import numpy as np
-import requests
 from PIL import Image
 from rio_tiler.io import COGReader
-from tqdm import tqdm
+from tqdm.asyncio import tqdm_asyncio
+
+default_max_workers = min(32, os.cpu_count() + 4)
+
+executor = ThreadPoolExecutor(max_workers=default_max_workers)
+
+print(f"Using {default_max_workers} parallel workers")
 
 
-def fetch_and_process_tile(red_url, nir_url, tile_x, tile_y, z):
+async def fetch_tile(url, tile_x, tile_y, z):
+    def read_tile():
+        with COGReader(url) as cog:
+            tile, _ = cog.tile(tile_x, tile_y, z)
+            return tile[0]
+
+    return await asyncio.to_thread(read_tile)
+
+
+async def fetch_and_process_tile(red_url, nir_url, tile_x, tile_y, z):
     try:
-        with COGReader(red_url) as red_cog, COGReader(nir_url) as nir_cog:
-            red_tile, _ = red_cog.tile(tile_x, tile_y, z)
-            nir_tile, _ = nir_cog.tile(tile_x, tile_y, z)
+        red_tile, nir_tile = await asyncio.gather(
+            fetch_tile(red_url, tile_x, tile_y, z),
+            fetch_tile(nir_url, tile_x, tile_y, z),
+        )
 
-            r = red_tile[0]
-            nir = nir_tile[0]
+        r = red_tile
+        nir = nir_tile
 
-            ndvi = (nir.astype(float) - r.astype(float)) / (nir + r)
-            ndvi = np.ma.masked_invalid(ndvi)
+        ndvi = (nir.astype(float) - r.astype(float)) / (nir + r)
+        ndvi = np.ma.masked_invalid(ndvi)
 
-            return ndvi
+        return ndvi
     except Exception as e:
         print(f"Error fetching tile: {e}")
         return None
 
 
-def main(args):
+async def process_tiles_parallel(tile_urls, tile_x, tile_y, z):
+    tasks = [
+        fetch_and_process_tile(red_url, nir_url, tile_x, tile_y, z)
+        for red_url, nir_url in tile_urls
+    ]
+    ndvi_tiles = []
+    for task in tqdm_asyncio.as_completed(
+        tasks, total=len(tasks), desc="Processing tiles"
+    ):
+        ndvi = await task
+        if ndvi is not None:
+            ndvi_tiles.append(ndvi)
+    return ndvi_tiles
+
+
+async def main(args):
     lat = args.lat
     lon = args.lon
     z = args.z
@@ -75,7 +78,6 @@ def main(args):
 
     STAC_API_URL = "https://earth-search.aws.element84.com/v1/search"
 
-    # Search parameters
     search_params = {
         "collections": ["sentinel-2-l2a"],
         "datetime": f"{start_date}T00:00:00Z/{end_date}T23:59:59Z",
@@ -84,7 +86,8 @@ def main(args):
         "limit": 100,
     }
 
-    response = requests.post(STAC_API_URL, json=search_params)
+    async with httpx.AsyncClient() as client:
+        response = await client.post(STAC_API_URL, json=search_params)
     if response.status_code != 200:
         raise Exception("Error searching STAC API")
 
@@ -96,39 +99,23 @@ def main(args):
         feature["assets"]["nir"]["href"] for feature in results["features"]
     ]
 
-    print(f"Processing {len(red_band_urls)} images...using {os.cpu_count()} cores")
+    print(f"Processing {len(red_band_urls)} images...")
 
-    num_cores = os.cpu_count()
-    max_workers = max(1, num_cores - 2)  # Leave 2 cores for other processes
-    ndvi_list = []
-    # Batch processing
-    batch_size = max(10, max_workers)
-    for i in range(0, len(red_band_urls), batch_size):
-        batch_red_urls = red_band_urls[i : i + batch_size]
-        batch_nir_urls = nir_band_urls[i : i + batch_size]
+    tile_urls = list(zip(red_band_urls, nir_band_urls))
 
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            futures = [
-                executor.submit(
-                    fetch_and_process_tile, red_url, nir_url, tile.x, tile.y, z
-                )
-                for red_url, nir_url in zip(batch_red_urls, batch_nir_urls)
-            ]
+    start_time = time.time()
+    ndvi_tiles = await process_tiles_parallel(tile_urls, tile.x, tile.y, z)
+    end_time = time.time()
 
-            for future in tqdm(
-                as_completed(futures),
-                total=len(futures),
-                desc=f"Processing tiles : Batch {i}",
-            ):
-                ndvi = future.result()
-                if ndvi is not None:
-                    ndvi_list.append(ndvi)
+    print(f"Processed {len(ndvi_tiles)} tiles in {end_time - start_time} seconds")
 
-    if ndvi_list:
-        ndvi_stack = np.ma.stack(ndvi_list)
+    if ndvi_tiles:
+        ndvi_stack = np.ma.stack(ndvi_tiles, axis=0)
         ndvi_median = np.ma.median(ndvi_stack, axis=0)
-        ndvi_normalized = (ndvi_median + 1) / 2
 
+        ndvi_normalized = (ndvi_median - ndvi_median.min()) / (
+            ndvi_median.max() - ndvi_median.min()
+        )
         colormap = plt.get_cmap("RdYlGn")
         ndvi_colored = colormap(ndvi_normalized)
 
@@ -141,9 +128,7 @@ def main(args):
         plt.xlabel(
             f"Normalized Range: {ndvi_normalized.min():.2f} to {ndvi_normalized.max():.2f}"
         )
-        plt.ylabel(
-            f"Date Range: {start_date} to {end_date}\nTotal Images: {len(ndvi_list)}"
-        )
+        plt.ylabel(f"From {start_date} to {end_date}\nTotal Images: {len(ndvi_tiles)}")
         cbar = plt.colorbar(plt.cm.ScalarMappable(cmap=colormap), ax=plt.gca())
         cbar.set_label("NDVI Normalized Value")
 
@@ -158,10 +143,26 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process NDVI tiles from STAC API.")
     parser.add_argument(
+        "--lat",
+        type=float,
+        default=28.202082,
+        help="Latitude (default: 28.202082)",
+    )
+    parser.add_argument(
+        "--lon",
+        type=float,
+        default=83.987222,
+        help="Longitude (default: 83.987222)",
+    )
+    parser.add_argument("--z", type=int, default=10, help="Zoom level (default: 10)")
+    parser.add_argument(
+        "--cc", type=int, default=30, help="Cloud cover percentage (default: 30)"
+    )
+    parser.add_argument(
         "--sd",
         type=str,
         default=(datetime.now() - timedelta(days=30 * 2)).strftime("%Y-%m-01"),
-        help="Start date in YYYY-MM-DD format (default: first day of last 2 month)",
+        help="Start date in YYYY-MM-DD format (default: first day of last 2 months)",
     )
     parser.add_argument(
         "--ed",
@@ -170,20 +171,10 @@ if __name__ == "__main__":
         help="End date in YYYY-MM-DD format (default: today)",
     )
     parser.add_argument(
-        "--lat", type=float, default=28.202082, help="Latitude (default: 28.202082)"
-    )
-    parser.add_argument(
-        "--lon", type=float, default=83.987222, help="Longitude (default: 83.987222)"
-    )
-    parser.add_argument("--z", type=int, default=10, help="Zoom level (default: 10)")
-    parser.add_argument(
-        "--cc", type=int, default=30, help="Cloud cover percentage (default: 20)"
-    )
-    parser.add_argument(
         "--out",
         type=str,
-        help="Output file path to save the image (default: only show)",
+        help="Output file path to save the plot (default: only show)",
     )
-
     args = parser.parse_args()
-    main(args)
+
+    asyncio.run(main(args))
