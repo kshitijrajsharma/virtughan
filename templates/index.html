@@ -111,107 +111,144 @@
     </style>
   </head>
   <body>
+    <header class="bg-white shadow-md py-4 border-b border-gray-300">
+      <div class="container mx-auto flex items-center justify-between px-4">
+        <!-- Logo -->
+        <div class="flex items-center">
+          <img src="static/img/ku_logo.png" alt="Logo" class="h-10 w-10 mr-2">
+          <span class="text-xl font-bold text-gray-800">KU VData Cube</span>
+        </div>
+        <!-- Navigation Links -->
+        <nav class="flex space-x-8">
+          <a href="#map" class="text-gray-600 hover:text-gray-900">Data</a>
+          <a href="#about" class="text-gray-600 hover:text-gray-900">About</a>
+        </nav>
+      </div>
+    </header>
     <div class = "flex h-screen">
       <div id="info" class="w-1/4 space-y-12 float-left z-10 bg-white col-span-1">
-        <div class="border-b border-gray-900/10 p-4">
-          <h2 class="text-base/7 font-semibold text-gray-900">Apply Filters</h2>
-          <p class="mt-1 text-sm/6 text-gray-600">Select the filters you want to apply.</p>
-          <div class = "pb-4">
-            <label id="listbox-label" class="block text-sm/6 font-medium text-gray-900">Filter</label>
-            <div class="relative mt-2">
-              <button id="select-button" type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label">
-                <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
-                  <img src="static/img/ndvi.png" alt="" class="size-5 shrink-0 rounded-full">
-                  <span id = "selected_filter_value" class="block truncate">NDVI</span>
-                </span>
-                <svg class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" />
-                </svg>
-              </button>
-          
-              <ul id="select-list" class="hidden absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3">
-                <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-0" role="option">
-                  <div class="flex items-center">
-                    <img src="static/img/ndvi.png" alt="" class="size-5 shrink-0 rounded-full">
-                    <span class="ml-3 block truncate font-normal">NDVI</span>
-                  </div>
-                  <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
-                    <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
-                    </svg>
-                  </span>
-                </li>
-                <!-- More items... -->
-                <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-0" role="option">
-                  <div class="flex items-center">
-                    <img src="static/img/basemap.png" alt="" class="size-5 shrink-0 rounded-full">
-                    <span class="ml-3 block truncate font-normal">Another Option</span>
-                  </div>
-                  <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
-                    <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
-                      <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
-                    </svg>
-                  </span>
-                </li>
-              </ul>
-            </div>
+      <div class="container mx-auto p-4">
+        <div class="tabs">
+          <div class="flex justify-center mb-4">
+            <button class="tab w-1/2 py-2 text-center text-gray-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:border-blue-500">Filter</button>
+            <button class="tab w-1/2 py-2 text-center text-gray-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:border-blue-500">Result</button>
           </div>
-          <div class = "pb-4">
-            <label class="block text-sm/6 font-medium text-gray-900 pb-1">Select Date</label>
-            <div class="relative h-10 w-full min-w-[200px] mb-4">
-              <input id="start-date" class="my-dates peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" placeholder=" "/>
-              <label id = "start-date" class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-                Start Date
-              </label>
-            </div>
-            <div class="relative h-10 w-full min-w-[200px]">
-              <input id="end-date" class="my-dates peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" placeholder=" "/>
-              <label id = "" class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
-                End Date
-              </label>
-            </div>
-          </div>
-          <div>
-            <label class="block text-sm/6 font-medium text-gray-900 pb-1">Select Cloud Cover <i title = "Less than the input value in percentage" class="fa-solid fa-circle-info"></i></label>
+          <div class="tab-content">
+            <div class="tab-panel hidden">
             
-            <div class="bg-white mt-4">
-              <div class="relative bg-inherit">
-                  <input type="number" id="cloud-cover" name="" value = "0" class="peer bg-transparent h-10 w-full rounded-lg text-gray-200 placeholder-transparent ring-1 px-2 ring-gray-200 focus:ring-sky-600 focus:outline-none focus:border-rose-600" placeholder="Cloud Cover"/><label for="" class="absolute cursor-text left-0 -top-3 text-sm text-gray-500 bg-inherit mx-1 px-1 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-2 peer-focus:-top-3 peer-focus:text-sky-600 peer-focus:text-sm transition-all">Cloud Cover</label>
+      
+            <div class="border-b border-gray-900/10 p-4">
+              <!-- <h2 class="text-base/7 font-semibold text-gray-900">Apply Filters</h2>
+              <p class="mt-1 text-sm/6 text-gray-600">Select the filters you want to apply.</p> -->
+              <div class = "pb-4">
+                <label id="listbox-label" class="block text-sm/6 font-medium text-gray-900">Filter Option</label>
+                <div class="relative mt-2">
+                  <button id="select-button" type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label">
+                    <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
+                      <img src="static/img/ndvi.png" alt="" class="size-5 shrink-0 rounded-full">
+                      <span id = "selected_filter_value" class="block truncate">NDVI</span>
+                    </span>
+                    <svg class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+              
+                  <ul id="select-list" class="hidden absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3">
+                    <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-0" role="option">
+                      <div class="flex items-center">
+                        <img src="static/img/ndvi.png" alt="" class="size-5 shrink-0 rounded-full">
+                        <span class="ml-3 block truncate font-normal">NDVI</span>
+                      </div>
+                      <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+                        <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                    </li>
+                    <!-- More items... -->
+                    <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-0" role="option">
+                      <div class="flex items-center">
+                        <img src="static/img/basemap.png" alt="" class="size-5 shrink-0 rounded-full">
+                        <span class="ml-3 block truncate font-normal">Another Option</span>
+                      </div>
+                      <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+                        <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
+                          <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class = "pb-4">
+                <label class="block text-sm/6 font-medium text-gray-900 pb-4">Select Date</label>
+                <div class="relative h-10 w-full min-w-[200px] mb-4">
+                  <input id="start-date" class="my-dates peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" placeholder=" "/>
+                  <label id = "start-date" class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                    Start Date
+                  </label>
+                </div>
+                <div class="relative h-10 w-full min-w-[200px]">
+                  <input id="end-date" class="my-dates peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" placeholder=" "/>
+                  <label id = "" class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                    End Date
+                  </label>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm/6 font-medium text-gray-900 pb-1">Select Cloud Cover <i title = "Less than the input value in percentage" class="fa-solid fa-circle-info"></i></label>
+                
+                <div class="bg-white mt-4">
+                  <div class="relative bg-inherit">
+                      <input type="number" id="cloud-cover" name="" value = "50" class="peer bg-transparent h-10 w-full rounded-lg text-gray-200 placeholder-transparent ring-1 px-2 ring-gray-200 focus:ring-sky-600 focus:outline-none focus:border-rose-600" placeholder="Cloud Cover"/><label for="" class="absolute cursor-text left-0 -top-3 text-sm text-gray-500 bg-inherit mx-1 px-1 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-2 peer-focus:-top-3 peer-focus:text-sky-600 peer-focus:text-sm transition-all">Cloud Cover</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-4">
+                <label class="block text-sm/6 font-medium text-gray-900 pb-1">BBOX: <span class = "break-words w-64 text-xs text-gray-500" id="coords"></span></label>
+                <label class="block text-sm/6 font-medium text-gray-900 pb-1">Zoom Level: <span class = "text-xs text-gray-500" id="zoom-level"></span></label>
+              </div>
+
+                <div class="pb-4 mt-6 float-right">
+                    <button id="search-button" class="bg-blue-700 rounded-lg text-white text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                </div>
+            </div>
+            <div class="tab-panel hidden">
+              <!-- Content for Tab 2 -->
+              <div id="sidebar">
+                <h3>Features</h3>
+                <button id="clear-sidebar-button">Clear</button>
+                <div id="feature-list"></div>
               </div>
             </div>
           </div>
-
-         
-          <div class="pb-4 mt-6">
-            <div class="float-right">
-                <button id="search-button" class="bg-blue-700 rounded-lg text-white text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
-            </div>
-          </div>
-
-          <div id="sidebar">
-            <h3>Features</h3>
-            <button id="clear-sidebar-button">Clear</button>
-            <div id="feature-list"></div>
-          </div>
-          
-          <strong>Coordinates:</strong> <span id="coords"></span><br />
-          <strong>Zoom Level:</strong> <span id="zoom-level"></span>
-      
-          <!-- <div id="controls">
-            <label>Start Date: <input type="date" id="start-date" /></label><br />
-            <label>End Date: <input type="date" id="end-date" /></label><br />
-            <label
-              >Cloud Cover: <input type="number" id="cloud-cover" value="30" /></label
-            ><br />
-            <button id="search-button">Search</button><br /><br />
-            <input type="checkbox" id="overlayNdvi" />
-            <label for="overlayNdvi">Overlay NDVI Layer</label>
-          </div> -->
-
         </div>
+      </div>
+      </div>
   </div>
   <div id="map" class = "w-3/4 z-0 col-span-2"></div>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabs = document.querySelectorAll('.tab');
+      const tabPanels = document.querySelectorAll('.tab-panel');
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(tab => tab.classList.remove('border-blue-500', 'text-blue-500'));
+          tab.classList.add('border-blue-500', 'text-blue-500');
+          tabPanels.forEach(panel => panel.classList.add('hidden'));
+          tabPanels[index].classList.remove('hidden');
+        });
+      });
+
+      // Activate the first tab by default
+      tabs[0].classList.add('border-blue-500', 'text-blue-500');
+      tabPanels[0].classList.remove('hidden');
+    });
+  </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
