@@ -214,18 +214,19 @@
                     <button id="search-button" class="bg-blue-700 rounded-lg text-white text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
                 </div>
             </div>
+            </div>
             <div class="tab-panel hidden">
               <!-- Content for Tab 2 -->
               <div id="sidebar">
                 <h3>Features</h3>
                 <button id="clear-sidebar-button">Clear</button>
-                <div id="feature-list"></div>
+                <div id="feature-list" style = "max-height: 450px;" class = "overflow-auto"></div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      </div>
+
   </div>
   <div id="map" class = "w-3/4 z-0 col-span-2"></div>
   </div>
@@ -400,9 +401,20 @@
                 var featureItem = document.createElement("div");
                 featureItem.className = "feature-item";
                 featureItem.innerHTML = `
-                            <strong>ID:</strong> ${feature.id}<br />
-                            <strong>Date:</strong> ${feature.properties.datetime}<br />
-                            <strong>Cloud Cover:</strong> ${feature.properties["eo:cloud_cover"]}<br />
+                            <ul role="list" class="divide-y divide-gray-100">
+                              <li class="flex justify-between gap-x-6 py-5">
+                                <div class="flex min-w-0 gap-x-4">
+                                  <img class="size-12 flex-none rounded-full bg-gray-50" src="static/img/satellite-basemap.png" alt="">
+                                  <div class="min-w-0 flex-auto">
+                                    <p class="text-sm/6 font-semibold text-gray-900">${feature.id}</p>
+                                    <p class="mt-1 truncate text-xs/5 text-gray-500">${feature.properties.datetime}</p>
+                                  </div>
+                                </div>
+                                <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+                                  <!--<p class="text-sm/6 text-gray-900">Co-Founder / CEO</p>-->
+                                  <p class="mt-1 text-xs/5 text-gray-500">${parseInt(feature.properties["eo:cloud_cover"])} % Cloud</time></p>
+                                </div>
+                              </li>            
                         `;
                 featureItem.addEventListener("click", function () {
                   if (highlightedLayer) {
