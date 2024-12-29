@@ -4,7 +4,6 @@ import os
 import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
-from io import BytesIO
 
 import httpx
 import matplotlib.pyplot as plt
