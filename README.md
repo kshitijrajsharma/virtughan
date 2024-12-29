@@ -4,8 +4,8 @@
 
 The goal of this project is to efficiently do raster computation  on different zoom levels, similar to Google Earth Engine, but using Cloud Optimized GeoTIFFs (COGs) for Sentinel-2 imagery. When you zoom in and out on Google Earth Engine, it efficiently processes large images on the fly. We aim to replicate this capability in an open-source and scalable manner using COGs. This experiment demonstrates that on-the-fly computation at various zoom levels can be achieved with minimal and scalable hardware. Additionally, by leveraging a data cube, this approach can be expanded to include temporal dimensions.
 
+![image](https://github.com/user-attachments/assets/e5741f6b-d6c2-4e47-a794-21c2244a7476)
 
-![image](https://github.com/user-attachments/assets/4ef38608-bf96-474a-8f7e-2890b5677cf5)
 
 Learn about COG and how to generate one for this project [Here](./cog.md)
 
