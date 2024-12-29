@@ -28,7 +28,7 @@ from rio_tiler.io import COGReader
 from shapely.geometry import box, mapping
 from starlette.requests import Request
 
-from src.scog_compute.process_ndvi_cog_tiles import main as calculate_ndvi_over_time
+from src.scog_compute.engine import compute as compute_engine
 
 app = FastAPI()
 
@@ -78,34 +78,85 @@ async def notify_progress(message: str):
         await connection.send_text(message)
 
 
-@app.post("/process_ndvi")
-async def process_ndvi_endpoint(
+@app.post("/compute")
+async def compute_aoi_over_time(
     background_tasks: BackgroundTasks,
-    lat: float = Query(28.202082, description="Latitude (default: 28.202082)"),
-    lon: float = Query(83.987222, description="Longitude (default: 83.987222)"),
-    z: int = Query(10, description="Zoom level (default: 10)"),
-    cc: int = Query(30, description="Cloud cover percentage (default: 30)"),
-    sd: str = Query(
-        (datetime.now() - timedelta(days=30 * 2)).strftime("%Y-%m-01"),
-        description="Start date in YYYY-MM-DD format (default: first day of last 2 months)",
+    min_x: float = Query(..., description="Minimum longitude of the bounding box"),
+    min_y: float = Query(..., description="Minimum latitude of the bounding box"),
+    max_x: float = Query(..., description="Maximum longitude of the bounding box"),
+    max_y: float = Query(..., description="Maximum latitude of the bounding box"),
+    start_date: str = Query(
+        (datetime.now() - timedelta(days=365 * 1)).strftime("%Y-%m-%d"),
+        description="Start date in YYYY-MM-DD format (default: 1 years ago)",
     ),
-    ed: str = Query(
+    end_date: str = Query(
         datetime.now().strftime("%Y-%m-%d"),
         description="End date in YYYY-MM-DD format (default: today)",
     ),
+    cloud_cover: int = Query(30, description="Cloud cover percentage (default: 30)"),
+    formula: str = Query(
+        "(band2 - band1) / (band2 + band1)",
+        description="Formula for custom band calculation (default: NDVI)",
+    ),
+    band1: str = Query(
+        "red", description="First band for custom calculation (default: red)"
+    ),
+    band2: str = Query(
+        "nir", description="Second band for custom calculation (default: nir)"
+    ),
+    operation: str = Query(
+        "mean", description="Operation for aggregating results (default: mean)"
+    ),
+    export_band: str = Query(
+        "visual", description="Band to export as TIFF and create GIF (default: visual)"
+    ),
+    output_dir: str = Query(
+        "output", description="Output directory for saving results (default: output)"
+    ),
 ):
-    background_tasks.add_task(run_ndvi_script, lat, lon, z, cc, sd, ed)
-    return {"message": "NDVI processing started"}
+    bbox = [min_x, min_y, max_x, max_y]
+    background_tasks.add_task(
+        run_computation,
+        bbox,
+        start_date,
+        end_date,
+        cloud_cover,
+        formula,
+        band1,
+        band2,
+        operation,
+        export_band,
+        output_dir,
+    )
+    return {"message": "Processing started"}
 
 
-async def run_ndvi_script(lat, lon, z, cc, sd, ed):
-    await notify_progress("Starting NDVI processing...")
-    image_url = "static/ndvi_result.png"
-    if os.path.exists("static/ndvi_result.png"):
-        os.remove("static/ndvi_result.png")
-    await calculate_ndvi_over_time(lat, lon, z, cc, sd, ed, image_url, notify_progress)
-
-    await notify_progress(f"Result available at {image_url}")
+async def run_computation(
+    bbox,
+    start_date,
+    end_date,
+    cloud_cover,
+    formula,
+    band1,
+    band2,
+    operation,
+    export_band,
+    output_dir,
+):
+    await notify_progress("Starting processing...")
+    compute_engine(
+        bbox=bbox,
+        start_date=start_date,
+        end_date=end_date,
+        cloud_cover=cloud_cover,
+        formula=formula,
+        band1=band1,
+        band2=band2,
+        operation=operation,
+        export_band=export_band,
+        output_dir=output_dir,
+    )
+    await notify_progress(f"Processing completed. Results saved in {output_dir}")
 
 
 @app.get("/search")

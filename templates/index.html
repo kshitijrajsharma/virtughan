@@ -331,7 +331,7 @@
                                       )
                                       .join("")}
                                     <div class="download-section">
-                                        <h4>Click to Download</h4>
+                                        <h4>Download</h4>
                                         <ul>
                                             ${Object.entries(feature.assets)
                                               .map(
@@ -379,7 +379,12 @@
                                 </div>
                               </li>            
                         `;
-                featureItem.addEventListener("click", function () {
+                featureItem.addEventListener("mouseout", function () {
+                  if (highlightedLayer) {
+                    map.removeLayer(highlightedLayer);
+                  }
+                });
+                featureItem.addEventListener("mouseover", function () {
                   if (highlightedLayer) {
                     map.removeLayer(highlightedLayer);
                   }
@@ -408,7 +413,7 @@
                   )
                   .join("")}
                 <div class="download-section">
-                    <h4>Click to Download</h4>
+                    <h4>Download</h4>
                     <ul>
                         ${Object.entries(feature.assets)
                           .map(

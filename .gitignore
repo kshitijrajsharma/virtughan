@@ -4,3 +4,5 @@ __pycache__
 images
 node_modules
 venv
+*.png
+*.gif
