@@ -205,7 +205,12 @@
                             <strong>Date:</strong> ${feature.properties.datetime}<br />
                             <strong>Cloud Cover:</strong> ${feature.properties["eo:cloud_cover"]}<br />
                         `;
-                featureItem.addEventListener("click", function () {
+                featureItem.addEventListener("mouseout", function () {
+                  if (highlightedLayer) {
+                    map.removeLayer(highlightedLayer);
+                  }
+                });
+                featureItem.addEventListener("mouseover", function () {
                   if (highlightedLayer) {
                     map.removeLayer(highlightedLayer);
                   }
