@@ -1,14 +1,4 @@
 
-## Sentinel COG Compute
-
-## Purpose
-
-The goal of this project is to efficiently do raster computation  on different zoom levels, similar to Google Earth Engine, but using Cloud Optimized GeoTIFFs (COGs) for Sentinel-2 imagery. When you zoom in and out on Google Earth Engine, it efficiently processes large images on the fly. We aim to replicate this capability in an open-source and scalable manner using COGs. This experiment demonstrates that on-the-fly computation at various zoom levels can be achieved with minimal and scalable hardware. Additionally, by leveraging a data cube, this approach can be expanded to include temporal dimensions.
-
-
-![image](https://github.com/user-attachments/assets/4ef38608-bf96-474a-8f7e-2890b5677cf5)
-
-
 ## Understand COG 
 
 ### Cloud Optimized GeoTIFF (COG)
@@ -67,7 +57,7 @@ When a client requests a view of the image at a low zoom level, the client can:
 
 
 
-## Generate 
+## How to Generate  COG for this project ?
 
 Sentinel 2 Raw Image 
 ![image](https://github.com/user-attachments/assets/a8d724d5-8cf9-423b-bde9-5b45ce517b0d)
@@ -120,20 +110,3 @@ GDAL info
 ```
 ![image](https://github.com/user-attachments/assets/19283513-41f5-4d1e-a4b7-20c212c43625)
 
-## Run API 
-
-## env
-
-```bash
-pip install -r  requirements.txt
-```
-
-```bash
-uvicorn main:app --reload
-```
-
-
-
-## Resources and Credits 
-
-- https://registry.opendata.aws/sentinel-2-l2a-cogs/ COGS Stac API for sentinel-2

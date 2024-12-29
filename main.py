@@ -180,14 +180,11 @@ def process_ndvi(r, nir):
     ndvi = (nir.astype(float) - r.astype(float)) / (nir + r)
     ndvi = np.ma.masked_invalid(ndvi)
 
-    # Normalize the NDVI for visualization
     ndvi_normalized = (ndvi - ndvi.min()) / (ndvi.max() - ndvi.min())
 
-    # Apply colormap
     colormap = plt.get_cmap("RdYlGn")
     ndvi_colored = colormap(ndvi_normalized)
 
-    # Convert to image
     ndvi_image = (ndvi_colored[:, :, :3] * 255).astype(np.uint8)
     image = Image.fromarray(ndvi_image)
 
