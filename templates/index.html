@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sentinel-2 COG Viewer</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <!-- tailwind start -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
 
     <!-- for customization -->
     <script>
@@ -108,37 +111,84 @@
     </style>
   </head>
   <body>
-    <div class = "flex h-screen p-4">
+    <div class = "flex h-screen">
       <div id="info" class="w-1/4 space-y-12 float-left z-10 bg-white col-span-1">
-        <div class="border-b border-gray-900/10 pb-12">
+        <div class="border-b border-gray-900/10 p-4">
           <h2 class="text-base/7 font-semibold text-gray-900">Apply Filters</h2>
           <p class="mt-1 text-sm/6 text-gray-600">Select the filters you want to apply.</p>
-          <div>
-            <ul role="list" class="divide-y divide-gray-100">
-              <li class="flex justify-between gap-x-6 py-5">
-                <div class="flex min-w-0 gap-x-4">
-                  <img class="size-12 flex-none rounded-full bg-gray-50" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
-                  <div class="min-w-0 flex-auto">
-                    <p class="text-sm/6 font-semibold text-gray-900">Leslie Alexander</p>
-                    <p class="mt-1 truncate text-xs/5 text-gray-500">leslie.alexander@example.com</p>
+          <div class = "pb-4">
+            <label id="listbox-label" class="block text-sm/6 font-medium text-gray-900">Filter</label>
+            <div class="relative mt-2">
+              <button id="select-button" type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label">
+                <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
+                  <img src="static/img/ndvi.png" alt="" class="size-5 shrink-0 rounded-full">
+                  <span class="block truncate">NDVI</span>
+                </span>
+                <svg class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" />
+                </svg>
+              </button>
+          
+              <ul id="select-list" class="hidden absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3">
+                <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-0" role="option">
+                  <div class="flex items-center">
+                    <img src="static/img/ndvi.png" alt="" class="size-5 shrink-0 rounded-full">
+                    <span class="ml-3 block truncate font-normal">NDVI</span>
                   </div>
-                </div>
-                <!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-                  <p class="text-sm/6 text-gray-900">Co-Founder / CEO</p>
-                  <p class="mt-1 text-xs/5 text-gray-500">Last seen <time datetime="2023-01-23T13:23Z">3h ago</time></p>
-                </div> -->
-              </li>
-              <li class="flex justify-between gap-x-6 py-5">
-                <div class="flex min-w-0 gap-x-4">
-                  <img class="size-12 flex-none rounded-full bg-gray-50" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
-                  <div class="min-w-0 flex-auto">
-                    <p class="text-sm/6 font-semibold text-gray-900">Leslie Alexander</p>
-                    <p class="mt-1 truncate text-xs/5 text-gray-500">leslie.alexander@example.com</p>
+                  <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+                    <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                </li>
+                <!-- More items... -->
+                <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-0" role="option">
+                  <div class="flex items-center">
+                    <img src="static/img/basemap.png" alt="" class="size-5 shrink-0 rounded-full">
+                    <span class="ml-3 block truncate font-normal">Another Option</span>
                   </div>
-                </div>
-              </li>
-            </ul>
+                  <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+                    <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                </li>
+              </ul>
+            </div>
           </div>
+          <div class = "pb-4">
+            <label class="block text-sm/6 font-medium text-gray-900 pb-1">Select Date</label>
+            <div class="relative h-10 w-full min-w-[200px] mb-4">
+              <input id="date-picker" class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" placeholder=" "/>
+              <label class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                Start Date
+              </label>
+            </div>
+            <div class="relative h-10 w-full min-w-[200px]">
+              <input id="date-picker" class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" placeholder=" "/>
+              <label class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                End Date
+              </label>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm/6 font-medium text-gray-900 pb-1">Select Cloud Cover <i title = "Less than the input value in percentage" class="fa-solid fa-circle-info"></i></label>
+            
+            <div class="bg-white mt-4">
+              <div class="relative bg-inherit">
+                  <input type="number" id="" name="" value = "0" class="peer bg-transparent h-10 w-full rounded-lg text-gray-200 placeholder-transparent ring-1 px-2 ring-gray-200 focus:ring-sky-600 focus:outline-none focus:border-rose-600" placeholder="Cloud Cover"/><label for="" class="absolute cursor-text left-0 -top-3 text-sm text-gray-500 bg-inherit mx-1 px-1 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-2 peer-focus:-top-3 peer-focus:text-sky-600 peer-focus:text-sm transition-all">Cloud Cover</label>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="mt-6">
+              <div class="float-right">
+                  <button class="bg-blue-700 rounded-lg text-white text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+              </div>
+            </div>
+          </div>
+          
           <strong>Coordinates:</strong> <span id="coords"></span><br />
           <strong>Zoom Level:</strong> <span id="zoom-level"></span>
       
@@ -157,10 +207,62 @@
         <button id="clear-sidebar-button">Clear</button>
         <div id="feature-list"></div>
       </div>
-    </div>
+        </div>
   </div>
   <div id="map" class = "w-3/4 z-0 col-span-2"></div>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const selectButton = document.getElementById('select-button');
+      const selectList = document.getElementById('select-list');
+      const listItems = selectList.querySelectorAll('[role="option"]');
+  
+      selectButton.addEventListener('click', function() {
+        const expanded = selectButton.getAttribute('aria-expanded') === 'true' || false;
+        selectButton.setAttribute('aria-expanded', !expanded);
+        selectList.classList.toggle('hidden');
+      });
+  
+      listItems.forEach(item => {
+        item.addEventListener('click', function() {
+          // Update the button text and image with the selected item's data
+          const selectedItemText = item.querySelector('.truncate').innerText;
+          const selectedItemImage = item.querySelector('img').src;
+          selectButton.querySelector('.truncate').innerText = selectedItemText;
+          selectButton.querySelector('img').src = selectedItemImage;
+  
+          // Update the selected class
+          listItems.forEach(i => {
+            i.classList.remove('bg-indigo-600', 'text-white', 'font-semibold');
+            i.querySelector('span').classList.remove('text-white');
+          });
+          item.classList.add('bg-indigo-600', 'text-white', 'font-semibold');
+          item.querySelector('span').classList.add('text-white');
+  
+          // Show the checkmark for the selected item
+          const checkIcon = item.querySelector('svg');
+          listItems.forEach(i => i.querySelector('svg').classList.add('hidden'));
+          checkIcon.classList.remove('hidden');
+  
+          // Close the select list
+          selectButton.setAttribute('aria-expanded', false);
+          selectList.classList.add('hidden');
+        });
+      });
+  
+      document.addEventListener('click', function(event) {
+        if (!selectButton.contains(event.target) && !selectList.contains(event.target)) {
+          selectButton.setAttribute('aria-expanded', false);
+          selectList.classList.add('hidden');
+        }
+      });
+    });
+  </script>
+  
+  
+
+
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
       var map = L.map("map").setView([28.202082, 83.987222], 10);
@@ -362,5 +464,31 @@
       document.getElementById("start-date").value = lastYearDate;
       document.getElementById("end-date").value = today;
     </script>
+
+  <!-- datepicker start -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    const datepicker = flatpickr("#date-picker", {});
+   
+    // styling the date picker
+    const calendarContainer = datepicker.calendarContainer;
+    const calendarMonthNav = datepicker.monthNav;
+    const calendarNextMonthNav = datepicker.nextMonthNav;
+    const calendarPrevMonthNav = datepicker.prevMonthNav;
+    const calendarDaysContainer = datepicker.daysContainer;
+   
+    calendarContainer.className = `${calendarContainer.className} bg-white p-4 border border-blue-gray-50 rounded-lg shadow-lg shadow-blue-gray-500/10 font-sans text-sm font-normal text-blue-gray-500 focus:outline-none break-words whitespace-normal`;
+   
+    calendarMonthNav.className = `${calendarMonthNav.className} flex items-center justify-between mb-4 [&>div.flatpickr-month]:-translate-y-3`;
+   
+    calendarNextMonthNav.className = `${calendarNextMonthNav.className} absolute !top-2.5 !right-1.5 h-6 w-6 bg-transparent hover:bg-blue-gray-50 !p-1 rounded-md transition-colors duration-300`;
+   
+    calendarPrevMonthNav.className = `${calendarPrevMonthNav.className} absolute !top-2.5 !left-1.5 h-6 w-6 bg-transparent hover:bg-blue-gray-50 !p-1 rounded-md transition-colors duration-300`;
+   
+    calendarDaysContainer.className = `${calendarDaysContainer.className} [&_span.flatpickr-day]:!rounded-md [&_span.flatpickr-day.selected]:!bg-gray-900 [&_span.flatpickr-day.selected]:!border-gray-900`;
+  </script>
+  
+
+  <!-- datepicker end -->
   </body>
 </html>
