@@ -42,6 +42,9 @@
         >Cloud Cover: <input type="number" id="cloud-cover" value="30" /></label
       ><br />
       <button id="search-button">Search</button>
+      <br />
+      <input type="checkbox" id="overlayNdvi" />
+      <label for="overlayNdvi">Overlay NDVI Layer</label>
     </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
@@ -72,7 +75,7 @@
           var cloudCover = document.getElementById("cloud-cover").value;
           var bounds = map.getBounds();
           var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
-
+          var overlayNdvi = document.getElementById("overlayNdvi").checked;
           var zoomLevel = map.getZoom();
 
           if (zoomLevel < 10) {
@@ -108,19 +111,21 @@
                 },
               }).addTo(map);
 
-              if (ndviLayer) {
-                map.removeLayer(ndviLayer);
-              }
-
-              ndviLayer = L.tileLayer(
-                `/tile/{z}/{x}/{y}?start_date=${startDate}&end_date=${endDate}&cloud_cover=${cloudCover}`,
-                {
-                  tileSize: 256,
-                  opacity: 0.8,
-                  attribution:
-                    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+              if (overlayNdvi) {
+                if (ndviLayer) {
+                  map.removeLayer(ndviLayer);
                 }
-              ).addTo(map);
+
+                ndviLayer = L.tileLayer(
+                  `/tile/{z}/{x}/{y}?start_date=${startDate}&end_date=${endDate}&cloud_cover=${cloudCover}`,
+                  {
+                    tileSize: 256,
+                    opacity: 0.8,
+                    attribution:
+                      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                  }
+                ).addTo(map);
+              }
             });
         });
 
