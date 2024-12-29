@@ -64,7 +64,7 @@ def fetch_process_custom_band(band1_url, band2_url, bbox, formula):
         return None, None, None
 
 
-def fetch_process_save_band(url, bbox, output_dir):
+def fetch_process_save_band(url, bbox, output_dir, export_band):
     try:
         with rasterio.open(url) as cog:
             transformer = Transformer.from_crs("epsg:4326", cog.crs, always_xy=True)
@@ -88,7 +88,7 @@ def fetch_process_save_band(url, bbox, output_dir):
 
             parts = url.split("/")
             image_name = parts[-2]
-            output_file = os.path.join(output_dir, f"{image_name}_band.tif")
+            output_file = os.path.join(output_dir, f"{image_name}_{export_band}.tif")
 
             with rasterio.open(
                 output_file,
@@ -309,7 +309,9 @@ def compute(
         tiff_files = []
         print("Exporting single band and creating GIF...")
         for band_url in tqdm(band_urls, total=len(band_urls), desc="Exporting Images"):
-            image_path, image_name = fetch_process_save_band(band_url, bbox, output_dir)
+            image_path, image_name = fetch_process_save_band(
+                band_url, bbox, output_dir, export_band
+            )
             if image_path is not None:
                 tiff_files.append(image_path)
                 image_with_text = add_text_to_image(image_path, image_name)
