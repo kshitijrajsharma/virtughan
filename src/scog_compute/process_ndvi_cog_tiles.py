@@ -20,6 +20,20 @@ executor = ThreadPoolExecutor(max_workers=default_max_workers)
 print(f"Using {default_max_workers} parallel workers")
 
 
+from tqdm.asyncio import tqdm_asyncio
+
+
+class TqdmWithNotify(tqdm_asyncio):
+    def __init__(self, *args, notify_progress=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.notify_progress = notify_progress
+
+    async def update(self, n=1):
+        await super().update(n)
+        if self.notify_progress:
+            await self.notify_progress(f"Progress: {self.n}/{self.total}")
+
+
 async def fetch_tile(url, tile_x, tile_y, z):
     def read_tile():
         with COGReader(url) as cog:
@@ -48,18 +62,22 @@ async def fetch_and_process_tile(red_url, nir_url, tile_x, tile_y, z):
         return None
 
 
-async def process_tiles_parallel(tile_urls, tile_x, tile_y, z):
+async def process_tiles_parallel(tile_urls, tile_x, tile_y, z, notify_progress):
     tasks = [
         fetch_and_process_tile(red_url, nir_url, tile_x, tile_y, z)
         for red_url, nir_url in tile_urls
     ]
     ndvi_tiles = []
-    for task in tqdm_asyncio.as_completed(
-        tasks, total=len(tasks), desc="Processing tiles"
+    for task in TqdmWithNotify.as_completed(
+        tasks,
+        total=len(tasks),
+        desc="Processing images",
+        notify_progress=notify_progress,
     ):
         ndvi = await task
         if ndvi is not None:
             ndvi_tiles.append(ndvi)
+        await notify_progress("Processed a image")
     return ndvi_tiles
 
 
@@ -95,15 +113,19 @@ async def main(lat, lon, z, cc, sd, ed, out, notify_progress):
         feature["assets"]["nir"]["href"] for feature in results["features"]
     ]
 
-    print(f"Processing {len(red_band_urls)} images...")
+    await notify_progress(f"Processing {len(red_band_urls)} images...")
 
     tile_urls = list(zip(red_band_urls, nir_band_urls))
 
     start_time = time.time()
-    ndvi_tiles = await process_tiles_parallel(tile_urls, tile.x, tile.y, z)
+    ndvi_tiles = await process_tiles_parallel(
+        tile_urls, tile.x, tile.y, z, notify_progress
+    )
     end_time = time.time()
 
-    print(f"Processed {len(ndvi_tiles)} tiles in {end_time - start_time} seconds")
+    await notify_progress(
+        f"Processed {len(ndvi_tiles)} tiles in {end_time - start_time} seconds"
+    )
 
     if ndvi_tiles:
         ndvi_stack = np.ma.stack(ndvi_tiles, axis=0)
@@ -133,7 +155,7 @@ async def main(lat, lon, z, cc, sd, ed, out, notify_progress):
         else:
             plt.show()
     else:
-        print("No images found for the given parameters")
+        notify_progress("No images found for the given parameters")
 
 
 if __name__ == "__main__":
