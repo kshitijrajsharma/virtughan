@@ -1,13 +1,23 @@
 import asyncio
+import os
 import time
 from datetime import datetime, timedelta
 from io import BytesIO
+from typing import List
 
 import httpx
 import mercantile
 import numpy as np
 from aiocache import cached
-from fastapi import FastAPI, HTTPException, Query, Response
+from fastapi import (
+    BackgroundTasks,
+    FastAPI,
+    HTTPException,
+    Query,
+    Response,
+    WebSocket,
+    WebSocketDisconnect,
+)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -17,6 +27,8 @@ from PIL import Image
 from rio_tiler.io import COGReader
 from shapely.geometry import box, mapping
 from starlette.requests import Request
+
+from src.scog_compute.process_ndvi_cog_tiles import main as calculate_ndvi_over_time
 
 app = FastAPI()
 
@@ -32,6 +44,8 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
+# store websocket connections
+connections: List[WebSocket] = []
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -46,6 +60,52 @@ async def fetch_tile(url, x, y, z):
             return tile[0]
 
     return await asyncio.to_thread(read_tile)
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    connections.append(websocket)
+    try:
+        while True:
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        connections.remove(websocket)
+
+
+async def notify_progress(message: str):
+    for connection in connections:
+        await connection.send_text(message)
+
+
+@app.post("/process_ndvi")
+async def process_ndvi_endpoint(
+    background_tasks: BackgroundTasks,
+    lat: float = Query(28.202082, description="Latitude (default: 28.202082)"),
+    lon: float = Query(83.987222, description="Longitude (default: 83.987222)"),
+    z: int = Query(10, description="Zoom level (default: 10)"),
+    cc: int = Query(30, description="Cloud cover percentage (default: 30)"),
+    sd: str = Query(
+        (datetime.now() - timedelta(days=30 * 2)).strftime("%Y-%m-01"),
+        description="Start date in YYYY-MM-DD format (default: first day of last 2 months)",
+    ),
+    ed: str = Query(
+        datetime.now().strftime("%Y-%m-%d"),
+        description="End date in YYYY-MM-DD format (default: today)",
+    ),
+):
+    background_tasks.add_task(run_ndvi_script, lat, lon, z, cc, sd, ed)
+    return {"message": "NDVI processing started"}
+
+
+async def run_ndvi_script(lat, lon, z, cc, sd, ed):
+    await notify_progress("Starting NDVI processing...")
+    image_url = "static/ndvi_result.png"
+    if os.path.exists("static/ndvi_result.png"):
+        os.remove("static/ndvi_result.png")
+    await calculate_ndvi_over_time(lat, lon, z, cc, sd, ed, image_url, notify_progress)
+
+    await notify_progress(f"Result available at {image_url}")
 
 
 @app.get("/search")

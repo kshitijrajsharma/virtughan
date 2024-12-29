@@ -63,17 +63,14 @@ async def process_tiles_parallel(tile_urls, tile_x, tile_y, z):
     return ndvi_tiles
 
 
-async def main(args):
-    lat = args.lat
-    lon = args.lon
-    z = args.z
-    cc = args.cc
+async def main(lat, lon, z, cc, sd, ed, out, notify_progress):
+    await notify_progress("Argument received...")
 
     tile = mercantile.tile(lon, lat, z)
     bbox = mercantile.bounds(tile)
 
-    start_date = args.sd
-    end_date = args.ed
+    start_date = sd
+    end_date = ed
 
     STAC_API_URL = "https://earth-search.aws.element84.com/v1/search"
 
@@ -131,8 +128,8 @@ async def main(args):
         cbar = plt.colorbar(plt.cm.ScalarMappable(cmap=colormap), ax=plt.gca())
         cbar.set_label("NDVI Normalized Value")
 
-        if args.out:
-            plt.savefig(args.out)
+        if out:
+            plt.savefig(out)
         else:
             plt.show()
     else:
@@ -176,4 +173,6 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    asyncio.run(main(args))
+    asyncio.run(
+        main(args.lat, args.lon, args.z, args.cc, args.sd, args.ed, args.out, print)
+    )

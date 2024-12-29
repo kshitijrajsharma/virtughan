@@ -1,17 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>scog-compute</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sentinel-2 COG Viewer</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
-      #map {
+      body {
+        margin: 0;
+        padding: 0;
         height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      #map {
+        flex: 1;
       }
       #info {
         position: absolute;
         bottom: 10px;
-        z-index: 1000;
         left: 10px;
+        z-index: 1000;
         background: white;
         padding: 10px;
         border-radius: 5px;
@@ -20,12 +29,37 @@
       #controls {
         position: absolute;
         top: 10px;
-        z-index: 1000;
         left: 10px;
+        z-index: 1000;
         background: white;
         padding: 10px;
         border-radius: 5px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      }
+      #sidebar {
+        display: none;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 300px;
+        max-height: 80vh;
+        overflow-y: auto;
+        padding: 10px;
+        background: white;
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+      }
+      .feature-item {
+        padding: 5px;
+        border-bottom: 1px solid #ccc;
+        cursor: pointer;
+      }
+      .feature-item:hover {
+        background-color: #f0f0f0;
+      }
+      .highlighted {
+        background-color: #ff0;
       }
     </style>
   </head>
@@ -41,25 +75,27 @@
       <label
         >Cloud Cover: <input type="number" id="cloud-cover" value="30" /></label
       ><br />
-      <button id="search-button">Search</button>
-      <br />
-
+      <button id="search-button">Search</button><br /><br />
       <input type="checkbox" id="overlayNdvi" />
       <label for="overlayNdvi">Overlay NDVI Layer</label>
     </div>
+    <div id="sidebar">
+      <h3>Features</h3>
+      <button id="clear-sidebar-button">Clear</button>
+
+      <div id="feature-list"></div>
+    </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-      var map = L.map("map").setView([0, 0], 2);
-
-      var openStreetMapLayer = L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-          maxZoom: 19,
-        }
-      ).addTo(map);
+      var map = L.map("map").setView([28.202082, 83.987222], 10);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
 
       var geojsonLayer;
       var ndviLayer;
+      var highlightedLayer;
 
       map.on("moveend", function () {
         var bounds = map.getBounds();
@@ -71,27 +107,22 @@
       document
         .getElementById("search-button")
         .addEventListener("click", function () {
+          var bounds = map.getBounds();
+          var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
           var startDate = document.getElementById("start-date").value;
           var endDate = document.getElementById("end-date").value;
           var cloudCover = document.getElementById("cloud-cover").value;
-          var bounds = map.getBounds();
-          var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
           var overlayNdvi = document.getElementById("overlayNdvi").checked;
-          var zoomLevel = map.getZoom();
-
-          if (zoomLevel < 10) {
-            alert("Please zoom in to a level greater than 10 to search.");
-            return;
-          }
-          if (geojsonLayer) {
-            map.removeLayer(geojsonLayer);
-          }
 
           fetch(
             `/search?bbox=${bbox}&start_date=${startDate}&end_date=${endDate}&cloud_cover=${cloudCover}`
           )
             .then((response) => response.json())
             .then((data) => {
+              if (geojsonLayer) {
+                map.removeLayer(geojsonLayer);
+              }
+
               geojsonLayer = L.geoJSON(data, {
                 style: function (feature) {
                   return {
@@ -103,14 +134,45 @@
                 onEachFeature: function (feature, layer) {
                   layer.on("click", function () {
                     var popupContent = `
-                    <strong>ID:</strong> ${feature.id}<br />
-                    <strong>Date:</strong> ${feature.properties.datetime}<br />
-                    <strong>Cloud Cover:</strong> ${feature.properties["eo:cloud_cover"]}<br />
-                  `;
+                                <strong>ID:</strong> ${feature.id}<br />
+                                <strong>Date:</strong> ${feature.properties.datetime}<br />
+                                <strong>Cloud Cover:</strong> ${feature.properties["eo:cloud_cover"]}<br />
+                              `;
                     layer.bindPopup(popupContent).openPopup();
                   });
                 },
               }).addTo(map);
+
+              var featureList = document.getElementById("feature-list");
+              featureList.innerHTML = "";
+
+              data.features.forEach(function (feature, index) {
+                var featureItem = document.createElement("div");
+                featureItem.className = "feature-item";
+                featureItem.innerHTML = `
+                            <strong>ID:</strong> ${feature.id}<br />
+                            <strong>Date:</strong> ${feature.properties.datetime}<br />
+                            <strong>Cloud Cover:</strong> ${feature.properties["eo:cloud_cover"]}<br />
+                        `;
+                featureItem.addEventListener("click", function () {
+                  if (highlightedLayer) {
+                    map.removeLayer(highlightedLayer);
+                  }
+                  highlightedLayer = L.geoJSON(feature, {
+                    style: function () {
+                      return {
+                        fillOpacity: 0.5,
+                        color: "yellow",
+                        weight: 2,
+                      };
+                    },
+                  }).addTo(map);
+                  map.fitBounds(highlightedLayer.getBounds());
+                });
+                featureList.appendChild(featureItem);
+              });
+
+              document.getElementById("sidebar").style.display = "block";
 
               if (overlayNdvi) {
                 if (ndviLayer) {
@@ -128,6 +190,21 @@
                 ).addTo(map);
               }
             });
+        });
+
+      document
+        .getElementById("clear-sidebar-button")
+        .addEventListener("click", function () {
+          if (geojsonLayer) {
+            map.removeLayer(geojsonLayer);
+          }
+          if (highlightedLayer) {
+            map.removeLayer(highlightedLayer);
+          }
+          if (ndviLayer) {
+            map.removeLayer(ndviLayer);
+          }
+          document.getElementById("sidebar").style.display = "none";
         });
 
       // Set default dates
