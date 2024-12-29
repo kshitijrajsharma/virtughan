@@ -1,11 +1,12 @@
+import asyncio
 import time
 from datetime import datetime, timedelta
-from functools import lru_cache
 from io import BytesIO
 
+import httpx
 import mercantile
 import numpy as np
-import requests
+from aiocache import cached
 from fastapi import FastAPI, HTTPException, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -25,7 +26,15 @@ app.add_middleware(
 )
 
 
-@lru_cache(maxsize=50)
+async def fetch_tile(url, x, y, z):
+    def read_tile():
+        with COGReader(url) as cog:
+            tile, _ = cog.tile(x, y, z)
+            return tile[0]
+
+    return await asyncio.to_thread(read_tile)
+
+
 @app.get("/search")
 async def search_images(
     bbox: str = Query(
@@ -53,7 +62,8 @@ async def search_images(
         "limit": 100,
     }
 
-    response = requests.post(STAC_API_URL, json=search_params)
+    async with httpx.AsyncClient() as client:
+        response = await client.post(STAC_API_URL, json=search_params)
     if response.status_code != 200:
         return JSONResponse(
             content={"error": "Error searching STAC API"},
@@ -64,11 +74,10 @@ async def search_images(
     return results
 
 
-@lru_cache(maxsize=500)
-def cached_generate_tile(
+@cached(ttl=3600)
+async def cached_generate_tile(
     x: int, y: int, z: int, start_date: str, end_date: str, cloud_cover: int
 ) -> bytes:
-    # Logic to generate the PNG image data on the fly
     tile = mercantile.Tile(x, y, z)
     bbox = mercantile.bounds(tile)
     bbox_polygon = box(bbox.west, bbox.south, bbox.east, bbox.north)
@@ -81,7 +90,9 @@ def cached_generate_tile(
         "intersects": bbox_geojson,
         "limit": 1,
     }
-    response = requests.post(STAC_API_URL, json=search_params)
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(STAC_API_URL, json=search_params)
     if response.status_code != 200:
         raise HTTPException(status_code=404, detail="Error searching STAC API")
 
@@ -96,14 +107,15 @@ def cached_generate_tile(
     nir_band_url = feature["assets"]["nir"]["href"]
 
     try:
-        with COGReader(red_band_url) as red_cog, COGReader(nir_band_url) as nir_cog:
-            red_tile, _ = red_cog.tile(x, y, z)
-            nir_tile, _ = nir_cog.tile(x, y, z)
+        red_tile, nir_tile = await asyncio.gather(
+            fetch_tile(red_band_url, x, y, z), fetch_tile(nir_band_url, x, y, z)
+        )
     except Exception as e:
+        raise e
         raise HTTPException(status_code=500, detail=str(e))
 
-    r = red_tile[0]
-    nir = nir_tile[0]
+    r = red_tile
+    nir = nir_tile
     image = process_ndvi(r, nir)
 
     buffered = BytesIO()
@@ -135,7 +147,7 @@ async def get_tile(
 
     try:
         start_time = time.time()
-        image_bytes, feature = cached_generate_tile(
+        image_bytes, feature = await cached_generate_tile(
             x, y, z, start_date, end_date, cloud_cover
         )
         computation_time = time.time() - start_time
@@ -154,18 +166,16 @@ async def get_tile(
 def process_ndvi(r, nir):
     ndvi = (nir.astype(float) - r.astype(float)) / (nir + r)
     ndvi = np.ma.masked_invalid(ndvi)
-    ndvi_normalized = (ndvi + 1) / 2
 
+    # Normalize the NDVI for visualization
+    ndvi_normalized = (ndvi - ndvi.min()) / (ndvi.max() - ndvi.min())
+
+    # Apply colormap
     colormap = plt.get_cmap("RdYlGn")
     ndvi_colored = colormap(ndvi_normalized)
 
+    # Convert to image
     ndvi_image = (ndvi_colored[:, :, :3] * 255).astype(np.uint8)
     image = Image.fromarray(ndvi_image)
 
     return image
-
-
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8000)

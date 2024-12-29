@@ -7,3 +7,5 @@ requests
 mercantile
 numpy
 shapely
+httpx
+aiocache
