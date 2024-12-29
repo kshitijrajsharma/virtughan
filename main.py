@@ -64,7 +64,7 @@ async def search_images(
     return results
 
 
-@lru_cache(maxsize=500)  # Adjust the maxsize based on your needs
+@lru_cache(maxsize=500)
 def cached_generate_tile(
     x: int, y: int, z: int, start_date: str, end_date: str, cloud_cover: int
 ) -> bytes:
