@@ -125,16 +125,13 @@ GDAL info
 ## env
 
 ```bash
-pip install fastapi uvicorn rasterio numpy mercantile rio-tiler
+pip install -r  requirements.txt
 ```
 
 ```bash
 uvicorn main:app --reload
 ```
 
-## Run frontend 
-
-Directly launch webserver pointed to index.html
 
 
 ## Resources and Credits 
