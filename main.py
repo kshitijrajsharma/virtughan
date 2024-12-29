@@ -116,7 +116,7 @@ async def compute_aoi_over_time(
 ):
     bbox = [min_x, min_y, max_x, max_y]
     background_tasks.add_task(
-        run_generic_script,
+        run_computation,
         bbox,
         start_date,
         end_date,
@@ -131,7 +131,7 @@ async def compute_aoi_over_time(
     return {"message": "Processing started"}
 
 
-async def run_generic_script(
+async def run_computation(
     bbox,
     start_date,
     end_date,
