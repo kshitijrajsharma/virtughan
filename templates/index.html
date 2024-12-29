@@ -61,6 +61,24 @@
       .highlighted {
         background-color: #ff0;
       }
+      .popup-content {
+        max-height: 200px;
+        overflow-y: auto;
+      }
+      .download-section {
+        margin-top: 10px;
+      }
+      .download-section h4 {
+        cursor: pointer;
+      }
+      .download-section ul {
+        display: none;
+        list-style-type: none;
+        padding: 0;
+      }
+      .download-section ul li {
+        margin-bottom: 5px;
+      }
     </style>
   </head>
   <body>
@@ -82,7 +100,6 @@
     <div id="sidebar">
       <h3>Features</h3>
       <button id="clear-sidebar-button">Clear</button>
-
       <div id="feature-list"></div>
     </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -134,11 +151,45 @@
                 onEachFeature: function (feature, layer) {
                   layer.on("click", function () {
                     var popupContent = `
-                                <strong>ID:</strong> ${feature.id}<br />
-                                <strong>Date:</strong> ${feature.properties.datetime}<br />
-                                <strong>Cloud Cover:</strong> ${feature.properties["eo:cloud_cover"]}<br />
+                                <div class="popup-content">
+                                    <strong>ID:</strong> ${feature.id}<br />
+                                    <strong>Date:</strong> ${
+                                      feature.properties.datetime
+                                    }<br />
+                                    <strong>Cloud Cover:</strong> ${
+                                      feature.properties["eo:cloud_cover"]
+                                    }<br />
+                                    <hr>
+                                    <strong>Properties:</strong><br />
+                                    ${Object.entries(feature.properties)
+                                      .map(
+                                        ([key, value]) =>
+                                          `<strong>${key}:</strong> ${value}<br />`
+                                      )
+                                      .join("")}
+                                    <div class="download-section">
+                                        <h4>Click to Download</h4>
+                                        <ul>
+                                            ${Object.entries(feature.assets)
+                                              .map(
+                                                ([key, asset]) =>
+                                                  `<li><a href="${asset.href}" target="_blank">${asset.title}</a></li>`
+                                              )
+                                              .join("")}
+                                        </ul>
+                                    </div>
+                                </div>
                               `;
                     layer.bindPopup(popupContent).openPopup();
+
+                    // Add event listener for download section toggle
+                    document
+                      .querySelector(".download-section h4")
+                      .addEventListener("click", function () {
+                        var ul = this.nextElementSibling;
+                        ul.style.display =
+                          ul.style.display === "none" ? "block" : "none";
+                      });
                   });
                 },
               }).addTo(map);
@@ -168,6 +219,42 @@
                     },
                   }).addTo(map);
                   map.fitBounds(highlightedLayer.getBounds());
+                  var popupContent = `
+            <div class="popup-content">
+                <strong>ID:</strong> ${feature.id}<br />
+                <strong>Date:</strong> ${feature.properties.datetime}<br />
+                <strong>Cloud Cover:</strong> ${
+                  feature.properties["eo:cloud_cover"]
+                }<br />
+                <hr>
+                <strong>Properties:</strong><br />
+                ${Object.entries(feature.properties)
+                  .map(
+                    ([key, value]) => `<strong>${key}:</strong> ${value}<br />`
+                  )
+                  .join("")}
+                <div class="download-section">
+                    <h4>Click to Download</h4>
+                    <ul>
+                        ${Object.entries(feature.assets)
+                          .map(
+                            ([key, asset]) =>
+                              `<li><a href="${asset.href}" target="_blank">${asset.title}</a></li>`
+                          )
+                          .join("")}
+                    </ul>
+                </div>
+            </div>
+        `;
+                  highlightedLayer.bindPopup(popupContent).openPopup();
+
+                  document
+                    .querySelector(".download-section h4")
+                    .addEventListener("click", function () {
+                      var ul = this.nextElementSibling;
+                      ul.style.display =
+                        ul.style.display === "none" ? "block" : "none";
+                    });
                 });
                 featureList.appendChild(featureItem);
               });
