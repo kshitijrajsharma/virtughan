@@ -124,7 +124,6 @@ async def cached_generate_tile(
             fetch_tile(red_band_url, x, y, z), fetch_tile(nir_band_url, x, y, z)
         )
     except Exception as e:
-        raise e
         raise HTTPException(status_code=500, detail=str(e))
 
     r = red_tile
