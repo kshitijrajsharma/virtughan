@@ -2,3 +2,5 @@ env
 __pycache__
 *.tif
 images
+node_modules
+venv
