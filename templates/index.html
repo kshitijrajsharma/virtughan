@@ -84,7 +84,7 @@
           }
 
           fetch(
-            `http://127.0.0.1:8000/search?bbox=${bbox}&start_date=${startDate}&end_date=${endDate}&cloud_cover=${cloudCover}`
+            `/search?bbox=${bbox}&start_date=${startDate}&end_date=${endDate}&cloud_cover=${cloudCover}`
           )
             .then((response) => response.json())
             .then((data) => {
@@ -113,7 +113,7 @@
               }
 
               ndviLayer = L.tileLayer(
-                `http://127.0.0.1:8000/tile/{z}/{x}/{y}?start_date=${startDate}&end_date=${endDate}&cloud_cover=${cloudCover}`,
+                `/tile/{z}/{x}/{y}?start_date=${startDate}&end_date=${endDate}&cloud_cover=${cloudCover}`,
                 {
                   tileSize: 256,
                   opacity: 0.8,

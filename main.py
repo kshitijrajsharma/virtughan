@@ -9,11 +9,14 @@ import numpy as np
 from aiocache import cached
 from fastapi import FastAPI, HTTPException, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from matplotlib import pyplot as plt
 from PIL import Image
 from rio_tiler.io import COGReader
 from shapely.geometry import box, mapping
+from starlette.requests import Request
 
 app = FastAPI()
 
@@ -24,6 +27,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+templates = Jinja2Templates(directory="templates")
+
+
+@app.get("/", response_class=HTMLResponse)
+async def read_index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 async def fetch_tile(url, x, y, z):
