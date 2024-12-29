@@ -41,73 +41,32 @@
         display: flex;
         flex-direction: column;
       }
-      #map {
-        /* flex: 1; */
+      /* Custom thin scrollbar styles */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 5px;
+        height: 60px;
       }
 
-      /* #info {
-        position: absolute;
-        bottom: 10px;
-        left: 10px;
-        z-index: 1000;
-        background: white;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      .custom-scrollbar::-webkit-scrollbar-track {
+        border-radius: 100vh;
+        background: #fbfaf8;
       }
-      #controls {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        z-index: 1000;
-        background: white;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #b0b0b0;
+        border-radius: 100vh;
+        border: 3px solid rgb(86, 86, 86);
       }
-      #sidebar {
-        display: none;
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        width: 300px;
-        max-height: 80vh;
-        overflow-y: auto;
-        padding: 10px;
-        background: white;
-        border: 1px solid #ccc;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
+
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #494949;
       }
-      .feature-item {
-        padding: 5px;
-        border-bottom: 1px solid #ccc;
+      /* Custom styles for the icon hover effect */ 
+      #clear-sidebar-button:hover { 
+        color: #1f2937; 
+        /* Tailwind's gray-900 */ 
         cursor: pointer;
       }
-      .feature-item:hover {
-        background-color: #f0f0f0;
-      }
-      .highlighted {
-        background-color: #ff0;
-      }
-      .popup-content {
-        max-height: 200px;
-        overflow-y: auto;
-      }
-      .download-section {
-        margin-top: 10px;
-      }
-      .download-section h4 {
-        cursor: pointer;
-      }
-      .download-section ul {
-        display: none;
-        list-style-type: none;
-        padding: 0;
-      }
-      .download-section ul li {
-        margin-bottom: 5px;
-      } */
     </style>
   </head>
   <body>
@@ -218,9 +177,13 @@
             <div class="tab-panel hidden">
               <!-- Content for Tab 2 -->
               <div id="sidebar">
-                <h3>Features</h3>
-                <button id="clear-sidebar-button">Clear</button>
-                <div id="feature-list" style = "max-height: 450px;" class = "overflow-auto"></div>
+                <div class="flex items-center justify-between">
+                  <label class="block  font-medium text-gray-900 pb-4">Images: </label>
+                  <span id="clear-sidebar-button" class="text-gray-500 text-xs"><i class="fa-solid fa-rotate-right"></i> Clear</span>
+                </div>
+                <div id="feature-list" style = "max-height: 450px;" class = "overflow-auto custom-scrollbar">
+                  <label class="block text-sm font-medium text-gray-400 pt-4">Apply the Filter First!!!</label>
+                </div>
               </div>
             </div>
           </div>
@@ -402,7 +365,7 @@
                 featureItem.className = "feature-item";
                 featureItem.innerHTML = `
                             <ul role="list" class="divide-y divide-gray-100">
-                              <li class="flex justify-between gap-x-6 py-5">
+                              <li class="flex justify-between gap-x-6 py-5 hover:bg-gray-100 transition-colors duration-300 cursor-pointer">
                                 <div class="flex min-w-0 gap-x-4">
                                   <img class="size-12 flex-none rounded-full bg-gray-50" src="static/img/satellite-basemap.png" alt="">
                                   <div class="min-w-0 flex-auto">
@@ -502,7 +465,7 @@
           if (ndviLayer) {
             map.removeLayer(ndviLayer);
           }
-          document.getElementById("sidebar").style.display = "none";
+          document.getElementById("feature-list").innerHTML = '<label class="block text-sm font-medium text-gray-400 pt-4">Apply the Filter First!!!</label>';
         });
 
       // Set default dates
