@@ -488,7 +488,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     var clickedLayer = createLayer(feature);
                     highlightedLayer.addLayer(clickedLayer);
                     highlightedLayer.addTo(map);
-                    map.fitBounds(clickedLayer.getBounds());
+                    // map.fitBounds(clickedLayer.getBounds());
+                    map.fitBounds(geojsonLayer.getBounds());
                     
                     layer.bindPopup(createPopup(feature)/*, { keepInView: true }*/).openPopup();
 
@@ -563,7 +564,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                   // }
                   highlightedLayer.addTo(map);
-                  map.fitBounds(hoveredLayer.getBounds());
+                  // map.fitBounds(hoveredLayer.getBounds());
+                  map.fitBounds(geojsonLayer.getBounds());
                   
 
                   // document
