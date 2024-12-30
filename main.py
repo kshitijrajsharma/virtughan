@@ -83,7 +83,7 @@ async def fetch_tile(url, x, y, z):
     def read_tile():
         with COGReader(url) as cog:
             tile, _ = cog.tile(x, y, z)
-            return tile[0]
+            return tile
 
     return await asyncio.to_thread(read_tile)
 
@@ -226,7 +226,15 @@ async def search_images(
 
 @cached(ttl=3600)
 async def cached_generate_tile(
-    x: int, y: int, z: int, start_date: str, end_date: str, cloud_cover: int
+    x: int,
+    y: int,
+    z: int,
+    start_date: str,
+    end_date: str,
+    cloud_cover: int,
+    band1: str,
+    band2: str,
+    formula: str,
 ) -> bytes:
     tile = mercantile.Tile(x, y, z)
     bbox = mercantile.bounds(tile)
@@ -253,19 +261,43 @@ async def cached_generate_tile(
         )
 
     feature = results["features"][0]
-    red_band_url = feature["assets"]["red"]["href"]
-    nir_band_url = feature["assets"]["nir"]["href"]
+    band1_url = feature["assets"][band1]["href"]
+    band2_url = feature["assets"][band2]["href"] if band2 else None
 
     try:
-        red_tile, nir_tile = await asyncio.gather(
-            fetch_tile(red_band_url, x, y, z), fetch_tile(nir_band_url, x, y, z)
-        )
+        tasks = [fetch_tile(band1_url, x, y, z)]
+        if band2_url:
+            tasks.append(fetch_tile(band2_url, x, y, z))
+
+        tiles = await asyncio.gather(*tasks)
+        band1 = tiles[0]
+        band2 = tiles[1] if band2_url else None
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    r = red_tile
-    nir = nir_tile
-    image = process_ndvi(r, nir)
+    if band2 is not None:
+        # Consider this is single band
+        # Perform custom calculation with two bands
+        band1 = band1[0].astype(float)
+        band2 = band2[0].astype(float)
+
+        result = eval(formula)
+        result = np.ma.masked_invalid(result)
+        image = apply_colormap(result)
+    else:
+        inner_bands = band1.shape[0]
+        if inner_bands == 1:
+            # Single band image
+            band1 = band1[0].astype(float)
+            result = eval(formula)
+            result = np.ma.masked_invalid(result)
+            image = apply_colormap(result)
+        else:
+            # Multi band image
+            band1 = band1.transpose(
+                1, 2, 0
+            )  # Transpose to (256, 256, 3) or (256, 256, 2)
+            image = Image.fromarray(band1)
 
     buffered = BytesIO()
     image.save(buffered, format="PNG")
@@ -282,13 +314,27 @@ async def get_tile(
     start_date: str = Query(None),
     end_date: str = Query(None),
     cloud_cover: int = Query(30),
+    band1: str = Query(
+        "visual", description="First band for custom calculation (default: red)"
+    ),
+    band2: str = Query(
+        None, description="Second band for custom calculation (default: nir)"
+    ),
+    formula: str = Query(
+        "band1",
+        description="Formula for custom band calculation (example: (band2 - band1) / (band2 + band1) for NDVI)",
+    ),
 ):
     if z < 10 or z > 16:
         return JSONResponse(
             content={"error": "Zoom level must be between 8 and 17"},
             status_code=400,
         )
-
+    if band1 is None:
+        return JSONResponse(
+            content={"error": "Band1 is required"},
+            status_code=400,
+        )
     if not start_date:
         start_date = (datetime.now() - timedelta(days=30 * 12)).strftime("%Y-%m-%d")
     if not end_date:
@@ -297,7 +343,7 @@ async def get_tile(
     try:
         start_time = time.time()
         image_bytes, feature = await cached_generate_tile(
-            x, y, z, start_date, end_date, cloud_cover
+            x, y, z, start_date, end_date, cloud_cover, band1, band2, formula
         )
         computation_time = time.time() - start_time
 
@@ -312,16 +358,9 @@ async def get_tile(
         return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
 
 
-def process_ndvi(r, nir):
-    ndvi = (nir.astype(float) - r.astype(float)) / (nir + r)
-    ndvi = np.ma.masked_invalid(ndvi)
-
-    ndvi_normalized = (ndvi - ndvi.min()) / (ndvi.max() - ndvi.min())
-
+def apply_colormap(result):
+    result_normalized = (result - result.min()) / (result.max() - result.min())
     colormap = plt.get_cmap("RdYlGn")
-    ndvi_colored = colormap(ndvi_normalized)
-
-    ndvi_image = (ndvi_colored[:, :, :3] * 255).astype(np.uint8)
-    image = Image.fromarray(ndvi_image)
-
-    return image
+    result_colored = colormap(result_normalized)
+    result_image = (result_colored[:, :, :3] * 255).astype(np.uint8)
+    return Image.fromarray(result_image)
