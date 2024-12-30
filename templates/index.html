@@ -44,7 +44,7 @@
       /* Custom thin scrollbar styles */
       .custom-scrollbar::-webkit-scrollbar {
         width: 5px;
-        height: 60px;
+        height: 5px;
       }
 
       .custom-scrollbar::-webkit-scrollbar-track {
@@ -375,7 +375,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
       var geojsonLayer;
       var ndviLayer;
-      var highlightedLayer;
+      var highlightedLayer = L.layerGroup();
+      var clickedResultList = false;
+      var previousListMouseIn;
 
       map.on("moveend", function () {
         var bounds = map.getBounds();
@@ -397,6 +399,68 @@ document.addEventListener('DOMContentLoaded', function() {
           var cloudCover = document.getElementById("cloud-cover").value;
           var overlayNdvi = function(){if(document.getElementById("selected_filter_value").value() == "NDVI"){ return true} else{return false} };
 
+          function createPopup(feature){
+            var popupContent = `
+              <div class="popup-content max-h-72 overflow-y-auto custom-scrollbar p-2">
+                <div class="mb-2">
+                  <strong class="text-base text-gray-800">${feature.id}</strong>
+                </div>
+                <div class="mb-2">
+                  <strong class="text-xs text-gray-600">Date:</strong>
+                  <span class="text-xs text-gray-500">${feature.properties.datetime}</span>
+                </div>
+                <div class="mb-2">
+                  <strong class="text-xs text-gray-600">Cloud Cover:</strong>
+                  <span class="text-xs text-gray-500">${feature.properties["eo:cloud_cover"]}</span>
+                </div>
+                <hr class="my-2">
+                <div class="mb-2">
+                  <strong class="text-xs">Properties:</strong>
+                  <div class="max-w-md overflow-x-auto custom-scrollbar">
+                    <table class="min-w-full table-fixed divide-y divide-gray-200">
+                      <!--<thead class="bg-gray-50">
+                        <tr>
+                          <th scope="col" class="w-1/3 px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Key</th>
+                          <th scope="col" class="w-2/3 px-2 py-1 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
+                        </tr>
+                      </thead>-->
+                      <tbody class="bg-white divide-y divide-gray-200">
+                        ${Object.entries(feature.properties).map(([key, value], index) =>
+                          `<tr class="${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
+                            <td class="w-1/3 px-2 py-1 text-xs text-gray-500 break-words">${key}</td>
+                            <td class="w-2/3 px-2 py-1 text-xs text-gray-900 break-words">${value}</td>
+                          </tr>`).join("")}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="download-section mt-2">
+                  <h4 class="text-sm font-semibold">Download</h4>
+                  <ul class="list-disc list-inside text-xs">
+                    ${Object.entries(feature.assets).map(([key, asset]) =>
+                      `<li><a href="${asset.href}" target="_blank" class="text-indigo-600 hover:underline break-words">${asset.title}</a></li>`
+                    ).join("")}
+                  </ul>
+                </div>
+              </div>
+            `;
+            return popupContent;
+          }
+
+
+          function createLayer(feature){
+            var layerCreated = L.geoJSON(feature, {
+                    style: function () {
+                      return {
+                        fillOpacity: 0.5,
+                        color: "yellow",
+                        weight: 2,
+                      };
+                    },
+                  });
+            return layerCreated;
+          }
+
           fetch(
             `/search?bbox=${bbox}&start_date=${startDate}&end_date=${endDate}&cloud_cover=${cloudCover}`
           )
@@ -416,37 +480,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 onEachFeature: function (feature, layer) {
                   layer.on("click", function () {
-                    var popupContent = `
-                                <div class="popup-content">
-                                    <strong>ID:</strong> ${feature.id}<br />
-                                    <strong>Date:</strong> ${
-                                      feature.properties.datetime
-                                    }<br />
-                                    <strong>Cloud Cover:</strong> ${
-                                      feature.properties["eo:cloud_cover"]
-                                    }<br />
-                                    <hr>
-                                    <strong>Properties:</strong><br />
-                                    ${Object.entries(feature.properties)
-                                      .map(
-                                        ([key, value]) =>
-                                          `<strong>${key}:</strong> ${value}<br />`
-                                      )
-                                      .join("")}
-                                    <div class="download-section">
-                                        <h4>Download</h4>
-                                        <ul>
-                                            ${Object.entries(feature.assets)
-                                              .map(
-                                                ([key, asset]) =>
-                                                  `<li><a href="${asset.href}" target="_blank">${asset.title}</a></li>`
-                                              )
-                                              .join("")}
-                                        </ul>
-                                    </div>
-                                </div>
-                              `;
-                    layer.bindPopup(popupContent).openPopup();
+                    if (Object.keys(highlightedLayer._layers).length > 0) {
+                      // map.removeLayer(highlightedLayer);
+                      highlightedLayer.clearLayers();
+                      
+                    }
+                    var clickedLayer = createLayer(feature);
+                    highlightedLayer.addLayer(clickedLayer);
+                    highlightedLayer.addTo(map);
+                    map.fitBounds(clickedLayer.getBounds());
+                    
+                    layer.bindPopup(createPopup(feature)/*, { keepInView: true }*/).openPopup();
 
                     // Add event listener for download section toggle
                     document
@@ -468,7 +512,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 featureItem.className = "feature-item";
                 featureItem.innerHTML = `
                             <ul role="list" class="divide-y divide-gray-100">
-                              <li class="flex justify-between gap-x-6 py-5 hover:bg-gray-100 transition-colors duration-300 cursor-pointer">
+                              <li id = "result_list_${index}" class="result-list-items flex justify-between gap-x-6 py-5 hover:bg-gray-100 transition-colors duration-300 cursor-pointer">
                                 <div class="flex min-w-0 gap-x-4">
                                   <img class="size-12 flex-none rounded-full bg-gray-50" src="static/img/satellite-basemap.png" alt="">
                                   <div class="min-w-0 flex-auto">
@@ -479,65 +523,67 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
                                   <!--<p class="text-sm/6 text-gray-900">Co-Founder / CEO</p>-->
                                   <p class="mt-1 text-xs/5 text-gray-500">${parseInt(feature.properties["eo:cloud_cover"])} % Cloud</time></p>
+                                  <!--<p class="result-icons text-sm/6 text-gray-500 hover:text-gray-900"><i id = "result_icon_${index}" class="fa-regular fa-eye"></i></p>-->
                                 </div>
                               </li>            
                         `;
-                featureItem.addEventListener("mouseout", function () {
-                  if (highlightedLayer) {
-                    map.removeLayer(highlightedLayer);
+                featureItem.addEventListener("mouseleave", function (e) {
+                  console.log(previousListMouseIn);
+                  console.log(e.target.querySelector('.result-list-items').id);
+                  console.log(clickedResultList);
+                  if (Object.keys(highlightedLayer._layers).length > 0) {
+                    // map.removeLayer(highlightedLayer);
+                    if(clickedResultList == false && previousListMouseIn != e.target.querySelector('.result-list-items').id){
+                      map.closePopup();
+                      highlightedLayer.clearLayers();
+                      console.log("entered")
+                    }
+                    else if(previousListMouseIn == e.target.querySelector('.result-list-items').id){
+                      map.removeLayer(highlightedLayer);
+                    }
+                    
                   }
+                  previousListMouseIn = e.target.querySelector('.result-list-items').id;
                 });
-                featureItem.addEventListener("mouseover", function () {
-                  if (highlightedLayer) {
-                    map.removeLayer(highlightedLayer);
+                featureItem.addEventListener("mouseenter", function (e) {
+                  if (Object.keys(highlightedLayer._layers).length > 0) {
+                    map.closePopup();
+                    highlightedLayer.clearLayers();
                   }
-                  highlightedLayer = L.geoJSON(feature, {
-                    style: function () {
-                      return {
-                        fillOpacity: 0.5,
-                        color: "yellow",
-                        weight: 2,
-                      };
-                    },
-                  }).addTo(map);
-                  map.fitBounds(highlightedLayer.getBounds());
-                  var popupContent = `
-            <div class="popup-content">
-                <strong>ID:</strong> ${feature.id}<br />
-                <strong>Date:</strong> ${feature.properties.datetime}<br />
-                <strong>Cloud Cover:</strong> ${
-                  feature.properties["eo:cloud_cover"]
-                }<br />
-                <hr>
-                <strong>Properties:</strong><br />
-                ${Object.entries(feature.properties)
-                  .map(
-                    ([key, value]) => `<strong>${key}:</strong> ${value}<br />`
-                  )
-                  .join("")}
-                <div class="download-section">
-                    <h4>Download</h4>
-                    <ul>
-                        ${Object.entries(feature.assets)
-                          .map(
-                            ([key, asset]) =>
-                              `<li><a href="${asset.href}" target="_blank">${asset.title}</a></li>`
-                          )
-                          .join("")}
-                    </ul>
-                </div>
-            </div>
-        `;
-                  highlightedLayer.bindPopup(popupContent).openPopup();
+                  var hoveredLayer = createLayer(feature);
+                  // if(previousListMouseIn != e.target.querySelector('.result-list-items').id){
+                    
+                    highlightedLayer.addLayer(hoveredLayer);
+                    
+                    // console.log(e)
+                    
+                    hoveredLayer.bindPopup(createPopup(feature));
+                  // }
+                  // else{
 
-                  document
-                    .querySelector(".download-section h4")
-                    .addEventListener("click", function () {
-                      var ul = this.nextElementSibling;
-                      ul.style.display =
-                        ul.style.display === "none" ? "block" : "none";
-                    });
+                  // }
+                  highlightedLayer.addTo(map);
+                  map.fitBounds(hoveredLayer.getBounds());
+                  
+
+                  // document
+                  //   .querySelector(".download-section h4")
+                  //   .addEventListener("click", function () {
+                  //     var ul = this.nextElementSibling;
+                  //     ul.style.display =
+                  //       ul.style.display === "none" ? "block" : "none";
+                  //   });
+                 
+                  clickedResultList = false;
+                  
+
                 });
+
+                featureItem.addEventListener("click", function () {
+                  // console.log(highlightedLayer.getLayers()[0]);
+                  highlightedLayer.getLayers()[0].openPopup();
+                  clickedResultList = true;
+                })
                 featureList.appendChild(featureItem);
               });
 
