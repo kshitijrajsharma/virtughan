@@ -102,10 +102,10 @@
               <div class = "pb-4">
                 <label id="listbox-label" class="block text-sm/6 font-medium text-gray-900">Filter Option</label>
                 <div class="relative mt-2">
-                  <button id="select-button" type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label">
+                  <button id="select-button" type="button" class="cursor-pointer grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label">
                     <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
-                      <img src="static/img/ndvi.png" alt="" class="size-5 shrink-0 rounded-full">
-                      <span id = "selected_filter_value" class="block truncate">NDVI</span>
+                      <img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full">
+                      <span id = "selected_filter_value" class="block truncate">Select Option</span>
                     </span>
                     <svg class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                       <path fill-rule="evenodd" d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" />
@@ -113,22 +113,34 @@
                   </button>
               
                   <ul id="select-list" class="hidden absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3">
-                    <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-0" role="option">
+                    <li class="relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-0" role="option">
                       <div class="flex items-center">
                         <img src="static/img/ndvi.png" alt="" class="size-5 shrink-0 rounded-full">
                         <span class="ml-3 block truncate font-normal">NDVI</span>
                       </div>
                       <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
                         <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                          <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+                          <!-- <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" /> -->
                         </svg>
                       </span>
                     </li>
                     <!-- More items... -->
-                    <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-1" role="option">
+                    <li class="relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1" role="option">
                       <div class="flex items-center">
                         <img src="static/img/basemap.png" alt="" class="size-5 shrink-0 rounded-full">
-                        <span class="ml-3 block truncate font-normal">Another Option</span>
+                        <span class="ml-3 block truncate font-normal">NDWI</span>
+                      </div>
+                      <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+                        <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
+                          <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                    </li>
+                    <hr/>
+                    <li id = "custom-filter" class="relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1" role="option">
+                      <div class="flex items-center">
+                        <img src="static/img/plus.png" alt="" class="size-5 shrink-0 rounded-full">
+                        <span class="ml-3 block truncate font-normal text-blue-500">Custom Filter</span>
                       </div>
                       <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
                         <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
@@ -138,6 +150,7 @@
                     </li>
                   </ul>
                 </div>
+                <label id = "formulaHeading" class="block text-xs font-medium text-gray-600 pb-1 pt-1 hidden">Custom: <span id="formulaText" class = "break-words w-64 text-xs text-gray-500" ></span></label>
               </div>
               <div class = "pb-4">
                 <label class="block text-sm/6 font-medium text-gray-900 pb-4">Select Date</label>
@@ -159,7 +172,7 @@
                 
                 <div class="bg-white mt-4">
                   <div class="relative bg-inherit">
-                      <input type="number" id="cloud-cover" name="" value = "50" class="peer bg-transparent h-10 w-full rounded-lg text-gray-200 placeholder-transparent ring-1 px-2 ring-gray-200 focus:ring-sky-600 focus:outline-none focus:border-rose-600" placeholder="Cloud Cover"/><label for="" class="absolute cursor-text left-0 -top-3 text-sm text-gray-500 bg-inherit mx-1 px-1 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-2 peer-focus:-top-3 peer-focus:text-sky-600 peer-focus:text-sm transition-all">Cloud Cover</label>
+                      <input type="number" id="cloud-cover" name="" value = "50" class="peer bg-transparent h-10 w-full rounded-lg text-gray-900 placeholder-transparent ring-1 px-2 ring-gray-200 focus:ring-sky-600 focus:outline-none focus:border-rose-600" placeholder="Cloud Cover"/><label for="" class="absolute cursor-text left-0 -top-3 text-sm text-gray-500 bg-inherit mx-1 px-1 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-2 peer-focus:-top-3 peer-focus:text-sky-600 peer-focus:text-sm transition-all">Cloud Cover</label>
                   </div>
                 </div>
               </div>
@@ -172,7 +185,7 @@
 
                 <div class="pb-4 mt-6 float-right">
                   <button id="search-clear-button" class="clear-visualize-filter bg-transparent rounded-lg text-gray-500 text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-solid fa-rotate-right"></i> Clear</button>
-                  <button id="search-button" class="bg-blue-700 rounded-lg text-white text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Visualize</button>
+                  <button id="search-button" title= "Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Visualize</button>
                 </div>
             </div>
             </div>
@@ -262,7 +275,87 @@
 
   </div>
   <div id="map" class = "w-full md:w-3/4 min-h-screen md:min-h-full z-0"></div>
+
+  <!-- modal start -->
+  <div id="modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-40">
+      <div class="bg-white rounded-lg shadow-lg p-6 w-2/5 relative">
+          <button id="closeModal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700"> <i class="fas fa-times"></i> </button>
+          <h3 class="text-xl font-semibold mb-4 text-gray-800">Finalize the formula to generate the result</h3>
+          <label class="block  font-xs text-gray-500 pb-4"> Double click on the Bands and Operators to select them. </label>
+          <!-- <div class="mb-4">
+              <label for="layer" class="block text-sm font-medium text-gray-700">Layer</label>
+              <select id="layer" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                  <option>Building</option>
+              </select>
+          </div> -->
+          <div class="mb-4 flex space-x-4">
+              <div class="w-1/2">
+                  <label class="block text-sm font-medium text-gray-700">Bands</label>
+                  <div class="mt-1 border border-gray-300 rounded-md p-2 max-h-40 overflow-auto custom-scrollbar" id="attributes-list">
+                    <ul class="cursor-pointer text-gray-500 text-sm">
+                        <li class="attribute-item hover:bg-gray-100 p-1">RED</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">GREEN</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">BLUE</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">VISUAL</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">NIR</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">SWIR22</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">REDEDGE2</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">REDEDGE3</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">REDEDGE1</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">SWIR16</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">WVP</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">NIR08</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">SCL</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">AOT</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">COASTAL</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">NIR09</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">CLOUD</li>
+                        <li class="attribute-item hover:bg-gray-100 p-1">SNOW</li>
+                    </ul>                 
+                  </div>
+              </div>
+              <div class="w-1/2">
+                <label class="block text-sm font-medium text-gray-700">Operators</label>
+                <div class="grid grid-cols-5 gap-2 mt-1 text-gray-500 text-sm" id="operators-list">
+                    <button class="operator-item bg-gray-200 rounded-md p-2">7</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">8</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">9</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">(</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">)</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">4</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">5</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">6</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">+</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">-</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">1</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">2</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">3</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">*</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">/</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">0</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">.</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">PI(P)</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">e</button>
+                    <button class="operator-item bg-gray-200 rounded-md p-2">^</button>
+                </div>
+            </div>            
+            
+          </div>
+          <div class="mb-4">
+              <label for="query" class="block text-sm font-medium text-gray-700">Query</label>
+              <textarea id="query" rows="3" class="mt-1 p-2 text-gray-800 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm pointer-events-none"></textarea>
+          </div>
+          <div class="flex justify-between float-right">
+            <button id="resetButton" class="text-gray-500 mr-2"><i class="fa-solid fa-rotate-right"></i> Reset</button>  
+            <button id="saveFormula" class="bg-blue-500 text-white rounded-md px-4 py-2">Save</button>
+          </div>
+          <!-- <button id="closeModal" class="text-gray-500 mt-4">Close</button> -->
+      </div>
   </div>
+  <!-- modal end -->
+
+
+</div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -301,6 +394,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     listItems.forEach(item => {
       item.addEventListener('click', function() {
+        //activate visualize/search button
+        document.getElementById("search-button").classList.remove('bg-gray-500', 'pointer-events-none');
+        document.getElementById("search-button").classList.add('bg-blue-700', 'pointer-events-none');
+
+        document.getElementById("formulaHeading").classList.add('hidden'); 
+
         // Update the button text and image/icon with the selected item's data
         const selectedItemText = item.querySelector('.truncate').innerText;
         const selectedItemIcon = item.querySelector('img, i'); // Select either img or i element
@@ -647,10 +746,72 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("end-date").value = today;
 
         document.getElementById("cloud-cover").value = "50";
+
+        document.getElementById("select-button").innerHTML = `<span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
+                      <img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full">
+                      <span id = "selected_filter_value" class="block truncate">Select Option</span>
+                    </span>`;
+
+        document.getElementById("search-button").classList.add('bg-gray-500', 'pointer-events-none');
+        document.getElementById("search-button").classList.remove('bg-blue-700', 'pointer-events-none');
       }
       setDefaultFilters();
       
     </script>
+    <!-- JavaScript to handle modal and populate textarea -->
+    <script>
+      var formula = "";
+     document.addEventListener('DOMContentLoaded', function() {
+        const openModalButton = document.getElementById('custom-filter');
+        const closeModalButton = document.getElementById('closeModal');
+        const modal = document.getElementById('modal');
+        const queryTextarea = document.getElementById('query');
+        const resetButton = document.getElementById('resetButton');
+        const saveFormulaButton = document.getElementById('saveFormula');
+
+        // Function to toggle modal visibility
+        function toggleModal() {
+            modal.classList.toggle('hidden');
+        }
+
+        // Event listeners to open and close the modal
+        openModalButton.addEventListener('click', toggleModal);
+        closeModalButton.addEventListener('click', toggleModal);
+
+        // Function to append text to the textarea
+        function appendToQuery(text) {
+            queryTextarea.value += text + ' ';
+        }
+
+        // Add double-click event listeners to attributes list items
+        document.querySelectorAll('#attributes-list .attribute-item').forEach(function(item) {
+            item.addEventListener('dblclick', function() {
+                appendToQuery(item.textContent);
+            });
+        });
+
+        // Add double-click event listeners to operators list items
+        document.querySelectorAll('#operators-list .operator-item').forEach(function(item) {
+            item.addEventListener('dblclick', function() {
+                appendToQuery(item.textContent);
+            });
+        });
+
+        // Event listener to reset the textarea
+        resetButton.addEventListener('click', function() {
+            queryTextarea.value = '';  // Clears the content of the textarea
+        });
+
+        saveFormulaButton.addEventListener('click', function() {
+            formula = queryTextarea.value; 
+            console.log('formula:', formula);
+            document.getElementById("formulaHeading").classList.remove('hidden'); 
+            document.getElementById("formulaText").innerHTML = formula;
+            closeModalButton.click();
+        });
+    });
+
+  </script>
 
   <!-- datepicker start -->
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
