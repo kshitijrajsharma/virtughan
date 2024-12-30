@@ -89,7 +89,7 @@
       <div class="container mx-auto pb-4 pt-1">
         <div class="tabs">
           <div class="flex justify-center mb-2">
-            <button id="filterTab" class="tab w-1/3 py-2 text-center text-gray-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:border-blue-500">Filter</button>
+            <button id="filterTab" class="tab w-1/3 py-2 text-center text-gray-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:border-blue-500">Visualize</button>
             <button id="resultTab" class="tab w-1/3 py-2 text-center text-gray-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:border-blue-500">Result</button>
             <button id="exportTab" class="tab w-1/3 py-2 text-center text-gray-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:border-blue-500">Export</button>
           </div>
@@ -165,7 +165,33 @@
               </div>
 
               <div class="mt-4">
-                <label class="block text-sm/6 font-medium text-gray-900 pb-1">BBOX:</label>
+                <label class="block text-sm/6 font-medium text-gray-900 pb-1">BBOX: <span id="coords" class = "break-words w-64 text-xs text-gray-500" ></span></label>
+                
+                <label class="block text-sm/6 font-medium text-gray-900 pb-1">Zoom Level: <span class = "text-xs text-gray-500" id="zoom-level"></span></label>
+              </div>
+
+                <div class="pb-4 mt-6 float-right">
+                  <button id="search-clear-button" class="clear-visualize-filter bg-transparent rounded-lg text-gray-500 text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-solid fa-rotate-right"></i> Clear</button>
+                  <button id="search-button" class="bg-blue-700 rounded-lg text-white text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Visualize</button>
+                </div>
+            </div>
+            </div>
+            <div class="tab-panel hidden p-4">
+              <!-- Content for Tab 2 -->
+              <div id="sidebar">
+                <div class="flex items-center justify-between">
+                  <label class="block  font-medium text-gray-900 pb-4">Images: </label>
+                  <span id="clear-sidebar-button" class="clear-visualize-filter text-gray-500 text-xs"><i class="fa-solid fa-rotate-right"></i> Clear</span>
+                </div>
+                <div id="feature-list" style = "max-height: 450px;" class = "overflow-auto custom-scrollbar">
+                  <label class="block text-sm font-medium text-gray-400 pt-4">Apply the Filter First!!!</label>
+                </div>
+              </div>
+            </div>
+            <div class="tab-panel hidden p-4">
+              <!-- Content for Tab 3 -->
+              <div id="sidebar">
+                <label class="block  font-medium text-gray-900 pb-4">Select Area of Interest </label>
                 <!-- dropdown start -->
                 <div class="relative mt-2">
                   <button id="select-button-bbox" type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label">
@@ -217,7 +243,7 @@
                 </div>
                 <!-- dropdown end -->
                 <div class = "mt-1 p-1 border border-gray-300 w-full bg-white">
-                  <div id="coords" class = "break-words w-64 text-xs text-gray-500" ></div>
+                  <div id="" class = "break-words w-64 text-xs text-gray-500" ></div>
                   <div id = "draw-bbox-option" class="hidden">
                       <span>This is draw bbox section</span>
                   </div>
@@ -228,33 +254,6 @@
                 <div>
 
                 </div>
-                <div>
-                  
-                </div>
-                <label class="block text-sm/6 font-medium text-gray-900 pb-1">Zoom Level: <span class = "text-xs text-gray-500" id="zoom-level"></span></label>
-              </div>
-
-                <div class="pb-4 mt-6 float-right">
-                    <button id="search-button" class="bg-blue-700 rounded-lg text-white text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
-                </div>
-            </div>
-            </div>
-            <div class="tab-panel hidden p-4">
-              <!-- Content for Tab 2 -->
-              <div id="sidebar">
-                <div class="flex items-center justify-between">
-                  <label class="block  font-medium text-gray-900 pb-4">Images: </label>
-                  <span id="clear-sidebar-button" class="text-gray-500 text-xs"><i class="fa-solid fa-rotate-right"></i> Clear</span>
-                </div>
-                <div id="feature-list" style = "max-height: 450px;" class = "overflow-auto custom-scrollbar">
-                  <label class="block text-sm font-medium text-gray-400 pt-4">Apply the Filter First!!!</label>
-                </div>
-              </div>
-            </div>
-            <div class="tab-panel hidden p-4">
-              <!-- Content for Tab 3 -->
-              <div id="sidebar">
-                <label class="block  font-medium text-gray-900 pb-4">Export tab: </label>
               </div>
             </div>
           </div>
@@ -529,7 +528,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                                 <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
                                   <!--<p class="text-sm/6 text-gray-900">Co-Founder / CEO</p>-->
-                                  <p class="mt-1 text-xs/5 text-gray-500">${parseInt(feature.properties["eo:cloud_cover"])} % Cloud</time></p>
+                                  <p class="mt-1 text-xs/5 text-gray-400"><i class="fa-solid fa-cloud"></i> ${parseInt(feature.properties["eo:cloud_cover"])} % </time></p>
                                   <!--<p class="result-icons text-sm/6 text-gray-500 hover:text-gray-900"><i id = "result_icon_${index}" class="fa-regular fa-eye"></i></p>-->
                                 </div>
                               </li>            
@@ -628,16 +627,29 @@ document.addEventListener('DOMContentLoaded', function() {
             map.removeLayer(ndviLayer);
           }
           document.getElementById("feature-list").innerHTML = '<label class="block text-sm font-medium text-gray-400 pt-4">Apply the Filter First!!!</label>';
+          setDefaultFilters();
         });
 
-      // Set default dates
-      var today = new Date().toISOString().split("T")[0];
-      var lastYear = new Date();
-      lastYear.setFullYear(lastYear.getFullYear() - 1);
-      var lastYearDate = lastYear.toISOString().split("T")[0];
+        document
+        .getElementById("search-clear-button")
+        .addEventListener("click", function () {
+          document.getElementById("clear-sidebar-button").click();
+        })
 
-      document.getElementById("start-date").value = lastYearDate;
-      document.getElementById("end-date").value = today;
+      function setDefaultFilters(){
+        // Set default dates
+        var today = new Date().toISOString().split("T")[0];
+        var lastYear = new Date();
+        lastYear.setFullYear(lastYear.getFullYear() - 1);
+        var lastYearDate = lastYear.toISOString().split("T")[0];
+
+        document.getElementById("start-date").value = lastYearDate;
+        document.getElementById("end-date").value = today;
+
+        document.getElementById("cloud-cover").value = "50";
+      }
+      setDefaultFilters();
+      
     </script>
 
   <!-- datepicker start -->
