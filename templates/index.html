@@ -84,8 +84,8 @@
         </nav>
       </div>
     </header>
-    <div class = "flex h-screen">
-      <div id="info" class="w-1/4 space-y-12 float-left z-10 bg-white col-span-1">
+    <div class = "flex flex-col md:flex-row h-screen overflow-y-auto custom-scrollbar md:overflow-hidden">
+      <div id="info" class="w-full md:w-1/4 space-y-12 bg-white z-10">
       <div class="container mx-auto pb-4 pt-1">
         <div class="tabs">
           <div class="flex justify-center mb-2">
@@ -191,7 +191,7 @@
       </div>
 
   </div>
-  <div id="map" class = "w-3/4 z-0 col-span-2"></div>
+  <div id="map" class = "w-full md:w-3/4 min-h-screen md:min-h-full z-0"></div>
   </div>
 
   <script>
