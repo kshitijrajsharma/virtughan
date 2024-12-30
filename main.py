@@ -1,4 +1,5 @@
 import asyncio
+import json
 import os
 import time
 from datetime import datetime, timedelta
@@ -51,6 +52,31 @@ connections: List[WebSocket] = []
 @app.get("/", response_class=HTMLResponse)
 async def read_index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
+
+with open("data/sentinel-2-bands.json") as f:
+    sentinel2_assets = json.load(f)
+
+
+@app.get("/sentinel2-bands")
+async def get_sentinel2_bands(
+    band: str = Query(None, description="Band name to filter")
+):
+    if band:
+        if band in sentinel2_assets:
+            band_data = sentinel2_assets[band]
+            filtered_data = {
+                "type": band_data.get("type"),
+                "title": band_data.get("title"),
+                "eo:bands": band_data.get("eo:bands"),
+                "gsd": band_data.get("gsd"),
+                "raster:bands": band_data.get("raster:bands"),
+            }
+            return filtered_data
+        else:
+            raise HTTPException(status_code=404, detail="Band not found")
+    else:
+        return {key: value["title"] for key, value in sentinel2_assets.items()}
 
 
 async def fetch_tile(url, x, y, z):
