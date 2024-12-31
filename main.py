@@ -104,7 +104,7 @@ async def notify_progress(message: str):
         await connection.send_text(message)
 
 
-@app.post("/compute")
+@app.post("/export")
 async def compute_aoi_over_time(
     background_tasks: BackgroundTasks,
     min_x: float = Query(..., description="Minimum longitude of the bounding box"),
@@ -133,13 +133,18 @@ async def compute_aoi_over_time(
     operation: str = Query(
         "mean", description="Operation for aggregating results (default: mean)"
     ),
-    export_band: str = Query(
-        "visual", description="Band to export as TIFF and create GIF (default: visual)"
+    timeseries: str = Query(
+        True, description="Should timeseries be generated (default: True)"
     ),
     output_dir: str = Query(
         "output", description="Output directory for saving results (default: output)"
     ),
 ):
+    if band1 is None:
+        return JSONResponse(
+            content={"error": "Band1 is required"},
+            status_code=400,
+        )
     bbox = [min_x, min_y, max_x, max_y]
     background_tasks.add_task(
         run_computation,
@@ -151,7 +156,7 @@ async def compute_aoi_over_time(
         band1,
         band2,
         operation,
-        export_band,
+        timeseries,
         output_dir,
     )
     return {"message": "Processing started"}
@@ -166,7 +171,7 @@ async def run_computation(
     band1,
     band2,
     operation,
-    export_band,
+    timeseries,
     output_dir,
 ):
     await notify_progress("Starting processing...")
@@ -179,7 +184,7 @@ async def run_computation(
         band1=band1,
         band2=band2,
         operation=operation,
-        export_band=export_band,
+        timeseries=timeseries,
         output_dir=output_dir,
     )
     await notify_progress(f"Processing completed. Results saved in {output_dir}")

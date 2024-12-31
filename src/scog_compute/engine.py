@@ -1,8 +1,3 @@
-"""Compute engine for the STAC COG Data Cube.
-Author : @kshitijrajsharma 2024
-"""
-
-import argparse
 import os
 import zipfile
 
@@ -15,15 +10,14 @@ from matplotlib.colors import Normalize
 from PIL import Image
 from pyproj import Transformer
 from rasterio.windows import from_bounds
+from scipy.stats import mode
 from shapely.geometry import box, shape
 from tqdm import tqdm
 
 
 def fetch_process_custom_band(band1_url, band2_url, bbox, formula):
     try:
-        with rasterio.open(band1_url) as band1_cog, rasterio.open(
-            band2_url
-        ) as band2_cog:
+        with rasterio.open(band1_url) as band1_cog:
             transformer = Transformer.from_crs(
                 "epsg:4326", band1_cog.crs, always_xy=True
             )
@@ -32,31 +26,48 @@ def fetch_process_custom_band(band1_url, band2_url, bbox, formula):
             max_x, max_y = transformer.transform(bbox[2], bbox[3])
 
             band1_window = from_bounds(min_x, min_y, max_x, max_y, band1_cog.transform)
-            band2_window = from_bounds(min_x, min_y, max_x, max_y, band2_cog.transform)
 
             if (
                 band1_window.col_off < 0
                 or band1_window.row_off < 0
                 or band1_window.width <= 0
                 or band1_window.height <= 0
-                or band2_window.col_off < 0
-                or band2_window.row_off < 0
-                or band2_window.width <= 0
-                or band2_window.height <= 0
             ):
                 print("Calculated window is out of bounds.")
                 return None, None, None
 
-            band1 = band1_cog.read(1, window=band1_window)
-            band2 = band2_cog.read(1, window=band2_window)
+            band1 = band1_cog.read(window=band1_window)
 
-            band1 = band1.astype(float)
-            band2 = band2.astype(float)
+            if band2_url:
+                with rasterio.open(band2_url) as band2_cog:
+                    band2_window = from_bounds(
+                        min_x, min_y, max_x, max_y, band2_cog.transform
+                    )
 
-            # Perform the custom calculation
-            result = eval(formula)
+                    if (
+                        band2_window.col_off < 0
+                        or band2_window.row_off < 0
+                        or band2_window.width <= 0
+                        or band2_window.height <= 0
+                    ):
+                        print("Calculated window is out of bounds.")
+                        return None, None, None
 
-            result = np.ma.masked_invalid(result)
+                    band2 = band2_cog.read(window=band2_window)
+                    band2 = band2.astype(float)
+            else:
+                band2 = None
+            if band2 is not None:
+                band1 = band1.astype(float)
+                result = eval(formula)
+            else:
+                inner_bands = band1.shape[0]
+                band1 = band1.astype(float)
+                if inner_bands == 1:
+                    result = eval(formula)
+                else:
+                    result = band1
+            # result = np.ma.masked_invalid(result)
 
             return result, band1_cog.crs, band1_cog.window_transform(band1_window)
     except Exception as e:
@@ -64,50 +75,55 @@ def fetch_process_custom_band(band1_url, band2_url, bbox, formula):
         return None, None, None
 
 
-def fetch_process_save_band(url, bbox, output_dir, export_band):
-    try:
-        with rasterio.open(url) as cog:
-            transformer = Transformer.from_crs("epsg:4326", cog.crs, always_xy=True)
+def add_text_to_image(image_path, text, cmap="RdYlGn"):
+    with rasterio.open(image_path) as src:
+        if src.count == 1:
+            # Single band image
+            image_array = src.read(1)
+            image_array = (
+                (image_array - image_array.min())
+                / (image_array.max() - image_array.min())
+                * 255
+            )
+            image_array = image_array.astype(np.uint8)
+            image = Image.fromarray(image_array)
+        elif src.count == 3:
+            # RGB image
+            image_array = np.dstack([src.read(i) for i in range(1, 4)])
+            image_array = (
+                (image_array - image_array.min())
+                / (image_array.max() - image_array.min())
+                * 255
+            )
+            image_array = image_array.astype(np.uint8)
+            image = Image.fromarray(image_array)
+            cmap = None
+        else:
+            raise ValueError("Unsupported number of bands: {}".format(src.count))
 
-            min_x, min_y = transformer.transform(bbox[0], bbox[1])
-            max_x, max_y = transformer.transform(bbox[2], bbox[3])
+    plt.figure(figsize=(10, 10))
+    plt.imshow(image, cmap=cmap)
+    plt.axis("off")
+    plt.text(10, 10, text, color="white", fontsize=12, backgroundcolor="black")
+    temp_image_path = os.path.splitext(image_path)[0] + "_text.png"
+    plt.savefig(temp_image_path, bbox_inches="tight", pad_inches=0)
+    plt.close()
+    return temp_image_path
 
-            cog_window = from_bounds(min_x, min_y, max_x, max_y, cog.transform)
 
-            if (
-                cog_window.col_off < 0
-                or cog_window.row_off < 0
-                or cog_window.width <= 0
-                or cog_window.height <= 0
-            ):
-                print("Calculated window is out of bounds.")
-                return None
+def create_gif(image_list, output_path, duration=0.5):
+    images = [imageio.imread(image_path) for image_path in image_list]
+    imageio.mimsave(output_path, images, duration=duration)
+    print(f"Saved GIF to {output_path}")
+    for image_path in image_list:
+        os.remove(image_path)
 
-            # Read all bands within the window
-            image = cog.read(window=cog_window)
 
-            parts = url.split("/")
-            image_name = parts[-2]
-            output_file = os.path.join(output_dir, f"{image_name}_{export_band}.tif")
-
-            with rasterio.open(
-                output_file,
-                "w",
-                driver="GTiff",
-                height=image.shape[1],
-                width=image.shape[2],
-                count=image.shape[0],
-                dtype=image.dtype,
-                crs=cog.crs,
-                transform=cog.window_transform(cog_window),
-            ) as dst:
-                for i in range(image.shape[0]):
-                    dst.write(image[i], i + 1)
-
-            return output_file, image_name
-    except Exception as e:
-        print(f"Error fetching image: {e}")
-        return None
+def zip_files(file_list, zip_path):
+    with zipfile.ZipFile(zip_path, "w") as zipf:
+        for file in file_list:
+            zipf.write(file, os.path.basename(file))
+    print(f"Saved ZIP to {zip_path}")
 
 
 def save_aggregated_result_with_colormap(
@@ -121,19 +137,34 @@ def save_aggregated_result_with_colormap(
     bbox,
     total_images,
     operation,
+    cmap="RdYlGn",
 ):
-    # Normalize the result
-    result_normalized = (result_aggregate - result_aggregate.min()) / (
-        result_aggregate.max() - result_aggregate.min()
-    )
-    colormap = plt.get_cmap("RdYlGn")
-    result_colored = colormap(result_normalized)
+    colormap = plt.get_cmap(cmap)
 
-    # Convert to image
-    result_image = (result_colored[:, :, :3] * 255).astype(np.uint8)
-    image = Image.fromarray(result_image)
+    if result_aggregate.shape[0] == 1:
+        # Single-band image
+        result_aggregate_m = result_aggregate[0]
+        result_normalized = (result_aggregate_m - result_aggregate_m.min()) / (
+            result_aggregate_m.max() - result_aggregate_m.min()
+        )
+        colormap = plt.get_cmap("RdYlGn")
+        result_colored = colormap(result_normalized)
 
-    # Plot and save the image with metadata
+        # Convert to image
+        result_image = (result_colored[:, :, :3] * 255).astype(np.uint8)
+        image = Image.fromarray(result_image)
+    else:
+        # Multi-band image
+        result_normalized = (
+            result_aggregate - result_aggregate.min(axis=(0, 1), keepdims=True)
+        ) / (
+            result_aggregate.max(axis=(0, 1), keepdims=True)
+            - result_aggregate.min(axis=(0, 1), keepdims=True)
+        )
+        result_image = np.transpose(result_normalized, (1, 2, 0))
+        result_image = (result_image * 255).astype(np.uint8)
+        image = Image.fromarray(result_image)
+
     plt.figure(figsize=(10, 10))
     plt.imshow(image)
     plt.title(f"Aggregated {operation} Custom Band Calculation")
@@ -143,60 +174,40 @@ def save_aggregated_result_with_colormap(
     plt.ylabel(
         f"From {start_date} to {end_date}\nCloud Cover < {cloud_cover}%\nBounding Box: {bbox}\nTotal Images: {total_images}"
     )
-    cbar = plt.colorbar(
-        plt.cm.ScalarMappable(
-            norm=Normalize(vmin=result_normalized.min(), vmax=result_normalized.max()),
-            cmap=colormap,
-        ),
-        ax=plt.gca(),
-    )
-    cbar.set_label("Normalized Value")
+
+    if result_aggregate.shape[0] == 1:
+        cbar = plt.colorbar(
+            plt.cm.ScalarMappable(
+                norm=Normalize(
+                    vmin=result_normalized.min(), vmax=result_normalized.max()
+                ),
+                cmap=colormap,
+            ),
+            ax=plt.gca(),
+        )
+        cbar.set_label("Normalized Value")
 
     plt.savefig(output_file.replace(".tif", "_colormap.png"))
     plt.close()
 
-    # Save the result as a GeoTIFF
+    result_aggregate = np.transpose(result_aggregate, (1, 2, 0))
+
     with rasterio.open(
         output_file,
         "w",
         driver="GTiff",
         height=result_aggregate.shape[0],
         width=result_aggregate.shape[1],
-        count=1,
+        count=result_aggregate.shape[2],
         dtype=result_aggregate.dtype,
         crs=crs,
         transform=transform,
     ) as dst:
-        dst.write(result_aggregate, 1)
+        for band in range(1, result_aggregate.shape[2] + 1):
+            dst.write(result_aggregate[:, :, band - 1], band)
 
     print(f"Saved aggregated custom band result to {output_file}")
     print(f"Saved color-mapped image to {output_file.replace('.tif', '_colormap.png')}")
-
-
-def add_text_to_image(image_path, text):
-    image = Image.open(image_path)
-    plt.figure(figsize=(10, 10))
-    plt.imshow(image)
-    plt.axis("off")
-    plt.text(10, 10, text, color="white", fontsize=12, backgroundcolor="black")
-    temp_image_path = os.path.splitext(image_path)[0] + "_text.png"
-    plt.savefig(temp_image_path, bbox_inches="tight", pad_inches=0)
-    plt.close()
-    return temp_image_path
-
-
-def create_gif(image_list, output_path, duration=0.5):
-    images = [imageio.imread(image_path) for image_path in image_list]
-    imageio.mimsave(output_path, images, duration=duration)
-    print(f"Saved GIF to {output_path}")
-    [os.remove(image) for image in image_list]
-
-
-def zip_files(file_list, zip_path):
-    with zipfile.ZipFile(zip_path, "w") as zipf:
-        for file in file_list:
-            zipf.write(file, os.path.basename(file))
-    print(f"Saved ZIP to {zip_path}")
 
 
 def compute(
@@ -208,12 +219,18 @@ def compute(
     band1,
     band2,
     operation,
-    export_band,
+    timeseries,
     output_dir,
+    cmap="RdYlGn",
 ):
     print("Engine starting...")
 
     os.makedirs(output_dir, exist_ok=True)
+    if band1 is None:
+        raise Exception("Band1 is required")
+
+    if formula is None:
+        formula = "band1"
 
     bbox_polygon = box(bbox[0], bbox[1], bbox[2], bbox[3])
 
@@ -245,10 +262,11 @@ def compute(
 
     # Get the band URLs for the filtered features
     band1_urls = [feature["assets"][band1]["href"] for feature in filtered_features]
-    band2_urls = [feature["assets"][band2]["href"] for feature in filtered_features]
-    band_urls = [
-        feature["assets"][export_band]["href"] for feature in filtered_features
-    ]
+    band2_urls = (
+        [feature["assets"][band2]["href"] for feature in filtered_features]
+        if band2
+        else [None] * len(filtered_features)
+    )
 
     print(
         f"Filtered {len(filtered_features)} items that are completely within the input bounding box"
@@ -259,11 +277,13 @@ def compute(
         result_list = []
         crs = None
         transform = None
-        print("Processing custom band calculation...")
+        intermediate_images = []
+        intermediate_images_with_text = []
+        print("Processing images along time dimention...")
         for band1_url, band2_url in tqdm(
             zip(band1_urls, band2_urls),
             total=len(band1_urls),
-            desc="Custom Band Calculation",
+            desc="Computing Band Calculation",
         ):
             result, crs, transform = fetch_process_custom_band(
                 band1_url, band2_url, bbox, formula
@@ -271,7 +291,30 @@ def compute(
             if result is not None:
                 result_list.append(result)
 
-        if result_list:
+                if timeseries:
+                    # Save intermediate result as GeoTIFF
+                    parts = band1_url.split("/")
+                    image_name = parts[-2]
+                    output_file = os.path.join(output_dir, f"{image_name}_result.tif")
+                    with rasterio.open(
+                        output_file,
+                        "w",
+                        driver="GTiff",
+                        height=result.shape[1],
+                        width=result.shape[2],
+                        count=result.shape[0],
+                        dtype=result.dtype,
+                        crs=crs,
+                        transform=transform,
+                    ) as dst:
+                        for band in range(1, result.shape[0] + 1):
+                            dst.write(result[band - 1], band)
+                    intermediate_images.append(output_file)
+                    intermediate_images_with_text.append(
+                        add_text_to_image(output_file, image_name)
+                    )
+
+        if result_list and operation:
             result_stack = np.ma.stack(result_list)
             if operation == "mean":
                 result_aggregate = np.ma.mean(result_stack, axis=0)
@@ -281,15 +324,25 @@ def compute(
                 result_aggregate = np.ma.max(result_stack, axis=0)
             elif operation == "min":
                 result_aggregate = np.ma.min(result_stack, axis=0)
+            elif operation == "std":
+                result_aggregate = np.ma.std(result_stack, axis=0)
+            elif operation == "sum":
+                result_aggregate = np.ma.sum(result_stack, axis=0)
+            elif operation == "var":
+                result_aggregate = np.ma.var(result_stack, axis=0)
+            elif operation == "mode":
+                result_aggregate, _ = mode(result_stack, axis=0, nan_policy="omit")
+                result_aggregate = result_aggregate.squeeze()
             else:
                 raise ValueError(
-                    "Invalid operation. Choose from 'mean', 'median', 'max', 'min'."
+                    "Invalid operation. Choose from 'mean', 'median', 'max', 'min', 'std', 'sum', 'var', 'mode'."
                 )
 
-            # Save the aggregated result as a GeoTIFF
+            # Save the aggregated result with colormap
             output_file = os.path.join(
                 output_dir, f"custom_band_{operation}_aggregate.tif"
             )
+            print("Saving aggregated result with colormap...")
             save_aggregated_result_with_colormap(
                 result_aggregate,
                 crs,
@@ -301,83 +354,16 @@ def compute(
                 bbox,
                 len(result_list),
                 operation,
+                cmap,
             )
 
-    # Export single band and create GIF
-    if export_band:
-        image_list = []
-        tiff_files = []
-        print("Exporting single band and creating GIF...")
-        for band_url in tqdm(band_urls, total=len(band_urls), desc="Exporting Images"):
-            image_path, image_name = fetch_process_save_band(
-                band_url, bbox, output_dir, export_band
+    # Create GIF and ZIP if timeseries is enabled
+    if timeseries:
+        print("Creating GIF and zipping TIFF files...")
+        if intermediate_images:
+            create_gif(
+                intermediate_images_with_text, os.path.join(output_dir, "output.gif")
             )
-            if image_path is not None:
-                tiff_files.append(image_path)
-                image_with_text = add_text_to_image(image_path, image_name)
-                image_list.append(image_with_text)
-
-        if image_list:
-            create_gif(image_list, os.path.join(output_dir, "output.gif"))
-            zip_files(tiff_files, os.path.join(output_dir, "tiff_files.zip"))
+            zip_files(intermediate_images, os.path.join(output_dir, "tiff_files.zip"))
         else:
             print("No images found for the given parameters")
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Data Cube Compute Engine based on COG"
-    )
-    parser.add_argument(
-        "--bbox",
-        type=float,
-        nargs=4,
-        required=True,
-        help="Bounding box in the format 'min_x min_y max_x max_y'",
-    )
-    parser.add_argument(
-        "--start_date", type=str, required=True, help="Start date in YYYY-MM-DD format"
-    )
-    parser.add_argument(
-        "--end_date", type=str, required=True, help="End date in YYYY-MM-DD format"
-    )
-    parser.add_argument(
-        "--cloud_cover", type=int, default=20, help="Maximum cloud cover percentage"
-    )
-    parser.add_argument(
-        "--formula",
-        type=str,
-        help="Formula for custom band calculation (e.g., '(band1 + band2) / (band1 - band2)')",
-    )
-    parser.add_argument("--band1", type=str, help="First band for custom calculation")
-    parser.add_argument("--band2", type=str, help="Second band for custom calculation")
-    parser.add_argument(
-        "--operation",
-        type=str,
-        choices=["mean", "median", "max", "min"],
-        help="Operation for aggregating results",
-    )
-    parser.add_argument(
-        "--export_band", type=str, help="Band to export as TIFF and create GIF"
-    )
-    parser.add_argument(
-        "--output_dir",
-        type=str,
-        default=".",
-        help="Output directory for saving results",
-    )
-
-    args = parser.parse_args()
-
-    compute(
-        args.bbox,
-        args.start_date,
-        args.end_date,
-        args.cloud_cover,
-        args.formula,
-        args.band1,
-        args.band2,
-        args.operation,
-        args.export_band,
-        args.output_dir,
-    )
