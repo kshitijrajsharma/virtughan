@@ -104,13 +104,12 @@ async def notify_progress(message: str):
         await connection.send_text(message)
 
 
-@app.post("/export")
+@app.get("/export")
 async def compute_aoi_over_time(
     background_tasks: BackgroundTasks,
-    min_x: float = Query(..., description="Minimum longitude of the bounding box"),
-    min_y: float = Query(..., description="Minimum latitude of the bounding box"),
-    max_x: float = Query(..., description="Maximum longitude of the bounding box"),
-    max_y: float = Query(..., description="Maximum latitude of the bounding box"),
+    bbox: str = Query(
+        ..., description="Bounding box in the format 'west,south,east,north'"
+    ),
     start_date: str = Query(
         (datetime.now() - timedelta(days=365 * 1)).strftime("%Y-%m-%d"),
         description="Start date in YYYY-MM-DD format (default: 1 years ago)",
@@ -136,16 +135,15 @@ async def compute_aoi_over_time(
     timeseries: str = Query(
         True, description="Should timeseries be generated (default: True)"
     ),
-    output_dir: str = Query(
-        "output", description="Output directory for saving results (default: output)"
-    ),
 ):
     if band1 is None:
         return JSONResponse(
             content={"error": "Band1 is required"},
             status_code=400,
         )
-    bbox = [min_x, min_y, max_x, max_y]
+    bbox = list(map(float, bbox.split(",")))
+
+    output_dir = "static/export"
     background_tasks.add_task(
         run_computation,
         bbox,
@@ -159,7 +157,7 @@ async def compute_aoi_over_time(
         timeseries,
         output_dir,
     )
-    return {"message": "Processing started"}
+    return {"message": f"Processing started in background : {output_dir}"}
 
 
 async def run_computation(
