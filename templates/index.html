@@ -113,10 +113,10 @@
                   </button>
               
                   <ul id="select-list" class="hidden absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3">
-                    <li class="relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-0" role="option">
+                    <li class="template-filters relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-0" role="option">
                       <div class="flex items-center">
                         <img src="static/img/ndvi.png" alt="" class="size-5 shrink-0 rounded-full">
-                        <span class="ml-3 block truncate font-normal">NDVI</span>
+                        <span class="template-filters-value ml-3 block truncate font-normal" value= "NDVI">NDVI</span>
                       </div>
                       <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
                         <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -125,10 +125,10 @@
                       </span>
                     </li>
                     <!-- More items... -->
-                    <li class="relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1" role="option">
+                    <li class="template-filters relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1" role="option">
                       <div class="flex items-center">
                         <img src="static/img/basemap.png" alt="" class="size-5 shrink-0 rounded-full">
-                        <span class="ml-3 block truncate font-normal">NDWI</span>
+                        <span class="template-filters-value ml-3 block truncate font-normal" value = "NDWI">NDWI</span>
                       </div>
                       <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
                         <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
@@ -534,6 +534,25 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+//if template provided options clicked eg. NDVI, NDWI
+document.querySelectorAll('.template-filters').forEach(function(item) {
+    item.addEventListener('click', function() {
+        const templateText = item.querySelector('.template-filters-value').getAttribute('value');
+        // console.log(templateText); 
+
+      if(templateText == "NDVI"){
+        formula = "(band2 - band1) / (band2 + band1)";
+        band1 = 'red';
+        band2 = 'nir';
+      }
+      else if(templateText == "NDWI"){
+        formula = "(band2 - band1) / (band2 + band1)";
+        band1 = 'swir22';
+        band2 = 'nir';
+      }
+      
+    });
+});
 
     
   </script>
