@@ -85,6 +85,13 @@
           cursor: pointer;
       }
   </style>
+  <style>
+    .upload-area.dragover {
+        border-color: #4A5568; /* Tailwind gray-700 */
+        background-color: #EDF2F7; /* Tailwind gray-100 */
+    }
+  </style>
+
   </head>
   <body>
     <header class="bg-white shadow-md py-4 border-b border-gray-300">
@@ -258,7 +265,7 @@
                         </svg>
                       </span>
                     </li>
-                    <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-1" role="option">
+                    <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="upload-file-option" role="option">
                       <div class="flex items-center">
                         <i class="fa-solid fa-arrow-up-from-bracket"></i>
                         <span class="ml-3 block truncate font-normal">Upload File</span>
@@ -297,7 +304,7 @@
   </div>
   <div id="map" class = "w-full md:w-3/4 min-h-screen md:min-h-full z-0"></div>
 
-  <!-- modal start -->
+  <!-- filter modal start -->
   <div id="modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-40">
     <div class="bg-white rounded-lg shadow-lg p-6 w-2/5 relative">
       <button id="closeModal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
@@ -411,8 +418,32 @@
   </div>
   
   </div>
-  <!-- modal end -->
+  <!-- filter modal end -->
 
+  <!-- upload modal start -->
+  <div id="uploadModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden z-40">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
+        <h2 class="text-2xl font-semibold mb-4">Upload or Paste GeoJSON File</h2>
+        
+        <!-- Drag and Drop or Upload Section -->
+        <div class="upload-area border-2 border-dashed border-gray-300 rounded-lg p-4 text-center mb-4" id="upload-area">
+            <p class="mb-2">Drag & Drop GeoJSON File Here <br/><label>or</label><br/><br/> <input type="file" id="file-input" class="hidden" /><label for="file-input" class="upload-button bg-blue-500 text-white px-4 py-2 rounded-md cursor-pointer">Browse Files</label></p>
+        </div>
+        
+        <!-- Copy and Paste Section -->
+        <div class="textarea-container border-2 border-dashed border-gray-300 rounded-lg p-4">
+            <p class="mb-2">Copy and Paste GeoJSON Content Here:</p>
+            <textarea id="geojson-textarea" class="w-full h-48 border-none focus:outline-none resize-none" placeholder="Paste GeoJSON content..."></textarea>
+        </div>
+
+        <!-- Close Button -->
+        <div class="text-right mt-4">
+            <button id="closeModalButton" class="bg-red-500 text-white px-4 py-2 rounded-md">Close</button>
+            <button id="saveUploadedData" class="bg-blue-500 text-white rounded-md px-4 py-2">Save</button>
+        </div>
+    </div>
+</div>
+   <!-- upload modal end -->
 
 </div>
 
@@ -928,6 +959,65 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
       /*draw script end */
       
     </script>
+
+    <!-- upload modal script start -->
+    <script>
+      const uploadArea = document.getElementById('upload-area');
+      const fileInput = document.getElementById('file-input');
+      const textarea = document.getElementById('geojson-textarea');
+      const openModalButton = document.getElementById('upload-file-option');
+      const closeModalButton = document.getElementById('closeModalButton');
+      const uploadModal = document.getElementById('uploadModal');
+      
+      // Open modal
+      openModalButton.addEventListener('click', function() {
+          uploadModal.classList.remove('hidden');
+      });
+  
+      // Close modal
+      closeModalButton.addEventListener('click', function() {
+          uploadModal.classList.add('hidden');
+      });
+  
+      // Handle drag and drop
+      uploadArea.addEventListener('dragover', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          uploadArea.classList.add('dragover');
+      });
+  
+      uploadArea.addEventListener('dragleave', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          uploadArea.classList.remove('dragover');
+      });
+  
+      uploadArea.addEventListener('drop', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          uploadArea.classList.remove('dragover');
+          const files = e.dataTransfer.files;
+          handleFileUpload(files[0]);
+      });
+  
+      // Handle file input change
+      fileInput.addEventListener('change', function(e) {
+          const files = e.target.files;
+          handleFileUpload(files[0]);
+      });
+  
+      // Function to handle file upload
+      function handleFileUpload(file) {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+              textarea.value = event.target.result;
+          };
+          reader.readAsText(file);
+      }
+    </script>
+
+    <!-- upload modal script end -->
+
     <!-- JavaScript to handle modal and populate textarea -->
     <script>
       
