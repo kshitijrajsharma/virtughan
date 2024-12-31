@@ -396,7 +396,7 @@ document.addEventListener('DOMContentLoaded', function() {
       item.addEventListener('click', function() {
         //activate visualize/search button
         document.getElementById("search-button").classList.remove('bg-gray-500', 'pointer-events-none');
-        document.getElementById("search-button").classList.add('bg-blue-700', 'pointer-events-none');
+        document.getElementById("search-button").classList.add('bg-blue-700');
 
         document.getElementById("formulaHeading").classList.add('hidden'); 
 
@@ -482,10 +482,47 @@ document.addEventListener('DOMContentLoaded', function() {
       var highlightedLayer = L.layerGroup();
       var clickedResultList = false;
       var previousListMouseIn;
+      var formula = "";
+      var band1 = 'red';
+      var band2 = 'nir';
+      var bounds = map.getBounds();
+      var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+
+      var parameters = {
+            min_x: 0, 
+            min_y: 0,  
+            max_x: 0, 
+            max_y: 0,  
+            start_date: '',
+            end_date: '',
+            cloud_cover: 30,
+            formula: '',
+            band1: null,
+            band2: null,
+            operation: null,
+            export_band: null,
+            output_dir: null
+        };
+
+      function updateParameters(min_x, min_y, max_x, max_y, start_date, end_date, cloud_cover, formula, band1, band2, operation, export_band, output_dir){
+        parameters.min_x = min_x;
+        parameters.min_y = min_y;
+        parameters.max_x = max_x;
+        parameters.max_y = max_y;
+        parameters.start_date = start_date;
+        parameters.end_date = end_date;
+        parameters.cloud_cover = cloud_cover;
+        parameters.formula = formula;
+        parameters.band1 = band1;
+        parameters.band2 = band2;
+        parameters.operation = operation;
+        parameters.export_band = export_band;
+        parameters.output_dir = output_dir;
+      }
 
       map.on("moveend", function () {
-        var bounds = map.getBounds();
-        var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+        bounds = map.getBounds();
+        bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
         document.getElementById("coords").textContent = bbox;
         document.getElementById("zoom-level").textContent = map.getZoom();
       });
@@ -753,14 +790,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     </span>`;
 
         document.getElementById("search-button").classList.add('bg-gray-500', 'pointer-events-none');
-        document.getElementById("search-button").classList.remove('bg-blue-700', 'pointer-events-none');
+        document.getElementById("search-button").classList.remove('bg-blue-700');
       }
       setDefaultFilters();
       
     </script>
     <!-- JavaScript to handle modal and populate textarea -->
     <script>
-      var formula = "";
+      
      document.addEventListener('DOMContentLoaded', function() {
         const openModalButton = document.getElementById('custom-filter');
         const closeModalButton = document.getElementById('closeModal');
@@ -848,5 +885,75 @@ document.addEventListener('DOMContentLoaded', function() {
   
 
   <!-- datepicker end -->
+
+  <!-- post api for search -->
+  <script>
+    document.getElementById("search-button").addEventListener("click", function() {
+        const apiUrl = 'http://127.0.0.1:8000/compute'; // Replace with your actual API endpoint
+
+        const data = {
+            bbox: 'west,south,east,north', // Replace with actual values
+            cloud_cover: 30,
+            start_date: '2024-01-01',
+            end_date: '2024-12-31'
+        };
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Success:', data);
+            // Handle the API response here
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+</script>
+  <!-- search post api call end -->
+
+  <!-- post api call start for /compute -->
+  <script>
+    // document.getElementById("").addEventListener("click", function() {
+    //     const apiUrl = 'http://127.0.0.1:8000/compute'; // Replace with your actual API endpoint
+
+    //     updateParameters(bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth(), startDate, endDate, cloudCover, formula, band1, band2, null, null, null)
+    //     var params = parameters;
+
+    //     const queryString = new URLSearchParams(params).toString();
+    //     const fullUrl = `${apiUrl}?${queryString}`;
+
+    //     fetch(fullUrl, {
+    //         method: 'POST', // Still using POST method
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         }
+    //     })
+    //     .then(response => {
+    //         if (!response.ok) {
+    //             throw new Error('Network response was not ok ' + response.statusText);
+    //         }
+    //         return response.json();
+    //     })
+    //     .then(data => {
+    //         console.log('Success:', data);
+    //         // Handle the API response here
+    //     })
+    //     .catch((error) => {
+    //         console.error('Error:', error);
+    //     });
+    // });
+</script>
+  <!-- post api call end -->
   </body>
 </html>
