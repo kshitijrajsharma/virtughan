@@ -193,7 +193,7 @@
               <!-- Content for Tab 2 -->
               <div id="sidebar">
                 <div class="flex items-center justify-between">
-                  <label class="block  font-medium text-gray-900 pb-4">Images: </label>
+                  <label id = "display-image-count" class="block  font-medium text-gray-900 pb-4">Images: <span class="text-xs"><span></label>
                   <span id="clear-sidebar-button" class="clear-visualize-filter text-gray-500 text-xs"><i class="fa-solid fa-rotate-right"></i> Clear</span>
                 </div>
                 <div id="feature-list" style = "max-height: 450px;" class = "overflow-auto custom-scrollbar">
@@ -706,6 +706,10 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
               var featureList = document.getElementById("feature-list");
               featureList.innerHTML = "";
+              
+              //add count of images
+              console.log("count "+data.features.length);
+              document.getElementById("display-image-count").innerHTML = `Images: <span class="text-xs">${data.features.length}<span>`;
 
               data.features.forEach(function (feature, index) {
                 var featureItem = document.createElement("div");
@@ -823,6 +827,8 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           }
           document.getElementById("feature-list").innerHTML = '<label class="block text-sm font-medium text-gray-400 pt-4">Apply the Filter First!!!</label>';
           setDefaultFilters();
+
+          document.getElementById("display-image-count").innerHTML = `Images: `;
         });
 
         document
