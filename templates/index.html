@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sentinel-2 COG Viewer</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <!-- tailwind start -->
@@ -68,6 +69,29 @@
         cursor: pointer;
       }
     </style>
+    <style>
+      #map {
+          height: 500px;
+          width: 100%;
+      }
+      .draw-buttons {
+          display: flex;
+          justify-content: center;
+          margin-bottom: 10px;
+      }
+      .draw-buttons button {
+          margin: 0 5px;
+          padding: 10px;
+          cursor: pointer;
+      }
+  </style>
+  <style>
+    .upload-area.dragover {
+        border-color: #4A5568; /* Tailwind gray-700 */
+        background-color: #EDF2F7; /* Tailwind gray-100 */
+    }
+  </style>
+
   </head>
   <body>
     <header class="bg-white shadow-md py-4 border-b border-gray-300">
@@ -193,7 +217,7 @@
               <!-- Content for Tab 2 -->
               <div id="sidebar">
                 <div class="flex items-center justify-between">
-                  <label class="block  font-medium text-gray-900 pb-4">Images: </label>
+                  <label id = "display-image-count" class="block  font-medium text-gray-900 pb-4">Images: <span class="text-xs"><span></label>
                   <span id="clear-sidebar-button" class="clear-visualize-filter text-gray-500 text-xs"><i class="fa-solid fa-rotate-right"></i> Clear</span>
                 </div>
                 <div id="feature-list" style = "max-height: 450px;" class = "overflow-auto custom-scrollbar">
@@ -233,7 +257,7 @@
                     <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-1" role="option">
                       <div class="flex items-center">
                         <i class="fa-solid fa-draw-polygon"></i>
-                        <span class="ml-3 block truncate font-normal">Draw Polygon</span>
+                        <span class="ml-3 block truncate font-normal">Draw AOI on Map</span>
                       </div>
                       <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
                         <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
@@ -241,7 +265,7 @@
                         </svg>
                       </span>
                     </li>
-                    <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-1" role="option">
+                    <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="upload-file-option" role="option">
                       <div class="flex items-center">
                         <i class="fa-solid fa-arrow-up-from-bracket"></i>
                         <span class="ml-3 block truncate font-normal">Upload File</span>
@@ -256,9 +280,13 @@
                 </div>
                 <!-- dropdown end -->
                 <div class = "mt-1 p-1 border border-gray-300 w-full bg-white">
-                  <div id="" class = "break-words w-64 text-xs text-gray-500" ></div>
+                  <div id="map-window-content" class = "break-words w-64 text-xs text-gray-500" >
+
+                  </div>
                   <div id = "draw-bbox-option" class="hidden">
-                      <span>This is draw bbox section</span>
+                    <div class="draw-buttons"> <button id="draw-point" title="Draw Point" class=" hover:bg-gray-50"><i class="fas fa-map-marker-alt"></i> Point</button> 
+                      <button id="draw-polygon" title="Draw Polygon" class=" hover:bg-gray-50"><i class="fas fa-draw-polygon"></i> Polygon</button> 
+                      <button id="draw-rectangle" title="Draw Rectangle" class=" hover:bg-gray-50"><i class="fas fa-vector-square"></i> Rectangle</button> </div>
                   </div>
                   <div id = "upload-bbox-file-option" class="hidden">
                       <span>This is upload bbox section</span>
@@ -276,7 +304,7 @@
   </div>
   <div id="map" class = "w-full md:w-3/4 min-h-screen md:min-h-full z-0"></div>
 
-  <!-- modal start -->
+  <!-- filter modal start -->
   <div id="modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-40">
     <div class="bg-white rounded-lg shadow-lg p-6 w-2/5 relative">
       <button id="closeModal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
@@ -390,8 +418,32 @@
   </div>
   
   </div>
-  <!-- modal end -->
+  <!-- filter modal end -->
 
+  <!-- upload modal start -->
+  <div id="uploadModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden z-40">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
+        <h2 class="text-2xl font-semibold mb-4">Upload or Paste GeoJSON File</h2>
+        
+        <!-- Drag and Drop or Upload Section -->
+        <div class="upload-area border-2 border-dashed border-gray-300 rounded-lg p-4 text-center mb-4" id="upload-area">
+            <p class="mb-2">Drag & Drop GeoJSON File Here <br/><label>or</label><br/><br/> <input type="file" id="file-input" class="hidden" /><label for="file-input" class="upload-button bg-blue-500 text-white px-4 py-2 rounded-md cursor-pointer">Browse Files</label></p>
+        </div>
+        
+        <!-- Copy and Paste Section -->
+        <div class="textarea-container border-2 border-dashed border-gray-300 rounded-lg p-4">
+            <p class="mb-2">Copy and Paste GeoJSON Content Here:</p>
+            <textarea id="geojson-textarea" class="w-full h-48 border-none focus:outline-none resize-none" placeholder="Paste GeoJSON content..."></textarea>
+        </div>
+
+        <!-- Close Button -->
+        <div class="text-right mt-4">
+            <button id="closeModalButton" class="bg-red-500 text-white px-4 py-2 rounded-md">Close</button>
+            <button id="saveUploadedData" class="bg-blue-500 text-white rounded-md px-4 py-2">Save</button>
+        </div>
+    </div>
+</div>
+   <!-- upload modal end -->
 
 </div>
 
@@ -505,7 +557,7 @@ document.addEventListener('DOMContentLoaded', function() {
         selectList.classList.add('hidden');
 
         // Show/Hide content based on the selected option
-        const coords = document.getElementById('coords');
+        const coords = document.getElementById('map-window-content');
         const drawBBoxOption = document.getElementById('draw-bbox-option');
         const uploadBBoxFileOption = document.getElementById('upload-bbox-file-option');
 
@@ -517,7 +569,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show the corresponding section based on the selected item
         if (selectedItemText === 'Map Window') {
           coords.classList.remove('hidden');
-        } else if (selectedItemText === 'Draw Polygon') {
+        } else if (selectedItemText === 'Draw AOI on Map') {
           drawBBoxOption.classList.remove('hidden');
         } else if (selectedItemText === 'Upload File') {
           uploadBBoxFileOption.classList.remove('hidden');
@@ -557,10 +609,10 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
     
   </script>
   
-  
 
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
     <script>
       var map = L.map("map").setView([28.202082, 83.987222], 10);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -578,9 +630,15 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
       var band1 = "red";
       var band2 = "nir";
 
+      var bounds = map.getBounds();
+      var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+      document.getElementById("coords").textContent = bbox;
+      document.getElementById("zoom-level").textContent = map.getZoom();
+
+
       map.on("moveend", function () {
-        var bounds = map.getBounds();
-        var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+        bounds = map.getBounds();
+        bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
         document.getElementById("coords").textContent = bbox;
         document.getElementById("zoom-level").textContent = map.getZoom();
       });
@@ -706,6 +764,10 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
               var featureList = document.getElementById("feature-list");
               featureList.innerHTML = "";
+              
+              //add count of images
+              console.log("count "+data.features.length);
+              document.getElementById("display-image-count").innerHTML = `Images: <span class="text-xs">${data.features.length}<span>`;
 
               data.features.forEach(function (feature, index) {
                 var featureItem = document.createElement("div");
@@ -823,6 +885,8 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           }
           document.getElementById("feature-list").innerHTML = '<label class="block text-sm font-medium text-gray-400 pt-4">Apply the Filter First!!!</label>';
           setDefaultFilters();
+
+          document.getElementById("display-image-count").innerHTML = `Images: `;
         });
 
         document
@@ -852,8 +916,108 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         document.getElementById("search-button").classList.remove('bg-blue-700');
       }
       setDefaultFilters();
+
+
+
+      /*draw script start */
+          // Initialize the FeatureGroup to store editable layers
+    var drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+    // Initialize the draw control and pass it the FeatureGroup of editable layers
+    var drawControl = new L.Control.Draw({
+        edit: {
+            featureGroup: drawnItems
+        },
+        draw: false // Disable built-in draw options
+    });
+    map.addControl(drawControl);
+
+    // Draw handlers
+    var drawHandlers = {
+        point: new L.Draw.Marker(map),
+        polygon: new L.Draw.Polygon(map),
+        rectangle: new L.Draw.Rectangle(map)
+    };
+
+    // Draw buttons event listeners
+    document.getElementById('draw-point').addEventListener('click', function () {
+        drawHandlers.point.enable();
+    });
+    document.getElementById('draw-polygon').addEventListener('click', function () {
+        drawHandlers.polygon.enable();
+    });
+    document.getElementById('draw-rectangle').addEventListener('click', function () {
+        drawHandlers.rectangle.enable();
+    });
+
+    // Event for creating new layers
+    map.on(L.Draw.Event.CREATED, function (event) {
+        var layer = event.layer;
+        drawnItems.addLayer(layer);
+    });
+      /*draw script end */
       
     </script>
+
+    <!-- upload modal script start -->
+    <script>
+      const uploadArea = document.getElementById('upload-area');
+      const fileInput = document.getElementById('file-input');
+      const textarea = document.getElementById('geojson-textarea');
+      const openModalButton = document.getElementById('upload-file-option');
+      const closeModalButton = document.getElementById('closeModalButton');
+      const uploadModal = document.getElementById('uploadModal');
+      
+      // Open modal
+      openModalButton.addEventListener('click', function() {
+          uploadModal.classList.remove('hidden');
+      });
+  
+      // Close modal
+      closeModalButton.addEventListener('click', function() {
+          uploadModal.classList.add('hidden');
+      });
+  
+      // Handle drag and drop
+      uploadArea.addEventListener('dragover', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          uploadArea.classList.add('dragover');
+      });
+  
+      uploadArea.addEventListener('dragleave', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          uploadArea.classList.remove('dragover');
+      });
+  
+      uploadArea.addEventListener('drop', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          uploadArea.classList.remove('dragover');
+          const files = e.dataTransfer.files;
+          handleFileUpload(files[0]);
+      });
+  
+      // Handle file input change
+      fileInput.addEventListener('change', function(e) {
+          const files = e.target.files;
+          handleFileUpload(files[0]);
+      });
+  
+      // Function to handle file upload
+      function handleFileUpload(file) {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+              textarea.value = event.target.result;
+          };
+          reader.readAsText(file);
+      }
+    </script>
+
+    <!-- upload modal script end -->
+
     <!-- JavaScript to handle modal and populate textarea -->
     <script>
       
@@ -942,8 +1106,12 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
     });
   </script>
   
-  
-
+  <!-- export tab script -->
+  <script>
+    document.getElementById("map-window-content").innerHTML = document.getElementById("coords").textContent;
+  </script>
+  <!-- export tab script end -->
+   
   <!-- datepicker end -->
 
   </body>
