@@ -278,79 +278,117 @@
 
   <!-- modal start -->
   <div id="modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-40">
-      <div class="bg-white rounded-lg shadow-lg p-6 w-2/5 relative">
-          <button id="closeModal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700"> <i class="fas fa-times"></i> </button>
-          <h3 class="text-xl font-semibold mb-4 text-gray-800">Finalize the formula to generate the result</h3>
-          <label class="block  font-xs text-gray-500 pb-4"> Double click on the Bands and Operators to select them. </label>
-          <!-- <div class="mb-4">
-              <label for="layer" class="block text-sm font-medium text-gray-700">Layer</label>
-              <select id="layer" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                  <option>Building</option>
-              </select>
-          </div> -->
+    <div class="bg-white rounded-lg shadow-lg p-6 w-2/5 relative">
+      <button id="closeModal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
+          <i class="fas fa-times"></i>
+      </button>
+      <h3 class="text-xl font-semibold mb-4 text-gray-800">Finalize the formula to generate the result</h3>
+      <label class="block font-xs text-gray-500 pb-4">Double click on the Bands and Operators to select them.</label>
+      
+      <!-- Section for mapping bands -->
+      <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700">Map Bands</label>
+          <div class="flex flex-col md:flex-row md:space-x-4">
+              <div class="w-full md:w-1/2 mb-4 md:mb-0">
+                  <label class="block text-sm font-medium text-gray-700">Band 1</label>
+                  <select id="band1" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                      <option value="">Select Band 1</option>
+                      <option value="RED">RED</option>
+                      <option value="GREEN">GREEN</option>
+                      <option value="BLUE">BLUE</option>
+                      <option value="VISUAL">VISUAL</option>
+                      <option value="NIR">NIR</option>
+                      <option value="SWIR22">SWIR22</option>
+                      <option value="REDEDGE2">REDEDGE2</option>
+                      <option value="REDEDGE3">REDEDGE3</option>
+                      <option value="REDEDGE1">REDEDGE1</option>
+                      <option value="SWIR16">SWIR16</option>
+                      <option value="WVP">WVP</option>
+                      <option value="NIR08">NIR08</option>
+                      <option value="SCL">SCL</option>
+                      <option value="AOT">AOT</option>
+                      <option value="COASTAL">COASTAL</option>
+                      <option value="NIR09">NIR09</option>
+                      <option value="CLOUD">CLOUD</option>
+                      <option value="SNOW">SNOW</option>
+                  </select>
+              </div>
+              <div class="w-full md:w-1/2">
+                  <label class="block text-sm font-medium text-gray-700">Band 2</label>
+                  <select id="band2" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                      <option value="">Select Band 2</option>
+                      <option value="RED">RED</option>
+                      <option value="GREEN">GREEN</option>
+                      <option value="BLUE">BLUE</option>
+                      <option value="VISUAL">VISUAL</option>
+                      <option value="NIR">NIR</option>
+                      <option value="SWIR22">SWIR22</option>
+                      <option value="REDEDGE2">REDEDGE2</option>
+                      <option value="REDEDGE3">REDEDGE3</option>
+                      <option value="REDEDGE1">REDEDGE1</option>
+                      <option value="SWIR16">SWIR16</option>
+                      <option value="WVP">WVP</option>
+                      <option value="NIR08">NIR08</option>
+                      <option value="SCL">SCL</option>
+                      <option value="AOT">AOT</option>
+                      <option value="COASTAL">COASTAL</option>
+                      <option value="NIR09">NIR09</option>
+                      <option value="CLOUD">CLOUD</option>
+                      <option value="SNOW">SNOW</option>
+                  </select>
+              </div>
+          </div>
+      </div>
+  
+      <!-- Initially hidden section -->
+      <div id="bandsSection">
           <div class="mb-4 flex flex-col md:flex-row md:space-x-4">
-            <div class="w-full md:w-1/2 mb-4 md:mb-0">
-                <label class="block text-sm font-medium text-gray-700">Bands</label>
-                <div class="mt-1 border border-gray-300 rounded-md p-2 max-h-40 overflow-auto custom-scrollbar" id="attributes-list">
-                    <ul class="cursor-pointer text-gray-500 text-sm uppercase">
-                        <li class="attribute-item hover:bg-gray-100 p-1">RED</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">GREEN</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">BLUE</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">VISUAL</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">NIR</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">SWIR22</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">REDEDGE2</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">REDEDGE3</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">REDEDGE1</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">SWIR16</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">WVP</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">NIR08</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">SCL</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">AOT</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">COASTAL</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">NIR09</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">CLOUD</li>
-                        <li class="attribute-item hover:bg-gray-100 p-1">SNOW</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="w-full md:w-1/2">
-                <label class="block text-sm font-medium text-gray-700">Operators</label>
-                <div class="grid grid-cols-5 gap-2 mt-1 text-gray-500 text-sm" id="operators-list">
-                    <button class="operator-item bg-gray-200 rounded-md p-2">7</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">8</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">9</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">(</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">)</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">4</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">5</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">6</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">+</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">-</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">1</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">2</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">3</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">*</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">/</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">0</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">.</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">PI(P)</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">e</button>
-                    <button class="operator-item bg-gray-200 rounded-md p-2">^</button>
-                </div>
-            </div>
-        </div>
-        
+              <div class="w-full md:w-1/2 mb-4 md:mb-0">
+                  <label class="block text-sm font-medium text-gray-700">Bands</label>
+                  <div class="mt-1 border border-gray-300 rounded-md p-2 min-h-40 max-h-40 overflow-auto custom-scrollbar" id="attributes-list">
+                      <ul class="cursor-pointer text-gray-500 text-sm uppercase" id="mapped-bands">
+                          <!-- Mapped bands will be appended here -->
+                      </ul>
+                  </div>
+              </div>
+              <div class="w-full md:w-1/2">
+                  <label class="block text-sm font-medium text-gray-700">Operators</label>
+                  <div class="grid grid-cols-5 gap-2 mt-1 text-gray-500 text-sm" id="operators-list">
+                      <button class="operator-item bg-gray-200 rounded-md p-2">7</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">8</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">9</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">(</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">)</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">4</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">5</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">6</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">+</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">-</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">1</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">2</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">3</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">*</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">/</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">0</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">.</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">PI(P)</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">e</button>
+                      <button class="operator-item bg-gray-200 rounded-md p-2">^</button>
+                  </div>
+              </div>
+          </div>
+          
           <div class="mb-4">
               <label for="query" class="block text-sm font-medium text-gray-700">Query</label>
               <textarea id="query" rows="3" class="mt-1 p-2 text-gray-800 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm pointer-events-none"></textarea>
           </div>
           <div class="flex justify-between float-right">
-            <button id="resetButton" class="text-gray-500 mr-2"><i class="fa-solid fa-rotate-right"></i> Reset</button>  
-            <button id="saveFormula" class="bg-blue-500 text-white rounded-md px-4 py-2">Save</button>
+              <button id="resetButton" class="text-gray-500 mr-2"><i class="fa-solid fa-rotate-right"></i> Reset</button>  
+              <button id="saveFormula" class="bg-blue-500 text-white rounded-md px-4 py-2">Save</button>
           </div>
-          <!-- <button id="closeModal" class="text-gray-500 mt-4">Close</button> -->
       </div>
+  </div>
+  
   </div>
   <!-- modal end -->
 
@@ -376,6 +414,40 @@
       tabPanels[0].classList.remove('hidden');
     });
   </script>
+
+<script>
+      document.getElementById("band1").addEventListener("change", updateBandsBox);
+    document.getElementById("band2").addEventListener("change", updateBandsBox);
+
+    function updateBandsBox() {
+        const band1_v = document.getElementById("band1").value;
+        const band2_v = document.getElementById("band2").value;
+
+        band1 = band1_v.toLowerCase();
+        band2 = band2_v.toLowerCase();
+
+        const mappedBands = new Set();
+
+        if (band1_v) {
+            mappedBands.add(`Band1 (${band1_v})`);
+        }
+
+        if (band2_v) {
+            mappedBands.add(`Band2 (${band2_v})`);
+        }
+
+        const bandsArray = Array.from(mappedBands);
+
+        const mappedBandsList = document.getElementById("mapped-bands");
+        mappedBandsList.innerHTML = bandsArray.map(band => `<li class="attribute-item hover:bg-gray-100 p-1">${band}</li>`).join('');
+
+        // if (bandsArray.length > 0) {
+        //     document.getElementById("bandsSection").classList.remove("hidden");
+        // } else {
+        //     document.getElementById("bandsSection").classList.add("hidden");
+        // }
+    }
+</script>
 
   <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -482,47 +554,14 @@ document.addEventListener('DOMContentLoaded', function() {
       var highlightedLayer = L.layerGroup();
       var clickedResultList = false;
       var previousListMouseIn;
-      var formula = "";
-      var band1 = 'red';
-      var band2 = 'nir';
-      var bounds = map.getBounds();
-      var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
 
-      var parameters = {
-            min_x: 0, 
-            min_y: 0,  
-            max_x: 0, 
-            max_y: 0,  
-            start_date: '',
-            end_date: '',
-            cloud_cover: 30,
-            formula: '',
-            band1: null,
-            band2: null,
-            operation: null,
-            export_band: null,
-            output_dir: null
-        };
-
-      function updateParameters(min_x, min_y, max_x, max_y, start_date, end_date, cloud_cover, formula, band1, band2, operation, export_band, output_dir){
-        parameters.min_x = min_x;
-        parameters.min_y = min_y;
-        parameters.max_x = max_x;
-        parameters.max_y = max_y;
-        parameters.start_date = start_date;
-        parameters.end_date = end_date;
-        parameters.cloud_cover = cloud_cover;
-        parameters.formula = formula;
-        parameters.band1 = band1;
-        parameters.band2 = band2;
-        parameters.operation = operation;
-        parameters.export_band = export_band;
-        parameters.output_dir = output_dir;
-      }
+      var formula = "(band2-band1)/(band2+band1)";
+      var band1 = "red";
+      var band2 = "nir";
 
       map.on("moveend", function () {
-        bounds = map.getBounds();
-        bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+        var bounds = map.getBounds();
+        var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
         document.getElementById("coords").textContent = bbox;
         document.getElementById("zoom-level").textContent = map.getZoom();
       });
@@ -736,9 +775,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (ndviLayer) {
                   map.removeLayer(ndviLayer);
                 }
-
+                
+                const encodedUrl_tiles = `/tile/{z}/{x}/{y}?start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}&cloud_cover=${encodeURIComponent(cloudCover)}&formula=${encodeURIComponent(formula)}&band1=${encodeURIComponent(band1)}&band2=${encodeURIComponent(band2)}`;
                 ndviLayer = L.tileLayer(
-                  `/tile/{z}/{x}/{y}?start_date=${startDate}&end_date=${endDate}&cloud_cover=${cloudCover}`,
+                  encodedUrl_tiles,
                   {
                     tileSize: 256,
                     opacity: 0.8,
@@ -821,10 +861,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Add double-click event listeners to attributes list items
-        document.querySelectorAll('#attributes-list .attribute-item').forEach(function(item) {
-            item.addEventListener('dblclick', function() {
-                appendToQuery(item.textContent);
-            });
+        document.getElementById('attributes-list').addEventListener('dblclick', function(event) { 
+          if (event.target && event.target.classList.contains('attribute-item')) { 
+            var separated_band_text = event.target.textContent.split(" ")[0];
+            appendToQuery(separated_band_text); 
+          } 
         });
 
         // Add double-click event listeners to operators list items
@@ -840,7 +881,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         saveFormulaButton.addEventListener('click', function() {
-            formula = queryTextarea.value; 
+            formula = queryTextarea.value.toLowerCase();        
             console.log('formula:', formula);
             document.getElementById("formulaHeading").classList.remove('hidden'); 
             document.getElementById("formulaText").innerHTML = formula;
@@ -886,74 +927,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
   <!-- datepicker end -->
 
-  <!-- post api for search -->
-  <script>
-    document.getElementById("search-button").addEventListener("click", function() {
-        const apiUrl = 'http://127.0.0.1:8000/compute'; // Replace with your actual API endpoint
-
-        const data = {
-            bbox: 'west,south,east,north', // Replace with actual values
-            cloud_cover: 30,
-            start_date: '2024-01-01',
-            end_date: '2024-12-31'
-        };
-
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Success:', data);
-            // Handle the API response here
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-    });
-</script>
-  <!-- search post api call end -->
-
-  <!-- post api call start for /compute -->
-  <script>
-    // document.getElementById("").addEventListener("click", function() {
-    //     const apiUrl = 'http://127.0.0.1:8000/compute'; // Replace with your actual API endpoint
-
-    //     updateParameters(bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth(), startDate, endDate, cloudCover, formula, band1, band2, null, null, null)
-    //     var params = parameters;
-
-    //     const queryString = new URLSearchParams(params).toString();
-    //     const fullUrl = `${apiUrl}?${queryString}`;
-
-    //     fetch(fullUrl, {
-    //         method: 'POST', // Still using POST method
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         }
-    //     })
-    //     .then(response => {
-    //         if (!response.ok) {
-    //             throw new Error('Network response was not ok ' + response.statusText);
-    //         }
-    //         return response.json();
-    //     })
-    //     .then(data => {
-    //         console.log('Success:', data);
-    //         // Handle the API response here
-    //     })
-    //     .catch((error) => {
-    //         console.error('Error:', error);
-    //     });
-    // });
-</script>
-  <!-- post api call end -->
   </body>
 </html>
