@@ -70,7 +70,7 @@ async def get_logs():
     def log_stream():
         log_file = "static/runtime.log"
         with open(log_file, "r") as log_file:
-            last_lines = deque(log_file, maxlen=50)
+            last_lines = deque(log_file, maxlen=1)
             for line in last_lines:
                 yield line
 
