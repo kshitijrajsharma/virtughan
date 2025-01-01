@@ -145,8 +145,6 @@ def save_aggregated_result_with_colormap(
     cmap="RdYlGn",
 ):
     colormap = plt.get_cmap(cmap)
-    print(result_aggregate.shape)
-
     if result_aggregate.shape[0] == 1:
         # Single-band image
         result_aggregate_m = result_aggregate[0]
@@ -241,6 +239,7 @@ def compute(
     operation,
     timeseries,
     output_dir,
+    log_file,
     cmap="RdYlGn",
 ):
     print("Engine starting...")
@@ -304,6 +303,7 @@ def compute(
             zip(band1_urls, band2_urls),
             total=len(band1_urls),
             desc="Computing Band Calculation",
+            file=log_file,
         ):
             result, crs, transform = fetch_process_custom_band(
                 band1_url, band2_url, bbox, formula

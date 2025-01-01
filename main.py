@@ -2,26 +2,19 @@ import asyncio
 import json
 import os
 import shutil
+import sys
 import time
+from collections import deque
 from datetime import datetime, timedelta
 from io import BytesIO
-from typing import List
 
 import httpx
 import mercantile
 import numpy as np
 from aiocache import cached
-from fastapi import (
-    BackgroundTasks,
-    FastAPI,
-    HTTPException,
-    Query,
-    Response,
-    WebSocket,
-    WebSocketDisconnect,
-)
+from fastapi import BackgroundTasks, FastAPI, HTTPException, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from matplotlib import pyplot as plt
@@ -46,8 +39,6 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
-# store websocket connections
-connections: List[WebSocket] = []
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -72,6 +63,18 @@ async def list_files():
             files[filename] = os.path.getsize(filepath)
 
     return JSONResponse(content=files)
+
+
+@app.get("/logs")
+async def get_logs():
+    def log_stream():
+        log_file = "static/runtime.log"
+        with open(log_file, "r") as log_file:
+            last_lines = deque(log_file, maxlen=50)
+            for line in last_lines:
+                yield line
+
+    return StreamingResponse(log_stream(), media_type="text/plain")
 
 
 @app.get("/sentinel2-bands")
@@ -102,22 +105,6 @@ async def fetch_tile(url, x, y, z):
             return tile
 
     return await asyncio.to_thread(read_tile)
-
-
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    connections.append(websocket)
-    try:
-        while True:
-            await websocket.receive_text()
-    except WebSocketDisconnect:
-        connections.remove(websocket)
-
-
-async def notify_progress(message: str):
-    for connection in connections:
-        await connection.send_text(message)
 
 
 @app.get("/export")
@@ -195,20 +182,28 @@ async def run_computation(
     timeseries,
     output_dir,
 ):
-    await notify_progress("Starting processing...")
-    compute_engine(
-        bbox=bbox,
-        start_date=start_date,
-        end_date=end_date,
-        cloud_cover=cloud_cover,
-        formula=formula,
-        band1=band1,
-        band2=band2,
-        operation=operation,
-        timeseries=timeseries,
-        output_dir=output_dir,
-    )
-    await notify_progress(f"Processing completed. Results saved in {output_dir}")
+    log_file = "static/runtime.log"
+    if os.path.exists(log_file):
+        os.remove(log_file)
+    with open(log_file, "a") as f:
+
+        sys.stdout = f
+
+        print("Starting processing...")
+        compute_engine(
+            bbox=bbox,
+            start_date=start_date,
+            end_date=end_date,
+            cloud_cover=cloud_cover,
+            formula=formula,
+            band1=band1,
+            band2=band2,
+            operation=operation,
+            timeseries=timeseries,
+            output_dir=output_dir,
+            log_file=f,
+        )
+        print(f"Processing completed. Results saved in {output_dir}")
 
 
 @app.get("/search")
