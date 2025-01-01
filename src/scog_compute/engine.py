@@ -121,11 +121,7 @@ def create_gif(image_list, output_path, duration=10):
     ]
 
     iio.imwrite(output_path, resized_images, duration=duration, loop=0)
-
     print(f"Saved GIF to {output_path}")
-
-    for image_path in image_list:
-        os.remove(image_path)
 
 
 def zip_files(file_list, zip_path):
