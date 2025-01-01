@@ -145,10 +145,13 @@ def save_aggregated_result_with_colormap(
     cmap="RdYlGn",
 ):
     colormap = plt.get_cmap(cmap)
+    print(result_aggregate.shape)
 
     if result_aggregate.shape[0] == 1:
         # Single-band image
         result_aggregate_m = result_aggregate[0]
+        result_aggregate_m = np.ma.masked_invalid(result_aggregate_m)
+
         result_normalized = (result_aggregate_m - result_aggregate_m.min()) / (
             result_aggregate_m.max() - result_aggregate_m.min()
         )
@@ -160,27 +163,28 @@ def save_aggregated_result_with_colormap(
         image = Image.fromarray(result_image)
     else:
         # Multi-band image
-        result_normalized = (
-            result_aggregate - result_aggregate.min(axis=(0, 1), keepdims=True)
-        ) / (
-            result_aggregate.max(axis=(0, 1), keepdims=True)
-            - result_aggregate.min(axis=(0, 1), keepdims=True)
-        )
-        result_image = np.transpose(result_normalized, (1, 2, 0))
+        # result_normalized = (
+        #     result_aggregate - result_aggregate.min(axis=(0, 1), keepdims=True)
+        # ) / (
+        #     result_aggregate.max(axis=(0, 1), keepdims=True)
+        #     - result_aggregate.min(axis=(0, 1), keepdims=True)
+        # )
+        result_image = np.transpose(result_aggregate, (1, 2, 0))
         result_image = (result_image * 255).astype(np.uint8)
         image = Image.fromarray(result_image)
 
     plt.figure(figsize=(10, 10))
     plt.imshow(image)
     plt.title(f"Aggregated {operation} Custom Band Calculation")
-    plt.xlabel(
-        f"Normalized Range: {result_normalized.min():.2f} to {result_normalized.max():.2f}"
-    )
+
     plt.ylabel(
         f"From {start_date} to {end_date}\nCloud Cover < {cloud_cover}%\nBounding Box: {bbox}\nTotal Images: {total_images}"
     )
 
     if result_aggregate.shape[0] == 1:
+        plt.xlabel(
+            f"Normalized Range: {result_normalized.min():.2f} to {result_normalized.max():.2f}"
+        )
         cbar = plt.colorbar(
             plt.cm.ScalarMappable(
                 norm=Normalize(
