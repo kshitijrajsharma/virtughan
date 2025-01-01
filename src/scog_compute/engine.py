@@ -363,9 +363,7 @@ def compute(
                 )
 
             # Save the aggregated result with colormap
-            output_file = os.path.join(
-                output_dir, f"custom_band_{operation}_aggregate.tif"
-            )
+            output_file = os.path.join(output_dir, f"custom_band_output_aggregate.tif")
             print("Saving aggregated result with colormap...")
             save_aggregated_result_with_colormap(
                 result_aggregate,
