@@ -190,20 +190,24 @@ async def run_computation(
         sys.stdout = f
 
         print("Starting processing...")
-        compute_engine(
-            bbox=bbox,
-            start_date=start_date,
-            end_date=end_date,
-            cloud_cover=cloud_cover,
-            formula=formula,
-            band1=band1,
-            band2=band2,
-            operation=operation,
-            timeseries=timeseries,
-            output_dir=output_dir,
-            log_file=f,
-        )
-        print(f"Processing completed. Results saved in {output_dir}")
+        try:
+            compute_engine(
+                bbox=bbox,
+                start_date=start_date,
+                end_date=end_date,
+                cloud_cover=cloud_cover,
+                formula=formula,
+                band1=band1,
+                band2=band2,
+                operation=operation,
+                timeseries=timeseries,
+                output_dir=output_dir,
+                log_file=f,
+            )
+            print(f"Processing completed. Results saved in {output_dir}")
+
+        except Exception as e:
+            print(f"Error processing : {e}")
 
 
 @app.get("/search")
