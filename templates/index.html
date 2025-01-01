@@ -113,7 +113,7 @@
       <div class="container mx-auto pb-4 pt-1">
         <div class="tabs">
           <div class="flex justify-center mb-2">
-            <button id="filterTab" class="tab w-1/3 py-2 text-center text-gray-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:border-blue-500">Visualize</button>
+            <button id="filterTab" class="tab w-1/3 py-2 text-center text-gray-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:border-blue-500">Live View</button>
             <button id="resultTab" class="tab w-1/3 py-2 text-center text-gray-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:border-blue-500">Result</button>
             <button id="exportTab" class="tab w-1/3 py-2 text-center text-gray-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:border-blue-500">Export</button>
           </div>
@@ -227,7 +227,7 @@
             </div>
             <div class="tab-panel hidden p-4">
               <!-- Content for Tab 3 -->
-              <div id="sidebar">
+              <div id="sidebar1" class = "overflow-y-scroll custom-scrollbar" style = "max-height: 550px;">
                <div>
                 <label class="block  font-medium text-gray-900 pb-4">Select Area of Interest </label>
                 <!-- dropdown start -->
@@ -346,7 +346,8 @@
 
                 <div class="w-full">
                   <label class="block text-sm font-medium text-gray-700">Operation</label>
-                  <select id="band2" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                  <select id="operation_menu" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                      <option value="min">Select Option</option>
                       <option value="min">Min</option>
                       <option value="max">Max</option>
                       <option value="mean">Mean</option>
@@ -355,7 +356,7 @@
               </div>
 
               <div class="pb-4 mt-6 float-right">
-                <button id="export-list-clear-button" class="clear-visualize-filter bg-transparent rounded-lg text-gray-500 text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-solid fa-rotate-right"></i> Clear</button>
+                <button id="export-clear-button" class="clear-visualize-filter bg-transparent rounded-lg text-gray-500 text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-solid fa-rotate-right"></i> Clear</button>
                 <button id="export-map-view-button" title= "Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Visualize</button>
                 <button id="export-file-button" title= "Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Export</button>
               </div>
@@ -540,8 +541,11 @@
         const band1_v = document.getElementById("band1").value;
         const band2_v = document.getElementById("band2").value;
 
-        band1 = band1_v.toLowerCase();
-        band2 = band2_v.toLowerCase();
+        tile_params.band1 = band1_v.toLowerCase();
+        tile_params.band2 = band2_v.toLowerCase();
+
+        export_params.band1 = band1_v.toLowerCase(); //setting the same params for now.
+        export_params.band2 = band2_v.toLowerCase();
 
         const mappedBands = new Set();
 
@@ -658,14 +662,14 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         // console.log(templateText); 
 
       if(templateText == "NDVI"){
-        formula = "(band2 - band1) / (band2 + band1)";
-        band1 = 'red';
-        band2 = 'nir';
+        tile_params.formula = "(band2 - band1) / (band2 + band1)";
+        tile_params.band1 = 'red';
+        tile_params.band2 = 'nir';
       }
       else if(templateText == "NDWI"){
-        formula = "(band2 - band1) / (band2 + band1)";
-        band1 = 'swir22';
-        band2 = 'nir';
+        tile_params.formula = "(band2 - band1) / (band2 + band1)";
+        tile_params.band1 = 'swir22';
+        tile_params.band2 = 'nir';
       }
       
     });
@@ -691,24 +695,57 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
       var clickedResultList = false;
       var previousListMouseIn;
 
-      var formula = "(band2-band1)/(band2+band1)";
-      var band1 = "red";
-      var band2 = "nir";
+      var tile_params = {
+          "bbox": "",                  
+          "startDate": "",         
+          "endDate": "",           
+          "cloudCover": 30,        
+          "band1": "visual",        
+          "band2": "nir",           
+          "formula": "band1"
+      }
+
+      var export_params = {
+        "min_x": 83.36975097656251,
+        "min_y": 27.839076094777816,
+        "max_x": 84.60433959960939,
+        "max_y": 28.56281321321839,
+        "startDdate": "2024-01-02",
+        "endDate": "2025-01-01",
+        "cloudCover": 30,
+        "formula": "(band2 - band1) / (band2 + band1)",
+        "band1": "red",
+        "band2": "nir",
+        "operation": "mean",
+        "export_band": "visual",
+        "output_dir": "output"
+      }
+
+      // var formula = "(band2-band1)/(band2+band1)";
+      // var band1 = "red";
+      // var band2 = "nir";
 
       var bounds = map.getBounds();
-      var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
-      document.getElementById("coords").textContent = bbox;
+      tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+      document.getElementById("coords").textContent = tile_params.bbox;
       document.getElementById("zoom-level").textContent = map.getZoom();
 
-      //for operation and export
-      var operation 
-
+      export_params.max_x = bounds.getEast();
+      export_params.max_y = bounds.getNorth();
+      export_params.min_x = bounds.getWest();
+      export_params.min_y = bounds.getSouth();
 
       map.on("moveend", function () {
         bounds = map.getBounds();
-        bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
-        document.getElementById("coords").textContent = bbox;
+        tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+        document.getElementById("coords").textContent = tile_params.bbox;
         document.getElementById("zoom-level").textContent = map.getZoom();
+        
+        //change this to if this tab is active or draw or upload is not done. this is for testing now.
+        export_params.max_x = bounds.getEast();
+        export_params.max_y = bounds.getNorth();
+        export_params.min_x = bounds.getWest();
+        export_params.min_y = bounds.getSouth();
       });
 
       document
@@ -718,13 +755,14 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           document.getElementById("resultTab").click();
 
           var bounds = map.getBounds();
-          var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
-          var startDate = document.getElementById("start-date").value;
-          var endDate = document.getElementById("end-date").value;
-          var cloudCover = document.getElementById("cloud-cover").value;
-          var startDate = document.getElementById("start-date-export").value;
-          var endDate = document.getElementById("end-date-export").value;
-          var cloudCover = document.getElementById("cloud-cover-export").value;
+          tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+          tile_params.startDate = document.getElementById("start-date").value;
+          tile_params.endDate = document.getElementById("end-date").value;
+          tile_params.cloudCover = document.getElementById("cloud-cover").value;
+
+          export_params.startDdate = document.getElementById("start-date").value;
+          export_params.endDate = document.getElementById("end-date").value;
+          export_params.cloudCover = document.getElementById("cloud-cover").value;
           var overlayNdvi = function(){if(document.getElementById("selected_filter_value").value() == "NDVI"){ return true} else{return false} };
 
           function createPopup(feature){
@@ -790,7 +828,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           }
 
           fetch(
-            `/search?bbox=${bbox}&start_date=${startDate}&end_date=${endDate}&cloud_cover=${cloudCover}`
+            `/search?bbox=${tile_params.bbox}&start_date=${tile_params.startDate}&end_date=${tile_params.endDate}&cloud_cover=${tile_params.cloudCover}`
           )
             .then((response) => response.json())
             .then((data) => {
@@ -928,7 +966,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
                   map.removeLayer(ndviLayer);
                 }
                 
-                const encodedUrl_tiles = `/tile/{z}/{x}/{y}?start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}&cloud_cover=${encodeURIComponent(cloudCover)}&formula=${encodeURIComponent(formula)}&band1=${encodeURIComponent(band1)}&band2=${encodeURIComponent(band2)}`;
+                const encodedUrl_tiles = `/tile/{z}/{x}/{y}?start_date=${encodeURIComponent(tile_params.startDate)}&end_date=${encodeURIComponent(tile_params.endDate)}&cloud_cover=${encodeURIComponent(tile_params.cloudCover)}&formula=${encodeURIComponent(tile_params.formula)}&band1=${encodeURIComponent(tile_params.band1)}&band2=${encodeURIComponent(tile_params.band2)}`;
                 ndviLayer = L.tileLayer(
                   encodedUrl_tiles,
                   {
@@ -956,6 +994,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           }
           document.getElementById("feature-list").innerHTML = '<label class="block text-sm font-medium text-gray-400 pt-4">Apply the Filter First!!!</label>';
           setDefaultFilters();
+          setDefaultFiltersExport();
 
           document.getElementById("display-image-count").innerHTML = `Images: `;
         });
@@ -964,6 +1003,13 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         .getElementById("search-clear-button")
         .addEventListener("click", function () {
           document.getElementById("clear-sidebar-button").click();
+        })
+
+        document
+        .getElementById("export-clear-button")
+        .addEventListener("click", function () {
+          document.getElementById("clear-sidebar-button").click();
+
         })
 
       function setDefaultFilters(){
@@ -987,6 +1033,25 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         document.getElementById("search-button").classList.remove('bg-blue-700');
       }
       setDefaultFilters();
+
+      function setDefaultFiltersExport(){
+        // Set default dates
+        var today = new Date().toISOString().split("T")[0];
+        var lastYear = new Date();
+        lastYear.setFullYear(lastYear.getFullYear() - 1);
+        var lastYearDate = lastYear.toISOString().split("T")[0];
+
+        document.getElementById("start-date-export").value = lastYearDate;
+        document.getElementById("end-date-export").value = today;
+
+        document.getElementById("cloud-cover-export").value = "50";
+
+        document.getElementById("export-map-view-button").classList.add('bg-gray-500', 'pointer-events-none');
+        document.getElementById("export-map-view-button").classList.remove('bg-blue-700');
+
+        document.getElementById("operation_menu").value = "Select Option";
+      }
+      setDefaultFiltersExport();
 
 
 
@@ -1045,11 +1110,16 @@ map.on(L.Draw.Event.CREATED, function (event) {
     var layer = event.layer;
     drawnItems.addLayer(layer);
 
-    var bbox;
+    // var bbox;
 
     if (!(layer instanceof L.Marker)) {
         var bd = layer.getBounds();
-        bbox = `${bd.getWest()},${bd.getSouth()},${bd.getEast()},${bd.getNorth()}`;
+        // tile_params.bbox = `${bd.getWest()},${bd.getSouth()},${bd.getEast()},${bd.getNorth()}`;
+        export_params.max_x = bd.getEast();
+        export_params.max_y = bd.getNorth();
+        export_params.min_x = bd.getWest();
+        export_params.min_y = bd.getSouth();
+
     } else {
         var radiusInMeters = 1000; // Example radius in meters
         var radiusInDegrees = metersToDegrees(radiusInMeters);
@@ -1058,13 +1128,54 @@ map.on(L.Draw.Event.CREATED, function (event) {
         var lat = latlng.lat;
         var lng = latlng.lng;
 
-        bbox = `${lng - radiusInDegrees},${lat - radiusInDegrees},${lng + radiusInDegrees},${lat + radiusInDegrees}`;
+        // tile_params.bbox = `${lng - radiusInDegrees},${lat - radiusInDegrees},${lng + radiusInDegrees},${lat + radiusInDegrees}`;
+        export_params.max_x = lng + radiusInDegrees;
+        export_params.max_y = lat + radiusInDegrees;
+        export_params.min_x = lng - radiusInDegrees;
+        export_params.min_y = lat - radiusInDegrees;
     }
-    console.log(bbox);
 });
 
       
     </script>
+
+
+    <!-- export /compute api start -->
+    <script>
+      document.getElementById("export-map-view-button").addEventListener('click', function() {
+        const url_compute = `/compute?min_x=${export_params.min_x}&min_y=${export_params.min_y}&max_x=${export_params.max_x}&max_y=${export_params.max_y}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&operation=${encodeURIComponent(export_params.operation)}&export_band=${encodeURIComponent(export_params.export_band)}&output_dir=${encodeURIComponent(export_params.output_dir)}`;
+
+        console.log(url_compute);
+        
+        fetch(url_compute, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(export_params)
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+      });
+
+    </script>
+    <!-- export /compute api end -->
+
+    <!-- operation script start  -->
+    <script>
+      document.getElementById("operation_menu").addEventListener('change', function() {
+        export_params.operation = this.value;
+        document.getElementById("export-map-view-button").classList.remove('bg-gray-500', 'pointer-events-none');
+        document.getElementById("export-map-view-button").classList.add('bg-blue-700');
+      });
+
+    </script>
+    <!-- operation script end -->
 
     <!-- upload modal script start -->
     <script>
@@ -1182,11 +1293,13 @@ map.on(L.Draw.Event.CREATED, function (event) {
         });
 
         saveFormulaButton.addEventListener('click', function() {
-            formula = queryTextarea.value.toLowerCase();        
-            console.log('formula:', formula);
+            tile_params.formula = queryTextarea.value.toLowerCase(); 
+            export_params.formula = queryTextarea.value.toLowerCase(); //setting the same formula for now (for search and export)
+
+            console.log('formula:', tile_params.formula);
             document.getElementById("formulaHeading").classList.remove('hidden'); 
-            document.getElementById("formulaText").innerHTML = formula;
-            document.getElementById("formula-text-export").innerHTML = formula; 
+            document.getElementById("formulaText").innerHTML = tile_params.formula;
+            document.getElementById("formula-text-export").innerHTML = export_params.formula; 
             closeModalButton.click();
         });
 
