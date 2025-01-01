@@ -146,12 +146,17 @@ async def compute_aoi_over_time(
         "nir", description="Second band for custom calculation (default: nir)"
     ),
     operation: str = Query(
-        "mean", description="Operation for aggregating results (default: mean)"
+        None, description="Operation for aggregating results (default: None)"
     ),
-    timeseries: str = Query(
+    timeseries: bool = Query(
         True, description="Should timeseries be generated (default: True)"
     ),
 ):
+    if timeseries is False and operation is None:
+        return JSONResponse(
+            content={"error": "Operation is required if timeseries is disabled"},
+            status_code=400,
+        )
     if band1 is None:
         return JSONResponse(
             content={"error": "Band1 is required"},
