@@ -91,6 +91,29 @@
         background-color: #EDF2F7; /* Tailwind gray-100 */
     }
   </style>
+  <style>
+    #progressContainer {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .progressItem {
+      margin-bottom: 10px;
+    }
+
+    .progressBar {
+      height: 10px;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progressBarFill {
+      height: 100%;
+      width: 0;
+      background-color: #76c7c0;
+      transition: width 0.3s ease;
+    }
+  </style>
 
   </head>
   <body>
@@ -113,7 +136,7 @@
       <div class="container mx-auto pb-4 pt-1">
         <div class="tabs">
           <div class="flex justify-center mb-2">
-            <button id="filterTab" class="tab w-1/3 py-2 text-center text-gray-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:border-blue-500">Visualize</button>
+            <button id="filterTab" class="tab w-1/3 py-2 text-center text-gray-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:border-blue-500">Live View</button>
             <button id="resultTab" class="tab w-1/3 py-2 text-center text-gray-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:border-blue-500">Result</button>
             <button id="exportTab" class="tab w-1/3 py-2 text-center text-gray-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:border-blue-500">Export</button>
           </div>
@@ -227,7 +250,8 @@
             </div>
             <div class="tab-panel hidden p-4">
               <!-- Content for Tab 3 -->
-              <div id="sidebar">
+              <div id="sidebar1" class = "overflow-y-scroll custom-scrollbar" style = "max-height: 550px;">
+               <div>
                 <label class="block  font-medium text-gray-900 pb-4">Select Area of Interest </label>
                 <!-- dropdown start -->
                 <div class="relative mt-2">
@@ -295,6 +319,71 @@
                 <div>
 
                 </div>
+                </div>
+
+                <div>
+                  <button id="setFormula-export" class="w-full bg-white text-gray-500 border-gray-500 rounded-md px-4 py-2 mt-4" style="border: 1px solid #dedede;">Set the formula</button>
+                  <div class = "mt-1 p-1 border border-gray-300 w-full bg-white">
+                    <label id = "formulaHeading-export" class="block text-xs font-medium text-gray-600 pb-1 pt-1">Custom: <span id="formula-text-export" class = "break-words w-64 text-xs text-gray-500" ></span></label>
+                  </div>
+                </div>
+
+                <!-- Collapsible List Container -->
+                <div class="w-full bg-white rounded-lg">
+                  <div class="relative">
+                      <button id="collapsibleButton" class="w-full text-left font-medium bg-gray-50 py-2 rounded-md flex items-center justify-between">
+                          Options 
+                          <svg id="arrowIcon" class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                          </svg>
+                      </button>
+                      <ul id="collapsibleContent" class="hidden mt-2 bg-white border border-gray-50 rounded-md w-full">
+                          <li class="p-2 border-b border-gray-200">
+                              <label class="block text-sm font-medium text-gray-900 pb-4">Select Date</label>
+                              <div class="relative h-10 w-full min-w-[200px] mb-4">
+                                  <input id="start-date-export" class="bg-white my-dates peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" placeholder=" "/>
+                                  <label class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                                    Start Date
+                                  </label>
+                              </div>
+                              <div class="relative h-10 w-full min-w-[200px]">
+                                  <input id="end-date-export" class="bg-white my-dates peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" placeholder=" "/>
+                                  <label id = "" class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                                    End Date
+                                  </label>
+                              </div>
+                          </li>
+                          <li class="p-2 border-b border-gray-200">
+                              <label class="block text-sm/6 font-medium text-gray-900 pb-1">Select Cloud Cover <i title = "Less than the input value in percentage" class="fa-solid fa-circle-info"></i></label>
+                              <div class="bg-white mt-4">
+                                  <div class="relative bg-inherit">
+                                      <input type="number" id="cloud-cover-export" name="" value="50" class="peer bg-transparent h-10 w-full rounded-lg text-gray-900 placeholder-transparent ring-1 px-2 ring-gray-200 focus:ring-sky-600 focus:outline-none focus:border-rose-600" placeholder="Cloud Cover"/>
+                                      <label for="" class="absolute cursor-text left-0 -top-3 text-sm text-gray-500 bg-inherit mx-1 px-1 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-2 peer-focus:-top-3 peer-focus:text-sky-600 peer-focus:text-sm transition-all">Cloud Cover</label>
+                                  </div>
+                              </div>
+                          </li>
+                          <!-- Additional list items can be added here -->
+                      </ul>
+                  </div>
+                </div>
+
+                <div class="w-full">
+                  <label class="block text-sm font-medium text-gray-700">Operation</label>
+                  <select id="operation_menu" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                      <option value="min">Select Option</option>
+                      <option value="min">Min</option>
+                      <option value="max">Max</option>
+                      <option value="mean">Mean</option>
+                      <option value="median">Median</option>
+                  </select>
+              </div>
+
+              <div class="pb-4 mt-6 float-right">
+                <button id="export-clear-button" class="clear-visualize-filter bg-transparent rounded-lg text-gray-500 text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-solid fa-rotate-right"></i> Clear</button>
+                <button id="export-map-view-button" title= "Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Visualize</button>
+                <button id="export-file-button" title= "Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Export</button>
+              </div>
+
               </div>
             </div>
           </div>
@@ -303,6 +392,11 @@
 
   </div>
   <div id="map" class = "w-full md:w-3/4 min-h-screen md:min-h-full z-0"></div>
+  <div id="progressContainer" style="position: absolute; bottom: 0; right: 0; width: 300px; max-height: 400px; overflow-y: auto; background: rgba(255, 255, 255, 0.8); border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
+    <h4>Computation Progress</h4>
+    <div id="progressList"></div>
+  </div>
+  
 
   <!-- filter modal start -->
   <div id="modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-40">
@@ -475,8 +569,11 @@
         const band1_v = document.getElementById("band1").value;
         const band2_v = document.getElementById("band2").value;
 
-        band1 = band1_v.toLowerCase();
-        band2 = band2_v.toLowerCase();
+        tile_params.band1 = band1_v.toLowerCase();
+        tile_params.band2 = band2_v.toLowerCase();
+
+        export_params.band1 = band1_v.toLowerCase(); //setting the same params for now.
+        export_params.band2 = band2_v.toLowerCase();
 
         const mappedBands = new Set();
 
@@ -593,14 +690,14 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         // console.log(templateText); 
 
       if(templateText == "NDVI"){
-        formula = "(band2 - band1) / (band2 + band1)";
-        band1 = 'red';
-        band2 = 'nir';
+        tile_params.formula = "(band2 - band1) / (band2 + band1)";
+        tile_params.band1 = 'red';
+        tile_params.band2 = 'nir';
       }
       else if(templateText == "NDWI"){
-        formula = "(band2 - band1) / (band2 + band1)";
-        band1 = 'swir22';
-        band2 = 'nir';
+        tile_params.formula = "(band2 - band1) / (band2 + band1)";
+        tile_params.band1 = 'swir22';
+        tile_params.band2 = 'nir';
       }
       
     });
@@ -626,21 +723,57 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
       var clickedResultList = false;
       var previousListMouseIn;
 
-      var formula = "(band2-band1)/(band2+band1)";
-      var band1 = "red";
-      var band2 = "nir";
+      var tile_params = {
+          "bbox": "",                  
+          "startDate": "",         
+          "endDate": "",           
+          "cloudCover": 30,        
+          "band1": "visual",        
+          "band2": "nir",           
+          "formula": "band1"
+      }
+
+      var export_params = {
+        "min_x": 0,
+        "min_y": 0,
+        "max_x": 0,
+        "max_y": 0,
+        "startDdate": "2024-01-02",
+        "endDate": "2025-01-01",
+        "cloudCover": 30,
+        "formula": "(band2 - band1) / (band2 + band1)",
+        "band1": "red",
+        "band2": "nir",
+        "operation": "mean",
+        "export_band": "visual",
+        "output_dir": "output"
+      }
+
+      // var formula = "(band2-band1)/(band2+band1)";
+      // var band1 = "red";
+      // var band2 = "nir";
 
       var bounds = map.getBounds();
-      var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
-      document.getElementById("coords").textContent = bbox;
+      tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+      document.getElementById("coords").textContent = tile_params.bbox;
       document.getElementById("zoom-level").textContent = map.getZoom();
 
+      export_params.max_x = bounds.getEast();
+      export_params.max_y = bounds.getNorth();
+      export_params.min_x = bounds.getWest();
+      export_params.min_y = bounds.getSouth();
 
       map.on("moveend", function () {
         bounds = map.getBounds();
-        bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
-        document.getElementById("coords").textContent = bbox;
+        tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+        document.getElementById("coords").textContent = tile_params.bbox;
         document.getElementById("zoom-level").textContent = map.getZoom();
+        
+        //change this to if this tab is active or draw or upload is not done. this is for testing now.
+        export_params.max_x = bounds.getEast();
+        export_params.max_y = bounds.getNorth();
+        export_params.min_x = bounds.getWest();
+        export_params.min_y = bounds.getSouth();
       });
 
       document
@@ -650,10 +783,11 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           document.getElementById("resultTab").click();
 
           var bounds = map.getBounds();
-          var bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
-          var startDate = document.getElementById("start-date").value;
-          var endDate = document.getElementById("end-date").value;
-          var cloudCover = document.getElementById("cloud-cover").value;
+          tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+          tile_params.startDate = document.getElementById("start-date").value;
+          tile_params.endDate = document.getElementById("end-date").value;
+          tile_params.cloudCover = document.getElementById("cloud-cover").value;
+
           var overlayNdvi = function(){if(document.getElementById("selected_filter_value").value() == "NDVI"){ return true} else{return false} };
 
           function createPopup(feature){
@@ -719,7 +853,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           }
 
           fetch(
-            `/search?bbox=${bbox}&start_date=${startDate}&end_date=${endDate}&cloud_cover=${cloudCover}`
+            `/search?bbox=${tile_params.bbox}&start_date=${tile_params.startDate}&end_date=${tile_params.endDate}&cloud_cover=${tile_params.cloudCover}`
           )
             .then((response) => response.json())
             .then((data) => {
@@ -857,7 +991,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
                   map.removeLayer(ndviLayer);
                 }
                 
-                const encodedUrl_tiles = `/tile/{z}/{x}/{y}?start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}&cloud_cover=${encodeURIComponent(cloudCover)}&formula=${encodeURIComponent(formula)}&band1=${encodeURIComponent(band1)}&band2=${encodeURIComponent(band2)}`;
+                const encodedUrl_tiles = `/tile/{z}/{x}/{y}?start_date=${encodeURIComponent(tile_params.startDate)}&end_date=${encodeURIComponent(tile_params.endDate)}&cloud_cover=${encodeURIComponent(tile_params.cloudCover)}&formula=${encodeURIComponent(tile_params.formula)}&band1=${encodeURIComponent(tile_params.band1)}&band2=${encodeURIComponent(tile_params.band2)}`;
                 ndviLayer = L.tileLayer(
                   encodedUrl_tiles,
                   {
@@ -885,6 +1019,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           }
           document.getElementById("feature-list").innerHTML = '<label class="block text-sm font-medium text-gray-400 pt-4">Apply the Filter First!!!</label>';
           setDefaultFilters();
+          setDefaultFiltersExport();
 
           document.getElementById("display-image-count").innerHTML = `Images: `;
         });
@@ -893,6 +1028,13 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         .getElementById("search-clear-button")
         .addEventListener("click", function () {
           document.getElementById("clear-sidebar-button").click();
+        })
+
+        document
+        .getElementById("export-clear-button")
+        .addEventListener("click", function () {
+          document.getElementById("clear-sidebar-button").click();
+
         })
 
       function setDefaultFilters(){
@@ -917,48 +1059,157 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
       }
       setDefaultFilters();
 
+      function setDefaultFiltersExport(){
+        // Set default dates
+        var today = new Date().toISOString().split("T")[0];
+        var lastYear = new Date();
+        lastYear.setFullYear(lastYear.getFullYear() - 1);
+        var lastYearDate = lastYear.toISOString().split("T")[0];
+
+        var lastMonth = new Date(); 
+        lastMonth.setMonth(lastMonth.getMonth() - 1); 
+        lastMonthDate = lastMonth.toISOString().split("T")[0];
 
 
-      /*draw script start */
-          // Initialize the FeatureGroup to store editable layers
-    var drawnItems = new L.FeatureGroup();
-    map.addLayer(drawnItems);
+        document.getElementById("start-date-export").value = lastMonthDate;
+        document.getElementById("end-date-export").value = today;
 
-    // Initialize the draw control and pass it the FeatureGroup of editable layers
-    var drawControl = new L.Control.Draw({
-        edit: {
-            featureGroup: drawnItems
-        },
-        draw: false // Disable built-in draw options
-    });
-    map.addControl(drawControl);
+        document.getElementById("cloud-cover-export").value = "50";
 
-    // Draw handlers
-    var drawHandlers = {
-        point: new L.Draw.Marker(map),
-        polygon: new L.Draw.Polygon(map),
-        rectangle: new L.Draw.Rectangle(map)
-    };
+        document.getElementById("export-map-view-button").classList.add('bg-gray-500', 'pointer-events-none');
+        document.getElementById("export-map-view-button").classList.remove('bg-blue-700');
 
-    // Draw buttons event listeners
-    document.getElementById('draw-point').addEventListener('click', function () {
-        drawHandlers.point.enable();
-    });
-    document.getElementById('draw-polygon').addEventListener('click', function () {
-        drawHandlers.polygon.enable();
-    });
-    document.getElementById('draw-rectangle').addEventListener('click', function () {
-        drawHandlers.rectangle.enable();
-    });
+        document.getElementById("operation_menu").value = "Select Option";
+      }
+      setDefaultFiltersExport();
 
-    // Event for creating new layers
-    map.on(L.Draw.Event.CREATED, function (event) {
-        var layer = event.layer;
-        drawnItems.addLayer(layer);
-    });
-      /*draw script end */
+
+
+//draw start    
+// Initialize the FeatureGroup to store editable layers
+var drawnItems = new L.FeatureGroup();
+map.addLayer(drawnItems);
+
+// Initialize the draw control and pass it the FeatureGroup of editable layers
+var drawControl = new L.Control.Draw({
+    edit: {
+        featureGroup: drawnItems
+    },
+    draw: false // Disable built-in draw options
+});
+map.addControl(drawControl);
+
+// Draw handlers
+var drawHandlers = {
+    point: new L.Draw.Marker(map),
+    polygon: new L.Draw.Polygon(map),
+    rectangle: new L.Draw.Rectangle(map)
+};
+
+// Draw buttons event listeners
+document.getElementById('draw-point').addEventListener('click', function () {
+    // Clear existing layers before drawing a new one
+    drawnItems.clearLayers();
+    drawHandlers.point.enable();
+});
+document.getElementById('draw-polygon').addEventListener('click', function () {
+    // Clear existing layers before drawing a new one
+    drawnItems.clearLayers();
+    drawHandlers.polygon.enable();
+});
+document.getElementById('draw-rectangle').addEventListener('click', function () {
+    // Clear existing layers before drawing a new one
+    drawnItems.clearLayers();
+    drawHandlers.rectangle.enable();
+});
+
+// Convert radius in meters to degrees 
+function metersToDegrees(meters) { 
+    const earthRadius = 6371000; // in meters 
+    const degToRad = Math.PI / 180; 
+    const radToDeg = 180 / Math.PI; 
+    const deltaDeg = meters / (earthRadius * degToRad); 
+    return deltaDeg * radToDeg; 
+}
+
+// Event for creating new layers
+map.on(L.Draw.Event.CREATED, function (event) {
+    // Clear existing layers before adding the new layer
+    drawnItems.clearLayers();
+
+    var layer = event.layer;
+    drawnItems.addLayer(layer);
+
+    // var bbox;
+
+    if (!(layer instanceof L.Marker)) {
+        var bd = layer.getBounds();
+        // tile_params.bbox = `${bd.getWest()},${bd.getSouth()},${bd.getEast()},${bd.getNorth()}`;
+        export_params.max_x = bd.getEast();
+        export_params.max_y = bd.getNorth();
+        export_params.min_x = bd.getWest();
+        export_params.min_y = bd.getSouth();
+
+    } else {
+        var radiusInMeters = 1000; // Example radius in meters
+        var radiusInDegrees = metersToDegrees(radiusInMeters);
+
+        var latlng = layer.getLatLng();
+        var lat = latlng.lat;
+        var lng = latlng.lng;
+
+        // tile_params.bbox = `${lng - radiusInDegrees},${lat - radiusInDegrees},${lng + radiusInDegrees},${lat + radiusInDegrees}`;
+        export_params.max_x = lng + radiusInDegrees;
+        export_params.max_y = lat + radiusInDegrees;
+        export_params.min_x = lng - radiusInDegrees;
+        export_params.min_y = lat - radiusInDegrees;
+    }
+});
+
       
     </script>
+
+
+    <!-- export /compute api start -->
+    <script>
+      document.getElementById("export-map-view-button").addEventListener('click', function() {
+        export_params.startDdate = document.getElementById("start-date-export").value;
+        export_params.endDate = document.getElementById("end-date-export").value;
+        export_params.cloudCover = document.getElementById("cloud-cover-export").value;
+        
+        const url_compute = `/compute?min_x=${export_params.min_x}&min_y=${export_params.min_y}&max_x=${export_params.max_x}&max_y=${export_params.max_y}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&operation=${encodeURIComponent(export_params.operation)}&export_band=${encodeURIComponent(export_params.export_band)}&output_dir=${encodeURIComponent(export_params.output_dir)}`;
+
+        console.log(url_compute);
+        
+        fetch(url_compute, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(export_params)
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+      });
+
+    </script>
+    <!-- export /compute api end -->
+
+    <!-- operation script start  -->
+    <script>
+      document.getElementById("operation_menu").addEventListener('change', function() {
+        export_params.operation = this.value;
+        document.getElementById("export-map-view-button").classList.remove('bg-gray-500', 'pointer-events-none');
+        document.getElementById("export-map-view-button").classList.add('bg-blue-700');
+      });
+
+    </script>
+    <!-- operation script end -->
 
     <!-- upload modal script start -->
     <script>
@@ -1018,6 +1269,18 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
     <!-- upload modal script end -->
 
+    <script>
+      const collapsibleButton = document.getElementById('collapsibleButton');
+      const collapsibleContent = document.getElementById('collapsibleContent');
+      const arrowIcon = document.getElementById('arrowIcon');
+  
+      // Toggle collapsible content visibility
+      collapsibleButton.addEventListener('click', function() {
+          collapsibleContent.classList.toggle('hidden');
+          arrowIcon.classList.toggle('rotate-180'); // Rotate the arrow icon
+      });
+  </script>
+
     <!-- JavaScript to handle modal and populate textarea -->
     <script>
       
@@ -1064,13 +1327,23 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         });
 
         saveFormulaButton.addEventListener('click', function() {
-            formula = queryTextarea.value.toLowerCase();        
-            console.log('formula:', formula);
+            tile_params.formula = queryTextarea.value.toLowerCase(); 
+            export_params.formula = queryTextarea.value.toLowerCase(); //setting the same formula for now (for search and export)
+
+            console.log('formula:', tile_params.formula);
             document.getElementById("formulaHeading").classList.remove('hidden'); 
-            document.getElementById("formulaText").innerHTML = formula;
+            document.getElementById("formulaText").innerHTML = tile_params.formula;
+            document.getElementById("formula-text-export").innerHTML = export_params.formula; 
             closeModalButton.click();
         });
+
+        //open formula modal from export section
+        document.getElementById("setFormula-export").addEventListener('click', function() {
+          document.getElementById("custom-filter").click();
+        });
     });
+
+
 
   </script>
 
@@ -1105,6 +1378,49 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
       });
     });
   </script>
+
+  <!-- computation progress code start -->
+   <script>
+  // Function to start a new computation and update progress
+  function startComputation(name) {
+    const progressList = document.getElementById('progressList');
+    
+    // Create new progress item
+    const progressItem = document.createElement('div');
+    progressItem.className = 'progressItem';
+    progressItem.innerHTML = `
+      <strong>${name}</strong>
+      <div class="progressBar">
+        <div class="progressBarFill" id="${name}_progress"></div>
+      </div>
+    `;
+    
+    // Append new progress item to progress list
+    progressList.appendChild(progressItem);
+    
+    // Simulate progress (for demo purposes)
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 10;
+      if (progress > 100) progress = 100;
+      document.getElementById(`${name}_progress`).style.width = progress + '%';
+      
+      // Remove item if complete
+      if (progress >= 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          progressItem.remove();
+        }, 1000);
+      }
+    }, 500);
+  }
+
+  // Example: Start multiple computations
+  startComputation('Computation 1');
+  startComputation('Computation 2');
+  startComputation('Computation 3');
+  </script>
+  <!-- computation progress code end -->
   
   <!-- export tab script -->
   <script>
