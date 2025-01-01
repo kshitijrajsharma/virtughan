@@ -1,7 +1,7 @@
 import os
 import zipfile
 
-import imageio
+import imageio.v3 as iio
 import matplotlib.pyplot as plt
 import numpy as np
 import rasterio
@@ -111,10 +111,19 @@ def add_text_to_image(image_path, text, cmap="RdYlGn"):
     return temp_image_path
 
 
-def create_gif(image_list, output_path, duration=0.5):
-    images = [imageio.imread(image_path) for image_path in image_list]
-    imageio.mimsave(output_path, images, duration=duration)
+def create_gif(image_list, output_path, duration=10):
+    images = [Image.open(image_path) for image_path in image_list]
+    max_width = max(image.width for image in images)
+    max_height = max(image.height for image in images)
+
+    resized_images = [
+        image.resize((max_width, max_height), Image.LANCZOS) for image in images
+    ]
+
+    iio.imwrite(output_path, resized_images, duration=duration, loop=0)
+
     print(f"Saved GIF to {output_path}")
+
     for image_path in image_list:
         os.remove(image_path)
 
@@ -208,6 +217,17 @@ def save_aggregated_result_with_colormap(
 
     print(f"Saved aggregated custom band result to {output_file}")
     print(f"Saved color-mapped image to {output_file.replace('.tif', '_colormap.png')}")
+
+
+def pad_array(array, target_shape, fill_value=np.nan):
+    """
+    Pad an array to the target shape
+    """
+    pad_width = [
+        (0, max(0, target - current))
+        for current, target in zip(array.shape, target_shape)
+    ]
+    return np.pad(array, pad_width, mode="constant", constant_values=fill_value)
 
 
 def compute(
@@ -315,7 +335,11 @@ def compute(
                     )
 
         if result_list and operation:
-            result_stack = np.ma.stack(result_list)
+
+            max_shape = tuple(max(s) for s in zip(*[arr.shape for arr in result_list]))
+            padded_result_list = [pad_array(arr, max_shape) for arr in result_list]
+            result_stack = np.ma.stack(padded_result_list)
+
             if operation == "mean":
                 result_aggregate = np.ma.mean(result_stack, axis=0)
             elif operation == "median":

@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+import shutil
 import time
 from datetime import datetime, timedelta
 from io import BytesIO
@@ -144,6 +145,8 @@ async def compute_aoi_over_time(
     bbox = list(map(float, bbox.split(",")))
 
     output_dir = "static/export"
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
     background_tasks.add_task(
         run_computation,
         bbox,
@@ -285,7 +288,6 @@ async def cached_generate_tile(
         band2 = band2[0].astype(float)
 
         result = eval(formula)
-        result = np.ma.masked_invalid(result)
         image = apply_colormap(result)
     else:
         inner_bands = band1.shape[0]
@@ -293,7 +295,6 @@ async def cached_generate_tile(
             # Single band image
             band1 = band1[0].astype(float)
             result = eval(formula)
-            result = np.ma.masked_invalid(result)
             image = apply_colormap(result)
         else:
             # Multi band image
