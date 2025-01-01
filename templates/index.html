@@ -324,14 +324,14 @@
                         <div class="absolute inset-0 flex items-center justify-center text-white" style="font-size:10px;" id="search_progress_text">0%</div>
                         <div class="bg-green-500 h-3 rounded transition-all duration-500 ease-in-out" id="search_progress" style="width: 0%"></div>
                       </div>
-                      <div class="flex items-center justify-end mt-2 space-x-4">
+                      <!-- <div class="flex items-center justify-end mt-2 space-x-4">
                         <button title="Download" class="text-gray-500 hover:text-gray-700">
                           <i id = "download-result-image" class="fas fa-download"></i>
                         </button>
                         <button title="View" class="text-gray-500 hover:text-gray-700">
                           <i id = "view-result-image" class="fas fa-eye"></i>
                         </button>
-                      </div>
+                      </div> -->
                     </div>
 
                     <div id = "computeLayerSwitcher" class="progressItem p-2 bg-gray-100 rounded-md shadow-sm hidden">
@@ -351,6 +351,14 @@
                       <div id="compute_progressbar" class="relative w-full bg-gray-300 h-3">
                         <div class="absolute inset-0 flex items-center justify-center text-white" style="font-size:10px;" id="compute_progress_text">0%</div>
                         <div class="bg-green-500 h-3 rounded transition-all duration-500 ease-in-out" id="compute_progress" style="width: 0%"></div>
+                      </div>
+                      <div class="flex items-center justify-end mt-2 space-x-4">
+                        <button title="Download" class="text-gray-500 hover:text-gray-700">
+                          <i id = "download-result-image" class="fas fa-download"></i>
+                        </button>
+                        <button title="View" class="text-gray-500 hover:text-gray-700">
+                          <i id = "view-result-image" class="fas fa-eye"></i>
+                        </button>
                       </div>
                     </div>
                     
@@ -672,7 +680,7 @@
 
 
    <!-- Result and timeslider modal start -->
-   <div id="timeSliderModal" class="modal hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+   <div id="timeSliderModal" class="modal hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-40">
     <div class="modal-content bg-white p-4 rounded-md w-full max-w-md">
       <span class="close text-gray-500 hover:text-gray-700 float-right text-2xl cursor-pointer">&times;</span>
       <h2 class="text-lg font-semibold mb-4">Select Date Range</h2>
@@ -1361,7 +1369,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
         export_params.endDate = document.getElementById("end-date-export").value;
         export_params.cloudCover = document.getElementById("cloud-cover-export").value;
         
-        const url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}`;
+        var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}`;
         // &timeseries=${encodeURIComponent(export_params.timeseries)}
         
         if(document.getElementById("operation").checked){
@@ -1665,25 +1673,50 @@ function startComputation(name) {
 
   <!-- result modal script for result and timeslider start -->
   <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
+   document.addEventListener('DOMContentLoaded', (event) => {
   let isPlaying = false;
   let playInterval;
-  const dates = [
-    '2022-01-01', '2022-02-01', '2022-03-01', '2022-04-01', '2022-05-01', 
-    '2022-06-01', '2022-07-01', '2022-08-01', '2022-09-01', '2022-10-01',
-    '2022-11-01', '2022-12-01'
-  ];
-  const images = [
-    'images/image_2022-01-01.jpg', 'images/image_2022-02-01.jpg', 'images/image_2022-03-01.jpg',
-    'images/image_2022-04-01.jpg', 'images/image_2022-05-01.jpg', 'images/image_2022-06-01.jpg',
-    'images/image_2022-07-01.jpg', 'images/image_2022-08-01.jpg', 'images/image_2022-09-01.jpg',
-    'images/image_2022-10-01.jpg', 'images/image_2022-11-01.jpg', 'images/image_2022-12-01.jpg'
-  ];
-  const totalDates = dates.length;
+  let pngImages = [];
+  let dates = [];
+  
+  // Function to process data
+  function processData(data) {
+    let imageDatePairs = [];
+    
+    for (const [key, value] of Object.entries(data)) {
+      if (key.endsWith('.png')) {
+        const dateMatch = key.match(/\d{8}/);
+        if (dateMatch) {
+          const dateStr = dateMatch[0];
+          const formattedDate = `${dateStr.slice(0, 4)}-${dateStr.slice(4, 6)}-${dateStr.slice(6, 8)}`;
+          imageDatePairs.push({ image: key, date: new Date(formattedDate) });
+        }
+      }
+    }
+    
+    // Sort by date
+    imageDatePairs.sort((a, b) => a.date - b.date);
+    
+    // Separate sorted images and dates
+    pngImages = imageDatePairs.map(pair => pair.image);
+    dates = imageDatePairs.map(pair => pair.date.toISOString().split('T')[0]);
+  }
 
   // Function to open the modal
   function openModal() {
     document.getElementById('timeSliderModal').classList.remove('hidden');
+
+    // Fetch data
+    var utlLists = '/list-files';
+    fetch(utlLists, { method: 'GET' })
+      .then(response => response.json())
+      .then(data => {
+        processData(data);
+        initializeSlider();
+      })
+      .catch((error) => {
+        console.error('Error: ', error);
+      });
   }
 
   // Function to close the modal
@@ -1694,12 +1727,12 @@ function startComputation(name) {
 
   // Function to change the image based on the slider value
   function changeImage() {
-    const sliderValue = document.getElementById('dateRangeSlider').value;
-    const index = Math.round((sliderValue / 100) * (totalDates - 1));
+    const slider = document.getElementById('dateRangeSlider');
+    const index = slider.value;
     const selectedDate = dates[index];
-    const selectedImage = images[index];
+    const selectedImage = pngImages[index];
     
-    document.getElementById('imageView').src = selectedImage;
+    document.getElementById('imageView').src = `static/export/${selectedImage}`;
     document.getElementById('dateDisplay').textContent = new Date(selectedDate).toLocaleDateString();
   }
 
@@ -1713,10 +1746,10 @@ function startComputation(name) {
     
     playInterval = setInterval(() => {
       const slider = document.getElementById('dateRangeSlider');
-      if (slider.value >= 100) {
+      if (slider.value >= dates.length - 1) {
         slider.value = 0;
       } else {
-        slider.value = parseFloat(slider.value) + 1;
+        slider.value = parseInt(slider.value) + 1;
       }
       changeImage();
     }, 1000); // Adjust the interval as needed
@@ -1741,11 +1774,33 @@ function startComputation(name) {
     }
   }
 
-  // Event listeners
+  // Function to initialize the slider and markers
+  function initializeSlider() {
+    const slider = document.getElementById('dateRangeSlider');
+    slider.max = dates.length - 1;
+    slider.step = 1;
+
+    // Event listeners for slider and play/pause button
+    slider.addEventListener('input', changeImage);
+    document.getElementById('playPauseButton').addEventListener('click', togglePlayPause);
+    
+    // Initialize markers for the slider
+    const markersContainer = document.querySelector('.slider-markers');
+    markersContainer.innerHTML = dates.map((date, index) => {
+      if (index % 2 === 0) { // Adjust spacing by showing every 2nd date marker
+        const dateObj = new Date(date);
+        const month = dateObj.toLocaleString('default', { month: 'short' });
+        const day = dateObj.getDate();
+        return `<span>${month} ${day}</span>`;
+      } else {
+        return `<span></span>`;
+      }
+    }).join('');
+  }
+
+  // Event listeners for modal
   document.getElementById('view-result-image').addEventListener('click', openModal);
   document.querySelector('.close').addEventListener('click', closeModal);
-  document.getElementById('dateRangeSlider').addEventListener('input', changeImage);
-  document.getElementById('playPauseButton').addEventListener('click', togglePlayPause);
 
   // Optional: Close the modal when clicking outside of it
   window.addEventListener('click', (event) => {
@@ -1753,14 +1808,10 @@ function startComputation(name) {
       closeModal();
     }
   });
-
-  // Initialize markers for the slider
-  const markersContainer = document.querySelector('.slider-markers');
-  markersContainer.innerHTML = dates.map(date => {
-    const month = new Date(date).toLocaleString('default', { month: 'short' });
-    return `<span>${month}</span>`;
-  }).join('');
 });
+
+
+
 
 
   </script>
