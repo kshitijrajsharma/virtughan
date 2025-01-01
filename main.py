@@ -59,6 +59,21 @@ with open("data/sentinel-2-bands.json") as f:
     sentinel2_assets = json.load(f)
 
 
+@app.get("/list-files")
+async def list_files():
+    directory = "static/export"
+    if not os.path.exists(directory):
+        raise HTTPException(status_code=404, detail="Directory not found")
+
+    files = {}
+    for filename in os.listdir(directory):
+        filepath = os.path.join(directory, filename)
+        if os.path.isfile(filepath):
+            files[filename] = os.path.getsize(filepath)
+
+    return JSONResponse(content=files)
+
+
 @app.get("/sentinel2-bands")
 async def get_sentinel2_bands(
     band: str = Query(None, description="Band name to filter")
