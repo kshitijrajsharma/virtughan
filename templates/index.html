@@ -91,6 +91,82 @@
         background-color: #EDF2F7; /*Tailwind gray-100*/
     }
   </style>
+  <style>
+   /* Tailwind CSS Custom Range Slider */
+/* CSS Custom Range Slider */
+/* Tailwind CSS Custom Range Slider */
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  background: #d3d3d3;
+  border-radius: 5px;
+  outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #007bff;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #007bff;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
+}
+/* 
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(to right, #007bff, #007bff 50%, #d3d3d3 50%, #d3d3d3);
+  border-radius: 5px;
+  outline: none;
+} */
+/* 
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #007bff;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #007bff;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
+} */
+
+/* Adding marks (dates) below the slider */
+.slider + .slider-markers {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+}
+
+.slider + .slider-markers span {
+  font-size: 12px;
+  color: #6b7280; /* Tailwind gray-500 */
+}
+
+  </style>
 
   </head>
   <body>
@@ -162,8 +238,8 @@
                     </li>
                     <li class="template-filters relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1" role="option">
                       <div class="flex items-center">
-                        <img src="static/img/basemap.png" alt="" class="size-5 shrink-0 rounded-full">
-                        <span class="template-filters-value ml-3 block truncate font-normal" value = "visual">Visual</span>
+                        <img src="static/img/visual.png" alt="" class="size-5 shrink-0 rounded-full">
+                        <span class="template-filters-value ml-3 block truncate font-normal" value = "visual">Visual Bands</span>
                       </div>
                       <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
                         <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
@@ -227,7 +303,7 @@
             <div class="tab-panel hidden p-4">
               <!-- Content for Tab 2 -->
               <div id="sidebar">
-                <div id="progressContainer" class="hidden w-full max-w-md mx-auto rounded-lg"> 
+                <div id="progressContainer" class="hidden w-full max-w-md mx-auto rounded-lg pb-4"> 
                   <label class="block text-sm/6 font-medium text-gray-900 pb-2">Output Layer</label> 
                   <div id="progressList" class="space-y-4">
                     <div id = "searchLayerSwitcher" class="progressItem p-2 bg-gray-100 rounded-md shadow-sm hidden">
@@ -247,6 +323,14 @@
                       <div id="search_progressbar" class="relative w-full bg-gray-300 h-3">
                         <div class="absolute inset-0 flex items-center justify-center text-white" style="font-size:10px;" id="search_progress_text">0%</div>
                         <div class="bg-green-500 h-3 rounded transition-all duration-500 ease-in-out" id="search_progress" style="width: 0%"></div>
+                      </div>
+                      <div class="flex items-center justify-end mt-2 space-x-4">
+                        <button title="Download" class="text-gray-500 hover:text-gray-700">
+                          <i id = "download-result-image" class="fas fa-download"></i>
+                        </button>
+                        <button title="View" class="text-gray-500 hover:text-gray-700">
+                          <i id = "view-result-image" class="fas fa-eye"></i>
+                        </button>
                       </div>
                     </div>
 
@@ -272,7 +356,7 @@
                     
                   </div> 
                 </div>              
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between pt-2">
                   <label id = "display-image-count" class="block  font-medium text-gray-900 pb-4">Images: <span class="text-xs"><span></label>
                   <span id="clear-sidebar-button" class="clear-visualize-filter text-gray-500 text-xs"><i class="fa-solid fa-rotate-right"></i> Clear</span>
                 </div>
@@ -408,11 +492,11 @@
                 <div class="mb-4 mt-2">
                   <label class="block text-sm font-medium text-gray-700 pb-4">Select Output Type</label>
                   <div class="flex items-center mb-2">
-                    <input id="operation" type="radio" name="option" class="output_type form-radio h-4 w-4 text-blue-600" checked>
+                    <input id="operation" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600" checked>
                     <label for="operation" class="ml-2 text-sm text-gray-600">Operation</label>
                   </div>
                   <div class="flex items-center">
-                    <input id="timeSeries" type="radio" name="option" class="output_type form-radio h-4 w-4 text-blue-600">
+                    <input id="timeSeries" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600">
                     <label for="timeSeries" class="ml-2 text-sm text-gray-600">Time Series</label>
                   </div>
                 </div>
@@ -586,6 +670,31 @@
 </div>
    <!-- upload modal end -->
 
+
+   <!-- Result and timeslider modal start -->
+   <div id="timeSliderModal" class="modal hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+    <div class="modal-content bg-white p-4 rounded-md w-full max-w-md">
+      <span class="close text-gray-500 hover:text-gray-700 float-right text-2xl cursor-pointer">&times;</span>
+      <h2 class="text-lg font-semibold mb-4">Select Date Range</h2>
+      <div id="imageContainer" class="mb-4">
+        <img id="imageView" class="w-full rounded-md" src="images/image_2022-01-01.jpg" alt="Image">
+      </div>
+      <div id="dateDisplay" class="text-center text-sm text-gray-700 mb-4">Start Date</div>
+      <div class="flex items-center mb-4">
+        <button id="playPauseButton" class="text-gray-500 hover:text-gray-700 mr-2">
+          <i class="fas fa-play" id="playIcon"></i>
+          <i class="fas fa-pause hidden" id="pauseIcon"></i>
+        </button>
+        <input type="range" id="dateRangeSlider" class="slider w-full" min="0" max="100" value="0">
+      </div>
+      <div class="slider-markers flex justify-between text-sm text-gray-700">
+        <!-- Markers will be generated dynamically -->
+      </div>
+    </div>
+  </div>
+  
+   <!-- Result and timeslider modal end -->
+
 </div>
 
   <script>
@@ -745,6 +854,11 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         tile_params.formula = "(band2 - band1) / (band2 + band1)";
         tile_params.band1 = 'swir22';
         tile_params.band2 = 'nir';
+      }
+      else if(templateText == "visual"){
+        tile_params.formula = "visual";
+        tile_params.band1 = 'visual';
+        tile_params.band2 = '';
       }
       
     });
@@ -1247,9 +1361,20 @@ map.on(L.Draw.Event.CREATED, function (event) {
         export_params.endDate = document.getElementById("end-date-export").value;
         export_params.cloudCover = document.getElementById("cloud-cover-export").value;
         
-        const url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&operation=${encodeURIComponent(export_params.operation)}&timeseries=${encodeURIComponent(export_params.timeseries)}`;
-
-        console.log(url_compute);
+        const url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}`;
+        // &timeseries=${encodeURIComponent(export_params.timeseries)}
+        
+        if(document.getElementById("operation").checked){
+          url_compute += "&operation=${encodeURIComponent(export_params.operation)}";
+        }
+        else if(document.getElementById("timeSeries").checked){
+          url_compute += "&timeseries=${encodeURIComponent(export_params.timeseries)}";
+        }
+        else if(document.getElementById("operation").checked && document.getElementById("timeSeries").checked){
+          url_compute += "&operation=${encodeURIComponent(export_params.operation)}&timeseries=${encodeURIComponent(export_params.timeseries)}";
+        }
+        
+        // console.log(url_compute);
         
         fetch(url_compute, { 
           method: 'GET' 
@@ -1303,7 +1428,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
           if(radioId == "operation"){
             document.getElementById("operation-container").classList.remove("hidden");
           }
-          else{
+          else if(radioId == "timeSeries"){
             document.getElementById("operation-container").classList.add("hidden");
             export_params.timeseries = "true";
             export_params.operation = "none";
@@ -1535,6 +1660,111 @@ function startComputation(name) {
   <!-- export tab script end -->
    
   <!-- datepicker end -->
+
+
+
+  <!-- result modal script for result and timeslider start -->
+  <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+  let isPlaying = false;
+  let playInterval;
+  const dates = [
+    '2022-01-01', '2022-02-01', '2022-03-01', '2022-04-01', '2022-05-01', 
+    '2022-06-01', '2022-07-01', '2022-08-01', '2022-09-01', '2022-10-01',
+    '2022-11-01', '2022-12-01'
+  ];
+  const images = [
+    'images/image_2022-01-01.jpg', 'images/image_2022-02-01.jpg', 'images/image_2022-03-01.jpg',
+    'images/image_2022-04-01.jpg', 'images/image_2022-05-01.jpg', 'images/image_2022-06-01.jpg',
+    'images/image_2022-07-01.jpg', 'images/image_2022-08-01.jpg', 'images/image_2022-09-01.jpg',
+    'images/image_2022-10-01.jpg', 'images/image_2022-11-01.jpg', 'images/image_2022-12-01.jpg'
+  ];
+  const totalDates = dates.length;
+
+  // Function to open the modal
+  function openModal() {
+    document.getElementById('timeSliderModal').classList.remove('hidden');
+  }
+
+  // Function to close the modal
+  function closeModal() {
+    document.getElementById('timeSliderModal').classList.add('hidden');
+    stopPlay();
+  }
+
+  // Function to change the image based on the slider value
+  function changeImage() {
+    const sliderValue = document.getElementById('dateRangeSlider').value;
+    const index = Math.round((sliderValue / 100) * (totalDates - 1));
+    const selectedDate = dates[index];
+    const selectedImage = images[index];
+    
+    document.getElementById('imageView').src = selectedImage;
+    document.getElementById('dateDisplay').textContent = new Date(selectedDate).toLocaleDateString();
+  }
+
+  // Function to play the slider automatically
+  function playSlider() {
+    if (isPlaying) return;
+
+    isPlaying = true;
+    document.getElementById('playIcon').classList.add('hidden');
+    document.getElementById('pauseIcon').classList.remove('hidden');
+    
+    playInterval = setInterval(() => {
+      const slider = document.getElementById('dateRangeSlider');
+      if (slider.value >= 100) {
+        slider.value = 0;
+      } else {
+        slider.value = parseFloat(slider.value) + 1;
+      }
+      changeImage();
+    }, 1000); // Adjust the interval as needed
+  }
+
+  // Function to stop the automatic play
+  function stopPlay() {
+    if (!isPlaying) return;
+    
+    isPlaying = false;
+    clearInterval(playInterval);
+    document.getElementById('playIcon').classList.remove('hidden');
+    document.getElementById('pauseIcon').classList.add('hidden');
+  }
+
+  // Function to toggle play/pause
+  function togglePlayPause() {
+    if (isPlaying) {
+      stopPlay();
+    } else {
+      playSlider();
+    }
+  }
+
+  // Event listeners
+  document.getElementById('view-result-image').addEventListener('click', openModal);
+  document.querySelector('.close').addEventListener('click', closeModal);
+  document.getElementById('dateRangeSlider').addEventListener('input', changeImage);
+  document.getElementById('playPauseButton').addEventListener('click', togglePlayPause);
+
+  // Optional: Close the modal when clicking outside of it
+  window.addEventListener('click', (event) => {
+    if (event.target === document.getElementById('timeSliderModal')) {
+      closeModal();
+    }
+  });
+
+  // Initialize markers for the slider
+  const markersContainer = document.querySelector('.slider-markers');
+  markersContainer.innerHTML = dates.map(date => {
+    const month = new Date(date).toLocaleString('default', { month: 'short' });
+    return `<span>${month}</span>`;
+  }).join('');
+});
+
+
+  </script>
+  <!-- result modal end -->
 
   </body>
 </html>
