@@ -1402,6 +1402,28 @@ map.on(L.Draw.Event.CREATED, function (event) {
 
         startComputation('compute');
 
+        //show the progress to the user
+        
+        function checkProcessingStatus() {
+          fetch('/logs', { 
+            method: 'GET' 
+          })
+            .then(response => response.text())
+            .then(data => {
+              console.log('Success:', data);
+              if (data.includes('Processing completed.')) {
+                clearInterval(intervalId);
+                console.log('Processing completed. Stopped checking.');
+              }
+            })
+            .catch((error) => {
+              console.error('Error:', error);
+            });
+        }
+
+        const intervalId = setInterval(checkProcessingStatus, 4000);
+
+
 
         //load tiles in map. i will do it later after this api is developed.
         
@@ -1673,7 +1695,7 @@ function startComputation(name) {
 
   <!-- result modal script for result and timeslider start -->
   <script>
-   document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', (event) => {
   let isPlaying = false;
   let playInterval;
   let pngImages = [];
@@ -1713,9 +1735,14 @@ function startComputation(name) {
       .then(data => {
         processData(data);
         initializeSlider();
+        // Load the first image at start
+        if (pngImages.length > 0 && dates.length > 0) {
+          document.getElementById('imageView').src = `static/export/${pngImages[0]}`;
+          document.getElementById('dateDisplay').textContent = new Date(dates[0]).toLocaleDateString();
+        }
       })
       .catch((error) => {
-        console.error('Error: ', error);
+        console.error('Error:', error);
       });
   }
 
@@ -1809,6 +1836,7 @@ function startComputation(name) {
     }
   });
 });
+
 
 
 
