@@ -91,6 +91,29 @@
         background-color: #EDF2F7; /* Tailwind gray-100 */
     }
   </style>
+  <style>
+    #progressContainer {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .progressItem {
+      margin-bottom: 10px;
+    }
+
+    .progressBar {
+      height: 10px;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progressBarFill {
+      height: 100%;
+      width: 0;
+      background-color: #76c7c0;
+      transition: width 0.3s ease;
+    }
+  </style>
 
   </head>
   <body>
@@ -369,6 +392,11 @@
 
   </div>
   <div id="map" class = "w-full md:w-3/4 min-h-screen md:min-h-full z-0"></div>
+  <div id="progressContainer" style="position: absolute; bottom: 0; right: 0; width: 300px; max-height: 400px; overflow-y: auto; background: rgba(255, 255, 255, 0.8); border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
+    <h4>Computation Progress</h4>
+    <div id="progressList"></div>
+  </div>
+  
 
   <!-- filter modal start -->
   <div id="modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-40">
@@ -706,10 +734,10 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
       }
 
       var export_params = {
-        "min_x": 83.36975097656251,
-        "min_y": 27.839076094777816,
-        "max_x": 84.60433959960939,
-        "max_y": 28.56281321321839,
+        "min_x": 0,
+        "min_y": 0,
+        "max_x": 0,
+        "max_y": 0,
         "startDdate": "2024-01-02",
         "endDate": "2025-01-01",
         "cloudCover": 30,
@@ -760,9 +788,6 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           tile_params.endDate = document.getElementById("end-date").value;
           tile_params.cloudCover = document.getElementById("cloud-cover").value;
 
-          export_params.startDdate = document.getElementById("start-date").value;
-          export_params.endDate = document.getElementById("end-date").value;
-          export_params.cloudCover = document.getElementById("cloud-cover").value;
           var overlayNdvi = function(){if(document.getElementById("selected_filter_value").value() == "NDVI"){ return true} else{return false} };
 
           function createPopup(feature){
@@ -1041,7 +1066,12 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         lastYear.setFullYear(lastYear.getFullYear() - 1);
         var lastYearDate = lastYear.toISOString().split("T")[0];
 
-        document.getElementById("start-date-export").value = lastYearDate;
+        var lastMonth = new Date(); 
+        lastMonth.setMonth(lastMonth.getMonth() - 1); 
+        lastMonthDate = lastMonth.toISOString().split("T")[0];
+
+
+        document.getElementById("start-date-export").value = lastMonthDate;
         document.getElementById("end-date-export").value = today;
 
         document.getElementById("cloud-cover-export").value = "50";
@@ -1143,6 +1173,10 @@ map.on(L.Draw.Event.CREATED, function (event) {
     <!-- export /compute api start -->
     <script>
       document.getElementById("export-map-view-button").addEventListener('click', function() {
+        export_params.startDdate = document.getElementById("start-date-export").value;
+        export_params.endDate = document.getElementById("end-date-export").value;
+        export_params.cloudCover = document.getElementById("cloud-cover-export").value;
+        
         const url_compute = `/compute?min_x=${export_params.min_x}&min_y=${export_params.min_y}&max_x=${export_params.max_x}&max_y=${export_params.max_y}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&operation=${encodeURIComponent(export_params.operation)}&export_band=${encodeURIComponent(export_params.export_band)}&output_dir=${encodeURIComponent(export_params.output_dir)}`;
 
         console.log(url_compute);
@@ -1344,6 +1378,49 @@ map.on(L.Draw.Event.CREATED, function (event) {
       });
     });
   </script>
+
+  <!-- computation progress code start -->
+   <script>
+  // Function to start a new computation and update progress
+  function startComputation(name) {
+    const progressList = document.getElementById('progressList');
+    
+    // Create new progress item
+    const progressItem = document.createElement('div');
+    progressItem.className = 'progressItem';
+    progressItem.innerHTML = `
+      <strong>${name}</strong>
+      <div class="progressBar">
+        <div class="progressBarFill" id="${name}_progress"></div>
+      </div>
+    `;
+    
+    // Append new progress item to progress list
+    progressList.appendChild(progressItem);
+    
+    // Simulate progress (for demo purposes)
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 10;
+      if (progress > 100) progress = 100;
+      document.getElementById(`${name}_progress`).style.width = progress + '%';
+      
+      // Remove item if complete
+      if (progress >= 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          progressItem.remove();
+        }, 1000);
+      }
+    }, 500);
+  }
+
+  // Example: Start multiple computations
+  startComputation('Computation 1');
+  startComputation('Computation 2');
+  startComputation('Computation 3');
+  </script>
+  <!-- computation progress code end -->
   
   <!-- export tab script -->
   <script>
