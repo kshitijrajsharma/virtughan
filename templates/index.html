@@ -88,30 +88,7 @@
   <style>
     .upload-area.dragover {
         border-color: #4A5568; /* Tailwind gray-700 */
-        background-color: #EDF2F7; /* Tailwind gray-100 */
-    }
-  </style>
-  <style>
-    #progressContainer {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .progressItem {
-      margin-bottom: 10px;
-    }
-
-    .progressBar {
-      height: 10px;
-      background-color: #e0e0e0;
-      border-radius: 5px;
-      overflow: hidden;
-    }
-
-    .progressBarFill {
-      height: 100%;
-      width: 0;
-      background-color: #76c7c0;
-      transition: width 0.3s ease;
+        background-color: #EDF2F7; /*Tailwind gray-100*/
     }
   </style>
 
@@ -239,6 +216,9 @@
             <div class="tab-panel hidden p-4">
               <!-- Content for Tab 2 -->
               <div id="sidebar">
+                <div id="progressContainer" class="hidden w-full max-w-md mx-auto rounded-lg"> 
+                  <label class="block text-sm/6 font-medium text-gray-900 pb-2">Output Layer</label> 
+                  <div id="progressList" class="space-y-4"></div> </div>              
                 <div class="flex items-center justify-between">
                   <label id = "display-image-count" class="block  font-medium text-gray-900 pb-4">Images: <span class="text-xs"><span></label>
                   <span id="clear-sidebar-button" class="clear-visualize-filter text-gray-500 text-xs"><i class="fa-solid fa-rotate-right"></i> Clear</span>
@@ -380,7 +360,7 @@
 
               <div class="pb-4 mt-6 float-right">
                 <button id="export-clear-button" class="clear-visualize-filter bg-transparent rounded-lg text-gray-500 text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-solid fa-rotate-right"></i> Clear</button>
-                <button id="export-map-view-button" title= "Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Visualize</button>
+                <button id="export-map-view-button" title= "Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Visualize and Export</button>
                 <button id="export-file-button" title= "Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Export</button>
               </div>
 
@@ -392,10 +372,6 @@
 
   </div>
   <div id="map" class = "w-full md:w-3/4 min-h-screen md:min-h-full z-0"></div>
-  <div id="progressContainer" style="position: absolute; bottom: 0; right: 0; width: 300px; max-height: 400px; overflow-y: auto; background: rgba(255, 255, 255, 0.8); border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
-    <h4>Computation Progress</h4>
-    <div id="progressList"></div>
-  </div>
   
 
   <!-- filter modal start -->
@@ -718,7 +694,8 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
       }).addTo(map);
 
       var geojsonLayer;
-      var ndviLayer;
+      var liveLayer;
+      var computeLayer;
       var highlightedLayer = L.layerGroup();
       var clickedResultList = false;
       var previousListMouseIn;
@@ -734,10 +711,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
       }
 
       var export_params = {
-        "min_x": 0,
-        "min_y": 0,
-        "max_x": 0,
-        "max_y": 0,
+        "bbox": "",
         "startDdate": "2024-01-02",
         "endDate": "2025-01-01",
         "cloudCover": 30,
@@ -745,8 +719,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         "band1": "red",
         "band2": "nir",
         "operation": "mean",
-        "export_band": "visual",
-        "output_dir": "output"
+        "timeseries": "false",
       }
 
       // var formula = "(band2-band1)/(band2+band1)";
@@ -755,25 +728,16 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
       var bounds = map.getBounds();
       tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+      export_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
       document.getElementById("coords").textContent = tile_params.bbox;
       document.getElementById("zoom-level").textContent = map.getZoom();
-
-      export_params.max_x = bounds.getEast();
-      export_params.max_y = bounds.getNorth();
-      export_params.min_x = bounds.getWest();
-      export_params.min_y = bounds.getSouth();
 
       map.on("moveend", function () {
         bounds = map.getBounds();
         tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+        export_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
         document.getElementById("coords").textContent = tile_params.bbox;
         document.getElementById("zoom-level").textContent = map.getZoom();
-        
-        //change this to if this tab is active or draw or upload is not done. this is for testing now.
-        export_params.max_x = bounds.getEast();
-        export_params.max_y = bounds.getNorth();
-        export_params.min_x = bounds.getWest();
-        export_params.min_y = bounds.getSouth();
       });
 
       document
@@ -781,6 +745,8 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         .addEventListener("click", function () {
           //goto next tab to show result
           document.getElementById("resultTab").click();
+          document.getElementById("progressContainer").classList.remove("hidden");
+          startComputation('Computation1');
 
           var bounds = map.getBounds();
           tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
@@ -788,7 +754,6 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           tile_params.endDate = document.getElementById("end-date").value;
           tile_params.cloudCover = document.getElementById("cloud-cover").value;
 
-          var overlayNdvi = function(){if(document.getElementById("selected_filter_value").value() == "NDVI"){ return true} else{return false} };
 
           function createPopup(feature){
             var popupContent = `
@@ -986,13 +951,13 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
               document.getElementById("sidebar").style.display = "block";
 
-              if (overlayNdvi) {
-                if (ndviLayer) {
-                  map.removeLayer(ndviLayer);
+             
+                if (liveLayer) {
+                  map.removeLayer(liveLayer);
                 }
                 
                 const encodedUrl_tiles = `/tile/{z}/{x}/{y}?start_date=${encodeURIComponent(tile_params.startDate)}&end_date=${encodeURIComponent(tile_params.endDate)}&cloud_cover=${encodeURIComponent(tile_params.cloudCover)}&formula=${encodeURIComponent(tile_params.formula)}&band1=${encodeURIComponent(tile_params.band1)}&band2=${encodeURIComponent(tile_params.band2)}`;
-                ndviLayer = L.tileLayer(
+                liveLayer = L.tileLayer(
                   encodedUrl_tiles,
                   {
                     tileSize: 256,
@@ -1001,7 +966,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
                       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
                   }
                 ).addTo(map);
-              }
+              
             });
         });
 
@@ -1014,8 +979,8 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           if (highlightedLayer) {
             map.removeLayer(highlightedLayer);
           }
-          if (ndviLayer) {
-            map.removeLayer(ndviLayer);
+          if (liveLayer) {
+            map.removeLayer(liveLayer);
           }
           document.getElementById("feature-list").innerHTML = '<label class="block text-sm font-medium text-gray-400 pt-4">Apply the Filter First!!!</label>';
           setDefaultFilters();
@@ -1082,9 +1047,10 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         document.getElementById("operation_menu").value = "Select Option";
       }
       setDefaultFiltersExport();
+</script>
 
 
-
+<script>
 //draw start    
 // Initialize the FeatureGroup to store editable layers
 var drawnItems = new L.FeatureGroup();
@@ -1140,15 +1106,9 @@ map.on(L.Draw.Event.CREATED, function (event) {
     var layer = event.layer;
     drawnItems.addLayer(layer);
 
-    // var bbox;
-
     if (!(layer instanceof L.Marker)) {
         var bd = layer.getBounds();
-        // tile_params.bbox = `${bd.getWest()},${bd.getSouth()},${bd.getEast()},${bd.getNorth()}`;
-        export_params.max_x = bd.getEast();
-        export_params.max_y = bd.getNorth();
-        export_params.min_x = bd.getWest();
-        export_params.min_y = bd.getSouth();
+        export_params.bbox = `${bd.getWest()},${bd.getSouth()},${bd.getEast()},${bd.getNorth()}`;
 
     } else {
         var radiusInMeters = 1000; // Example radius in meters
@@ -1158,47 +1118,102 @@ map.on(L.Draw.Event.CREATED, function (event) {
         var lat = latlng.lat;
         var lng = latlng.lng;
 
-        // tile_params.bbox = `${lng - radiusInDegrees},${lat - radiusInDegrees},${lng + radiusInDegrees},${lat + radiusInDegrees}`;
-        export_params.max_x = lng + radiusInDegrees;
-        export_params.max_y = lat + radiusInDegrees;
-        export_params.min_x = lng - radiusInDegrees;
-        export_params.min_y = lat - radiusInDegrees;
+        export_params.bbox = `${lng - radiusInDegrees},${lat - radiusInDegrees},${lng + radiusInDegrees},${lat + radiusInDegrees}`;
     }
 });
 
       
     </script>
 
+<!-- draw end -->
 
-    <!-- export /compute api start -->
+<script>
+        //for all dynamic html contents event register
+        //layer switching functionality
+        document.addEventListener('click', function(event) {
+          if (event.target && event.target.classList.contains('layerSwitcher')) {
+            const layerId = event.target.id;
+            console.log('Layer ID:', layerId);
+            checkedStatus = document.getElementById(layerId).checked;
+            if(layerId == "Computation1_layer"){
+                if(checkedStatus == true){
+                  map.addLayer(liveLayer);
+                }
+                else{
+                  map.removeLayer(liveLayer);
+                }
+            }
+            else{
+
+            }
+            
+          }
+
+          //zoom to layer click on layerswitcher
+          if (event.target && event.target.classList.contains('zoom-to-layer')) {
+            const zoomId = event.target.id;
+            console.log('zoom ID:', zoomId);
+
+            if(zoomId == "Computation1_zoom"){
+              //get bound at the time of apply and fit it. I will do it later.
+            }
+          }
+        });
+
+        
+
+</script>
+
+    <!-- /export api start -->
     <script>
       document.getElementById("export-map-view-button").addEventListener('click', function() {
         export_params.startDdate = document.getElementById("start-date-export").value;
         export_params.endDate = document.getElementById("end-date-export").value;
         export_params.cloudCover = document.getElementById("cloud-cover-export").value;
         
-        const url_compute = `/compute?min_x=${export_params.min_x}&min_y=${export_params.min_y}&max_x=${export_params.max_x}&max_y=${export_params.max_y}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&operation=${encodeURIComponent(export_params.operation)}&export_band=${encodeURIComponent(export_params.export_band)}&output_dir=${encodeURIComponent(export_params.output_dir)}`;
+        const url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&operation=${encodeURIComponent(export_params.operation)}&timeseries=${encodeURIComponent(export_params.timeseries)}`;
 
         console.log(url_compute);
         
-        fetch(url_compute, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(export_params)
-        })
-        .then(response => response.json())
+        fetch(url_compute, { 
+          method: 'GET' 
+        }) 
+        .then(response => response.json()) 
         .then(data => {
           console.log('Success:', data);
         })
         .catch((error) => {
           console.error('Error:', error);
         });
+        
+        //Open Result Tab
+        document.getElementById("resultTab").click();
+        document.getElementById("progressContainer").classList.remove("hidden");
+
+        startComputation('Computation2');
+
+
+        //load tiles in map. i will do it later after this api is developed.
+        
+        // if (computeLayer) {
+        //   map.removeLayer(computeLayer);
+        // }
+                
+        // const encodedUrl_tiles = `/tile/{z}/{x}/{y}?start_date=${encodeURIComponent(tile_params.startDate)}&end_date=${encodeURIComponent(tile_params.endDate)}&cloud_cover=${encodeURIComponent(tile_params.cloudCover)}&formula=${encodeURIComponent(tile_params.formula)}&band1=${encodeURIComponent(tile_params.band1)}&band2=${encodeURIComponent(tile_params.band2)}`;
+        // computeLayer = L.tileLayer(
+        //     encodedUrl_tiles,
+        //     {
+        //       tileSize: 256,
+        //       opacity: 0.8,
+        //       attribution:
+        //         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        //     }
+        // ).addTo(map);
+
       });
 
     </script>
-    <!-- export /compute api end -->
+    <!-- /export api end -->
 
     <!-- operation script start  -->
     <script>
@@ -1381,44 +1396,63 @@ map.on(L.Draw.Event.CREATED, function (event) {
 
   <!-- computation progress code start -->
    <script>
-  // Function to start a new computation and update progress
-  function startComputation(name) {
-    const progressList = document.getElementById('progressList');
-    
-    // Create new progress item
-    const progressItem = document.createElement('div');
-    progressItem.className = 'progressItem';
-    progressItem.innerHTML = `
-      <strong>${name}</strong>
-      <div class="progressBar">
-        <div class="progressBarFill" id="${name}_progress"></div>
+// Function to start a new computation and update progress
+function startComputation(name) {
+  const progressList = document.getElementById('progressList');
+  
+  // Create new progress item
+  const progressItem = document.createElement('div');
+  progressItem.className = 'progressItem p-2 bg-gray-100 rounded-md shadow-sm';
+  progressItem.innerHTML = `
+    <div class="flex items-center justify-between mb-2">
+      <div class="flex items-center space-x-2">
+        <input id="${name}_layer" type="checkbox" class="layerSwitcher form-checkbox h-4 w-4 text-blue-600" checked>
+        <label class="block text-sm/6 font-medium text-gray-700">${name}</label> 
       </div>
-    `;
-    
-    // Append new progress item to progress list
-    progressList.appendChild(progressItem);
-    
-    // Simulate progress (for demo purposes)
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.random() * 10;
-      if (progress > 100) progress = 100;
-      document.getElementById(`${name}_progress`).style.width = progress + '%';
-      
-      // Remove item if complete
-      if (progress >= 100) {
-        clearInterval(interval);
-        setTimeout(() => {
-          progressItem.remove();
-        }, 1000);
-      }
-    }, 500);
-  }
+      <button title="Zoom to Layer" class="text-gray-500 hover:text-gray-700">
+        <i id ="${name}_zoom" class="zoom-to-layer fas fa-search-plus "></i>
+      </button>
+    </div>
 
-  // Example: Start multiple computations
-  startComputation('Computation 1');
-  startComputation('Computation 2');
-  startComputation('Computation 3');
+    <div class="flex items-center mb-2">
+      <span class="text-sm mr-2">Transparency:</span>
+      <input type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
+    </div>
+    <div id="${name}_progressbar" class="relative w-full bg-gray-300 h-3">
+      <div class="absolute inset-0 flex items-center justify-center text-white" style="font-size:10px;" id="${name}_progress_text">0%</div>
+      <div class="bg-green-500 h-3 rounded transition-all duration-500 ease-in-out" id="${name}_progress" style="width: 0%"></div>
+    </div>
+  `;
+  
+  // Append new progress item to progress list
+  progressList.appendChild(progressItem);
+  
+  // Simulate progress (for demo purposes)
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.random() * 10;
+    if (progress > 100) progress = 100;
+    document.getElementById(`${name}_progress`).style.width = progress + '%';
+    document.getElementById(`${name}_progress_text`).textContent = `${Math.floor(progress)}%`;
+    
+    // Remove progress bar if complete
+    if (progress >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        const progressBar = document.getElementById(`${name}_progressbar`);
+        if (progressBar) {
+          progressBar.remove();
+        }
+      }, 1000);
+    }
+  }, 500);
+}
+
+// Start multiple computations
+
+// startComputation('Computation 2');
+// startComputation('Computation 3');
+
   </script>
   <!-- computation progress code end -->
   
