@@ -160,6 +160,17 @@
                         </svg>
                       </span>
                     </li>
+                    <li class="template-filters relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1" role="option">
+                      <div class="flex items-center">
+                        <img src="static/img/basemap.png" alt="" class="size-5 shrink-0 rounded-full">
+                        <span class="template-filters-value ml-3 block truncate font-normal" value = "visual">Visual</span>
+                      </div>
+                      <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+                        <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
+                          <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                    </li>
                     <hr/>
                     <li id = "custom-filter" class="relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1" role="option">
                       <div class="flex items-center">
@@ -218,7 +229,49 @@
               <div id="sidebar">
                 <div id="progressContainer" class="hidden w-full max-w-md mx-auto rounded-lg"> 
                   <label class="block text-sm/6 font-medium text-gray-900 pb-2">Output Layer</label> 
-                  <div id="progressList" class="space-y-4"></div> </div>              
+                  <div id="progressList" class="space-y-4">
+                    <div id = "searchLayerSwitcher" class="progressItem p-2 bg-gray-100 rounded-md shadow-sm hidden">
+                      <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                          <input id="search_layer" type="checkbox" class="layerSwitcher form-checkbox h-4 w-4 text-blue-600" checked>
+                          <label class="block text-sm/6 font-medium text-gray-700">search</label>
+                        </div>
+                        <button title="Zoom to Layer" class="text-gray-500 hover:text-gray-700">
+                          <i id="search_zoom" class="zoom-to-layer fas fa-search-plus"></i>
+                        </button>
+                      </div>
+                      <div class="flex items-center mb-2">
+                        <span class="text-sm mr-2">Transparency:</span>
+                        <input type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
+                      </div>
+                      <div id="search_progressbar" class="relative w-full bg-gray-300 h-3">
+                        <div class="absolute inset-0 flex items-center justify-center text-white" style="font-size:10px;" id="search_progress_text">0%</div>
+                        <div class="bg-green-500 h-3 rounded transition-all duration-500 ease-in-out" id="search_progress" style="width: 0%"></div>
+                      </div>
+                    </div>
+
+                    <div id = "computeLayerSwitcher" class="progressItem p-2 bg-gray-100 rounded-md shadow-sm hidden">
+                      <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                          <input id="compute_layer" type="checkbox" class="layerSwitcher form-checkbox h-4 w-4 text-blue-600" checked>
+                          <label class="block text-sm/6 font-medium text-gray-700">compute</label>
+                        </div>
+                        <button title="Zoom to Layer" class="text-gray-500 hover:text-gray-700">
+                          <i id="compute_zoom" class="zoom-to-layer fas fa-search-plus"></i>
+                        </button>
+                      </div>
+                      <div class="flex items-center mb-2">
+                        <span class="text-sm mr-2">Transparency:</span>
+                        <input type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
+                      </div>
+                      <div id="compute_progressbar" class="relative w-full bg-gray-300 h-3">
+                        <div class="absolute inset-0 flex items-center justify-center text-white" style="font-size:10px;" id="compute_progress_text">0%</div>
+                        <div class="bg-green-500 h-3 rounded transition-all duration-500 ease-in-out" id="compute_progress" style="width: 0%"></div>
+                      </div>
+                    </div>
+                    
+                  </div> 
+                </div>              
                 <div class="flex items-center justify-between">
                   <label id = "display-image-count" class="block  font-medium text-gray-900 pb-4">Images: <span class="text-xs"><span></label>
                   <span id="clear-sidebar-button" class="clear-visualize-filter text-gray-500 text-xs"><i class="fa-solid fa-rotate-right"></i> Clear</span>
@@ -764,7 +817,8 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           //goto next tab to show result
           document.getElementById("resultTab").click();
           document.getElementById("progressContainer").classList.remove("hidden");
-          startComputation('Computation1');
+          document.getElementById("searchLayerSwitcher").classList.remove("hidden");
+          startComputation('search');
 
           var bounds = map.getBounds();
           tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
@@ -1011,6 +1065,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         .getElementById("search-clear-button")
         .addEventListener("click", function () {
           document.getElementById("clear-sidebar-button").click();
+          document.getElementById("searchLayerSwitcher").classList.add("hidden");
         })
 
         document
@@ -1018,6 +1073,8 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         .addEventListener("click", function () {
           document.getElementById("clear-sidebar-button").click();
           document.getElementById("custom-formula-view-export").classList.add('hidden'); 
+
+          document.getElementById("computeLayerSwitcher").classList.add("hidden");
 
         })
 
@@ -1154,7 +1211,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
             const layerId = event.target.id;
             console.log('Layer ID:', layerId);
             checkedStatus = document.getElementById(layerId).checked;
-            if(layerId == "Computation1_layer"){
+            if(layerId == "search_layer"){
                 if(checkedStatus == true){
                   map.addLayer(liveLayer);
                 }
@@ -1173,7 +1230,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
             const zoomId = event.target.id;
             console.log('zoom ID:', zoomId);
 
-            if(zoomId == "Computation1_zoom"){
+            if(zoomId == "search_zoom"){
               //get bound at the time of apply and fit it. I will do it later.
             }
           }
@@ -1208,8 +1265,9 @@ map.on(L.Draw.Event.CREATED, function (event) {
         //Open Result Tab
         document.getElementById("resultTab").click();
         document.getElementById("progressContainer").classList.remove("hidden");
+        document.getElementById("computeLayerSwitcher").classList.remove("hidden");
 
-        startComputation('Computation2');
+        startComputation('compute');
 
 
         //load tiles in map. i will do it later after this api is developed.
@@ -1248,6 +1306,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
           else{
             document.getElementById("operation-container").classList.add("hidden");
             export_params.timeseries = "true";
+            export_params.operation = "none";
 
             document.getElementById("export-map-view-button").classList.remove('bg-gray-500', 'pointer-events-none');
             document.getElementById("export-map-view-button").classList.add('bg-blue-700');
@@ -1438,39 +1497,11 @@ map.on(L.Draw.Event.CREATED, function (event) {
   <!-- computation progress code start -->
    <script>
 // Function to start a new computation and update progress
-function startComputation(name) {
-  const progressList = document.getElementById('progressList');
-  
-  // Create new progress item
-  const progressItem = document.createElement('div');
-  progressItem.className = 'progressItem p-2 bg-gray-100 rounded-md shadow-sm';
-  progressItem.innerHTML = `
-    <div class="flex items-center justify-between mb-2">
-      <div class="flex items-center space-x-2">
-        <input id="${name}_layer" type="checkbox" class="layerSwitcher form-checkbox h-4 w-4 text-blue-600" checked>
-        <label class="block text-sm/6 font-medium text-gray-700">${name}</label> 
-      </div>
-      <button title="Zoom to Layer" class="text-gray-500 hover:text-gray-700">
-        <i id ="${name}_zoom" class="zoom-to-layer fas fa-search-plus "></i>
-      </button>
-    </div>
-
-    <div class="flex items-center mb-2">
-      <span class="text-sm mr-2">Transparency:</span>
-      <input type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
-    </div>
-    <div id="${name}_progressbar" class="relative w-full bg-gray-300 h-3">
-      <div class="absolute inset-0 flex items-center justify-center text-white" style="font-size:10px;" id="${name}_progress_text">0%</div>
-      <div class="bg-green-500 h-3 rounded transition-all duration-500 ease-in-out" id="${name}_progress" style="width: 0%"></div>
-    </div>
-  `;
-  
-  // Append new progress item to progress list
-  progressList.appendChild(progressItem);
-  
+function startComputation(name) {  
   // Simulate progress (for demo purposes)
   let progress = 0;
   const interval = setInterval(() => {
+    console.log(name);
     progress += Math.random() * 10;
     if (progress > 100) progress = 100;
     document.getElementById(`${name}_progress`).style.width = progress + '%';
@@ -1482,7 +1513,7 @@ function startComputation(name) {
       setTimeout(() => {
         const progressBar = document.getElementById(`${name}_progressbar`);
         if (progressBar) {
-          progressBar.remove();
+          // progressBar.remove();
         }
       }, 1000);
     }
