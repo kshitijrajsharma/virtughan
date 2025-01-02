@@ -149,6 +149,16 @@ async def compute_aoi_over_time(
             content={"error": "Band1 is required"},
             status_code=400,
         )
+
+    valid_operations = ["mean", "median", "max", "min", "std", "sum", "var", "mode"]
+    if operation and operation not in valid_operations:
+        return JSONResponse(
+            content={
+                "error": f"Invalid operation {operation}. Choose from 'mean', 'median', 'max', 'min', 'std', 'sum', 'var', 'mode'."
+            },
+            status_code=400,
+        )
+
     bbox = list(map(float, bbox.split(",")))
 
     output_dir = "static/export"
