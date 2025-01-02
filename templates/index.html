@@ -1391,7 +1391,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
           })
             .then(response => response.text())
             .then(data => {
-              console.log('Success log:', data);
+              // console.log('Success log:', data);
               updateProgress(data);
               if (data.includes('Processing completed.')) {
                 clearInterval(intervalId);
@@ -1449,8 +1449,8 @@ map.on(L.Draw.Event.CREATED, function (event) {
      
     <script>
       document.addEventListener('DOMContentLoaded', (event) => {
-      document.querySelectorAll('.output_type').forEach((radio) => {
-        radio.addEventListener('change', function(event){
+      document.querySelectorAll('.output_type').forEach((checkbox) => {
+        checkbox.addEventListener('change', function(event){
           // const radioId = event.target.id;
           var checkedStatusOperation = document.getElementById("operation").checked;
           var checkedStatustimeSeries = document.getElementById("timeSeries").checked;
@@ -1461,12 +1461,11 @@ map.on(L.Draw.Event.CREATED, function (event) {
           }
           else{
             export_params.operation = "none";
+            document.getElementById("operation-container").classList.add("hidden");
           }
 
           if(checkedStatustimeSeries){
-            document.getElementById("operation-container").classList.add("hidden");
             export_params.timeseries = "true";
-        
 
             document.getElementById("export-map-view-button").classList.remove('bg-gray-500', 'pointer-events-none');
             document.getElementById("export-map-view-button").classList.add('bg-blue-700');
@@ -1661,42 +1660,37 @@ map.on(L.Draw.Event.CREATED, function (event) {
    <script>
     // Function to start a new computation and update progress
     function startProgressComputation(name, progress) {
-  // Update progress based on fetched data
-  const progressBar = document.getElementById(`${name}_progress`);
-  const progressBarContainer = document.getElementById(`${name}_progressbar`);
+      // Update progress based on fetched data
+      const progressBar = document.getElementById(`${name}_progress`);
+      const progressBarContainer = document.getElementById(`${name}_progressbar`);
 
-  progressBar.style.width = progress + '%';
-  document.getElementById(`${name}_progress_text`).textContent = `${Math.floor(progress)}%`;
+      progressBar.style.width = progress + '%';
+      document.getElementById(`${name}_progress_text`).textContent = `${Math.floor(progress)}%`;
 
-  // Hide progress bar if complete
-  if (progress >= 100) {
-    setTimeout(() => {
-      if (progressBarContainer) {
-        progressBarContainer.style.display = 'none';
-        document.getElementById("after-compute-buttons").classList.remove("hidden");
+      // Hide progress bar if complete
+      if (progress >= 100) {
+        setTimeout(() => {
+          if (progressBarContainer) {
+            progressBarContainer.style.display = 'none';
+            document.getElementById("after-compute-buttons").classList.remove("hidden");
+          }
+        }, 1000);
+      } else {
+        // Ensure progress bar is visible if not complete
+        if (progressBarContainer) {
+          progressBarContainer.style.display = 'block';
+        }
       }
-    }, 1000);
-  } else {
-    // Ensure progress bar is visible if not complete
-    if (progressBarContainer) {
+    }
+
+    function displayNoImageFoundMessage() {
+      const progressBarContainer = document.getElementById('compute_progressbar');
+      const progressText = document.getElementById('compute_progress_text');
+      
+      progressText.textContent = 'No image found/ try smaller AOI';
+      progressText.style.color = 'red';
       progressBarContainer.style.display = 'block';
     }
-  }
-}
-
-function displayNoImageFoundMessage() {
-  const progressBarContainer = document.getElementById('compute_progressbar');
-  const progressText = document.getElementById('compute_progress_text');
-  
-  progressText.textContent = 'No image found/ try smaller AOI';
-  progressText.style.color = 'red';
-  progressBarContainer.style.display = 'block';
-}
-
-// Start multiple computations
-
-// startProgressComputation('Computation 2');
-// startProgressComputation('Computation 3');
 
   </script>
   <!-- computation progress code end -->
@@ -1915,7 +1909,44 @@ function displayNoImageFoundMessage() {
 });
 
   </script>
-  <!-- result modal end -->
+    <!-- result modal end -->
+
+  <!-- download file script -->
+  <script>
+      document.addEventListener('DOMContentLoaded', (event) => {
+        // Add click event listener for the download icon
+        document.getElementById('download-result-image').addEventListener('click', downloadResult);
+      });
+
+      function downloadResult() {
+        const operationChecked = document.getElementById('operation').checked;
+        const timeSeriesChecked = document.getElementById('timeSeries').checked;
+        
+        if (operationChecked && !timeSeriesChecked) {
+          // Download .tif file for operation
+          window.location.href = 'static/export/custom_band_output_aggregate.tif';
+        } else if (timeSeriesChecked && !operationChecked) {
+          // Download .zip file for time series
+          window.location.href = 'static/export/timeseries.zip';
+        } else if (operationChecked && timeSeriesChecked) {
+          // Download both files
+          downloadFile('static/export/custom_band_output_aggregate.tif');
+          downloadFile('static/export/timeseries.zip');
+        }
+      }
+
+      function downloadFile(filePath) {
+        const link = document.createElement('a');
+        link.href = filePath;
+        link.download = filePath.split('/').pop();
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+  </script>
+  <!-- download file script end -->
+
 
   </body>
 </html>
