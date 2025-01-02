@@ -121,17 +121,44 @@
       cursor: pointer;
       box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
     }
-/* Adding marks (dates) below the slider */
-.slider + .slider-markers {
-  display: flex;
-  justify-content: space-between;
-  padding-top: 10px;
-}
+    /* Adding marks (dates) below the slider */
+    .slider + .slider-markers {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 10px;
+    }
 
-.slider + .slider-markers span {
-  font-size: 12px;
-  color: #6b7280; /* Tailwind gray-500 */
-}
+    .slider + .slider-markers span {
+      font-size: 12px;
+      color: #6b7280; /* Tailwind gray-500 */
+    }
+
+  </style>
+
+  <style>
+    .legend {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background-color: white;
+      padding: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      margin-right: 5px;
+    }
 
   </style>
 
@@ -270,9 +297,9 @@
             <div class="tab-panel hidden p-4">
               <!-- Content for Tab 2 -->
               <div id="sidebar">
-                <div id="progressContainer" class="hidden w-full max-w-md mx-auto rounded-lg pb-4"> 
+                <div id="layerSwitcherContainer" class="hidden w-full max-w-md mx-auto rounded-lg pb-4"> 
                   <label class="block text-sm/6 font-medium text-gray-900 pb-2">Output Layer</label> 
-                  <div id="progressList" class="space-y-4">
+                  <div id="layerSwitcherList" class="">
                     <div id = "searchLayerSwitcher" class="progressItem p-2 bg-gray-100 rounded-md shadow-sm hidden">
                       <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center space-x-2">
@@ -301,33 +328,62 @@
                       </div> -->
                     </div>
 
-                    <div id = "computeLayerSwitcher" class="progressItem p-2 bg-gray-100 rounded-md shadow-sm hidden">
+                    <div id="computeLayerSwitcher" class="progressItem p-2 bg-gray-100 rounded-md shadow-sm hidden">
+                      <div id = "layerSwitcherBox" class = "hidden">
                       <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center space-x-2">
                           <input id="compute_layer" type="checkbox" class="layerSwitcher form-checkbox h-4 w-4 text-blue-600" checked>
-                          <label class="block text-sm/6 font-medium text-gray-700">compute</label>
+                          <label for="compute_layer" class="block text-sm font-medium text-gray-700">Compute</label>
                         </div>
                         <button title="Zoom to Layer" class="text-gray-500 hover:text-gray-700">
                           <i id="compute_zoom" class="zoom-to-layer fas fa-search-plus"></i>
                         </button>
                       </div>
                       <div class="flex items-center mb-2">
-                        <span class="text-sm mr-2">Transparency:</span>
-                        <input type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
+                        <label for="transparency" class="text-sm mr-2">Transparency:</label>
+                        <input id="transparency" type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
                       </div>
-                      <div id="compute_progressbar" class="relative w-full bg-gray-300 h-3">
-                        <div class="absolute inset-0 flex items-center justify-center text-white" style="font-size:10px;" id="compute_progress_text">0%</div>
-                        <div class="bg-green-500 h-3 rounded transition-all duration-500 ease-in-out" id="compute_progress" style="width: 0%"></div>
+                      <div class="mb-2 w-full">
+                        <div class="text-sm">Color Palette:</div>
+                        <select id="paletteSelect" class="form-select mt-1 w-full">
+                          <option value="Viridis" style="background: linear-gradient(to right, #440154, #FDE724);">Viridis</option>
+                          <option value="Plasma" style="background: linear-gradient(to right, #0D0887, #FCA636);">Plasma</option>
+                          <option value="Magma" style="background: linear-gradient(to right, #000004, #FE9F6D);">Magma</option>
+                          <option value="Inferno" style="background: linear-gradient(to right, #000004, #FEA97D);">Inferno</option>
+                          <option value="Cividis" style="background: linear-gradient(to right, #00204C, #FFFFD8);">Cividis</option>
+                          <option value="Spectral" style="background: linear-gradient(to right, #9E0142, #66C2A5);">Spectral</option>
+                          <option value="Jet" style="background: linear-gradient(to right, #000083, #FF0000);">Jet</option>
+                          <option value="HSV" style="background: linear-gradient(to right, #FF0000, #CC00FF);">HSV</option>
+                          <option value="Cool" style="background: linear-gradient(to right, #00FFFF, #FFCC88);">Cool</option>
+                          <option value="Spring" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Spring</option>
+                        </select>
                       </div>
-                      <div id = "after-compute-buttons" class="flex items-center justify-end mt-2 space-x-4 hidden">
+                      <div id="after-compute-buttons" class="flex items-center justify-end mt-2 space-x-4 hidden">
                         <button title="Download" class="text-gray-500 hover:text-gray-700">
-                          <i id = "download-result-image" class="fas fa-download"></i>
+                          <i id="download-result-image" class="fas fa-download"></i>
                         </button>
                         <button title="View" class="text-gray-500 hover:text-gray-700">
-                          <i id = "view-result-image" class="fas fa-eye"></i>
+                          <i id="view-result-image" class="fas fa-eye"></i>
                         </button>
                       </div>
+                      </div>
+                      
+                      <div id="compute_progressbar" class="relative w-full">
+                        <div class="mb-4">
+                          <label class="block text-xs font-medium text-gray-900 pb-2">Computation Progress</label>
+                          <ul id="ProgressTextsBefore" class="list-none list-inside text-sm text-gray-700 mb-2">
+                            <li style = "font-size: 10px;">Please Wait Computing...</li>
+                          </ul>
+                        </div>
+                        <div class="relative w-full bg-gray-300 h-3 rounded mt-4">
+                          <div class="absolute inset-0 flex items-center justify-center text-white text-xs" id="compute_progress_text">0%</div>
+                          <div class="bg-green-500 h-full rounded transition-all duration-500 ease-in-out" id="compute_progress" style="width: 0%"></div>
+                        </div>
+                      </div>
+                      
+                      
                     </div>
+                          
                     
                   </div> 
                 </div>              
@@ -502,6 +558,7 @@
 
   </div>
   <div id="map" class = "w-full md:w-3/4 min-h-screen md:min-h-full z-0"></div>
+  <div id="legend" class="legend"></div>
   
 
   <!-- filter modal start -->
@@ -859,6 +916,8 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
     <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
     <script src="https://unpkg.com/georaster"></script>
     <script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
     <script>
       var map = L.map("map").setView([28.202082, 83.987222], 10);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -918,7 +977,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         .addEventListener("click", function () {
           //goto next tab to show result
           document.getElementById("resultTab").click();
-          document.getElementById("progressContainer").classList.remove("hidden");
+          document.getElementById("layerSwitcherContainer").classList.remove("hidden");
           document.getElementById("searchLayerSwitcher").classList.remove("hidden");
           startProgressComputation('search', null);
 
@@ -1314,7 +1373,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
             console.log('Layer ID:', layerId);
             checkedStatus = document.getElementById(layerId).checked;
             if(layerId == "search_layer"){
-                if(checkedStatus == true){
+                if(checkedStatus){
                   map.addLayer(liveLayer);
                 }
                 else{
@@ -1325,12 +1384,16 @@ map.on(L.Draw.Event.CREATED, function (event) {
               console.log("entered compute_layer");
               console.log("compute checked status: "+checkedStatus);
               console.log(computeLayer);
-              if(checkedStatus == true){
-                  map.addLayer(computeLayer);
-                }
-                else{
-                  map.removeLayer(computeLayer);
-                }
+              
+              if(checkedStatus){
+                console.log("addRasterLayer");
+                map.addLayer(computeLayer);
+              }
+              else{
+                console.log("removeRasterLayer");
+                map.removeLayer(computeLayer);
+                
+              }
             }
 
             
@@ -1360,6 +1423,8 @@ map.on(L.Draw.Event.CREATED, function (event) {
 
         document.getElementById("after-compute-buttons").classList.add("hidden");
         document.getElementById('compute_progress_text').style.color = 'white';
+
+        document.getElementById("layerSwitcherBox").classList.add("hidden");
         
         var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&timeseries=${encodeURIComponent(export_params.timeseries)}`;
 
@@ -1391,7 +1456,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
         
         //Open Result Tab
         document.getElementById("resultTab").click();
-        document.getElementById("progressContainer").classList.remove("hidden");
+        document.getElementById("layerSwitcherContainer").classList.remove("hidden");
         document.getElementById("computeLayerSwitcher").classList.remove("hidden");
 
         //show the progress to the user
@@ -1402,13 +1467,14 @@ map.on(L.Draw.Event.CREATED, function (event) {
           })
             .then(response => response.text())
             .then(data => {
-              // console.log('Success log:', data);
+              console.log('Success log:', data);
               updateProgress(data);
               if (data.includes('Processing completed.') || data.includes('100%')) {
                 clearInterval(intervalId);
                 console.log('Processing completed. Stopped checking.');
                 if(data.includes('Filtered 0 items')){}
                 else{
+                  document.getElementById("layerSwitcherBox").classList.remove("hidden");
                   plotGeoTIFF('static/export/custom_band_output_aggregate.tif');
                 }    
               }
@@ -1424,9 +1490,24 @@ map.on(L.Draw.Event.CREATED, function (event) {
           const intervalId = setInterval(checkProcessingStatus, 4000);
 
           function updateProgress(logData) {
+
             if (logData.includes('No images found') || logData.includes('Filtered 0 items')) {
               displayNoImageFoundMessage();
             } else {
+                // Extract non-computation log lines
+                const logLines = logData.split('\n');
+                const nonComputationLogs = logLines.filter(line => !line.includes('Computing Band Calculation'));
+                
+                // Add non-computation logs to the progress list
+                const progressTextsBefore = document.getElementById('ProgressTextsBefore');
+                progressTextsBefore.innerHTML = ""; // Clear existing items
+                nonComputationLogs.forEach(step => {
+                  const listItem = document.createElement('li');
+                  listItem.style.fontSize = "10px";
+                  listItem.textContent = step;
+                  progressTextsBefore.appendChild(listItem);
+                });
+
               const progressMatches = logData.match(/(\d+)%/g);
               if (progressMatches) {
                 const lastProgress = progressMatches[progressMatches.length - 1];
@@ -1456,11 +1537,26 @@ map.on(L.Draw.Event.CREATED, function (event) {
         // ).addTo(map);
 
       });
+      var min;
+      var max;
+      var geoRaster;
 
+      const colorScales = {
+        Viridis: ['#440154', '#482777', '#3E4989', '#31688E', '#26838F', '#1F9D8A', '#6DCD59', '#B6DE2B', '#FDE724'],
+        Plasma: ['#0D0887', '#41049D', '#6A00A8', '#8F0DA4', '#B12A90', '#CC4678', '#E16462', '#F1824D', '#FCA636'],
+        Magma: ['#000004', '#140E36', '#3B0F70', '#641A80', '#8C2981', '#B63679', '#DA4453', '#F1605D', '#FE9F6D'],
+        Inferno: ['#000004', '#160B39', '#420A68', '#6A176E', '#932667', '#BC3754', '#DE4968', '#F66E5B', '#FEA97D'],
+        Cividis: ['#00204C', '#244B5A', '#467B65', '#68A56A', '#93BF72', '#C2CF80', '#EBE983', '#F2F252', '#FFFFD8'],
+        Spectral: ['#9E0142', '#D53E4F', '#F46D43', '#FDAE61', '#FEE08B', '#FFFFBF', '#E6F598', '#ABDDA4', '#66C2A5'],
+        Jet: ['#000083', '#001CE3', '#1CFFFE', '#83FF00', '#FFDD00', '#FF0000', '#B80000', '#7C0000', '#3A0000'],
+        HSV: ['#FF0000', '#FF9900', '#FFFF00', '#33FF00', '#00FF66', '#00FFFF', '#0066FF', '#3300FF', '#CC00FF'],
+        Cool: ['#00FFFF', '#61E3FF', '#9AD3FF', '#C5C6FF', '#ECBCFF', '#FFB7FB', '#FFB6D9', '#FFBCB3', '#FFCC88'],
+        Spring: ['#FF00FF', '#FF69FF', '#FF8FFF', '#FFA2FF', '#FFB1FF', '#FFBFFF', '#FFCFFF', '#FFDEFF', '#FFECFF']
+      };
 
       function plotGeoTIFF(tifUrl) {
         if (computeLayer) {
-                  map.removeLayer(computeLayer);
+          map.removeLayer(computeLayer);
         }
 
         fetch(tifUrl)
@@ -1468,6 +1564,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
           .then(arrayBuffer => {
             parseGeoraster(arrayBuffer).then(georaster => {
               console.log("georaster:", georaster);
+              geoRaster = georaster;
 
               /*
                   GeoRasterLayer is an extension of GridLayer,
@@ -1480,17 +1577,84 @@ map.on(L.Draw.Event.CREATED, function (event) {
 
                   https://leafletjs.com/reference.html#gridlayer
               */
+              
+              min = georaster.mins[0];
+              max = georaster.maxs[0];
+              console.log(`Min pixel value: ${min}`);
+              console.log(`Max pixel value: ${max}`);
+
+              const paletteSelect = document.getElementById('paletteSelect');
+              const selectedPalette = paletteSelect.value;
+              const colorScale = colorScales[selectedPalette];
+
               computeLayer = new GeoRasterLayer({
-                  georaster: georaster,
-                  opacity: 0.7,
-                  // pixelValuesToColorFn: values => values[0] === 42 ? '#ffffff' : '#000000',
-                  // resolution: 64 // optional parameter for adjusting display resolution
+                georaster: georaster,
+                opacity: 0.8,
+                pixelValuesToColorFn: values => {
+                  const normalizedValue = (values[0] - min) / (max - min);
+                  return colorScale[Math.floor(normalizedValue * (colorScale.length - 1))];
+                }
               });
-              computeLayer.addTo(map);
+              map.addLayer(computeLayer);
 
               map.fitBounds(computeLayer.getBounds());
 
           });
+        });
+      }
+
+      document.getElementById('paletteSelect').addEventListener('change', (event) => {
+        updateRasterColor(event.target.value);
+        updateLegend(event.target.value);
+      });
+      // Initial legend update
+      updateLegend(document.getElementById('paletteSelect').value);
+
+      function updateRasterColor(paletteName) {
+        if (computeLayer) {
+          const colorScale = colorScales[paletteName];
+
+          // Remove the existing layer from the map
+          if (map.hasLayer(computeLayer)) {
+            map.removeLayer(computeLayer);
+          }
+
+          computeLayer =null;
+
+          // Update the color palette and create a new layer
+          computeLayer = new GeoRasterLayer({
+            georaster: geoRaster,
+            opacity: 0.8,
+            pixelValuesToColorFn: values => {
+              const normalizedValue = (values[0] - min) / (max - min);
+              return colorScale[Math.floor(normalizedValue * (colorScale.length - 1))];
+            }
+          });
+
+          // Add the new layer to the map
+          map.addLayer(computeLayer);
+        }
+      }
+
+
+      function updateLegend(paletteName) {
+        const legend = document.getElementById('legend');
+        const colorScale = colorScales[paletteName];
+
+        // Clear existing legend items
+        legend.innerHTML = '';
+
+        // Create legend items based on color scale
+        colorScale.forEach(color => {
+          const legendItem = document.createElement('div');
+          legendItem.className = 'legend-item';
+
+          const colorBox = document.createElement('div');
+          colorBox.className = 'legend-color';
+          colorBox.style.backgroundColor = color;
+
+          legendItem.appendChild(colorBox);
+          legend.appendChild(legendItem);
         });
       }
 
@@ -1742,6 +1906,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
       const progressText = document.getElementById('compute_progress_text');
       
       progressText.textContent = 'No image found/ try smaller AOI';
+      progressText.style.fontSize = "10px";
       progressText.style.color = 'red';
       progressBarContainer.style.display = 'block';
     }
