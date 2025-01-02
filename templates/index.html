@@ -92,68 +92,35 @@
     }
   </style>
   <style>
-   /* Tailwind CSS Custom Range Slider */
-/* CSS Custom Range Slider */
-/* Tailwind CSS Custom Range Slider */
+/*  Custom Range Slider */
 .slider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 8px;
-  background: #d3d3d3;
-  border-radius: 5px;
-  outline: none;
-}
+      -webkit-appearance: none;
+      width: 100%;
+      height: 8px;
+      background: #d3d3d3;
+      border-radius: 5px;
+      outline: none;
+    }
 
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  background: #007bff;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
-}
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #007bff;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
+    }
 
-.slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  background: #007bff;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
-}
-/* 
-
-.slider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 8px;
-  background: linear-gradient(to right, #007bff, #007bff 50%, #d3d3d3 50%, #d3d3d3);
-  border-radius: 5px;
-  outline: none;
-} */
-/* 
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  background: #007bff;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
-}
-
-.slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  background: #007bff;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
-} */
-
+    .slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: #007bff;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 2px 0 rgba(0,0,0,0.5);
+    }
 /* Adding marks (dates) below the slider */
 .slider + .slider-markers {
   display: flex;
@@ -684,23 +651,34 @@
     <div class="modal-content bg-white p-4 rounded-md w-full max-w-md">
       <span class="close text-gray-500 hover:text-gray-700 float-right text-2xl cursor-pointer">&times;</span>
       <h2 class="text-lg font-semibold mb-4">Select Date Range</h2>
-      <div id="imageContainer" class="mb-4">
-        <img id="imageView" class="w-full rounded-md" src="images/image_2022-01-01.jpg" alt="Image">
+      <div class="tabs mb-4 hidden" id="tabs">
+        <button id="operationTabButton" class="bg-blue-500 text-white p-2 rounded-l">Operation</button>
+        <button id="timeSeriesTabButton" class="bg-blue-500 text-white p-2 rounded-r">Time Series</button>
       </div>
-      <div id="dateDisplay" class="text-center text-sm text-gray-700 mb-4">Start Date</div>
-      <div class="flex items-center mb-4">
-        <button id="playPauseButton" class="text-gray-500 hover:text-gray-700 mr-2">
-          <i class="fas fa-play" id="playIcon"></i>
-          <i class="fas fa-pause hidden" id="pauseIcon"></i>
-        </button>
-        <input type="range" id="dateRangeSlider" class="slider w-full" min="0" max="100" value="0">
+      <div id="operationContainer" class="hidden">
+        <div id="imageContainer" class="mb-4">
+          <img id="operationImageView" class="w-full rounded-md" src="images/image_2022-01-01.jpg" alt="Image">
+        </div>
+        <div id="operationDateDisplay" class="text-center text-sm text-gray-700 mb-4">Start Date</div>
       </div>
-      <div class="slider-markers flex justify-between text-sm text-gray-700">
-        <!-- Markers will be generated dynamically -->
+      <div id="timeSeriesContainer" class="hidden">
+        <div id="imageContainer" class="mb-4">
+          <img id="timeSeriesImageView" class="w-full rounded-md" src="images/image_2022-01-01.jpg" alt="Image">
+        </div>
+        <div id="dateDisplay" class="text-center text-sm text-gray-700 mb-4">Start Date</div>
+        <div class="flex items-center mb-4">
+          <button id="playPauseButton" class="text-gray-500 hover:text-gray-700 mr-2">
+            <i class="fas fa-play" id="playIcon"></i>
+            <i class="fas fa-pause hidden" id="pauseIcon"></i>
+          </button>
+          <input type="range" id="dateRangeSlider" class="slider w-full" min="0" max="100" value="0">
+        </div>
+        <div class="slider-markers flex justify-between text-sm text-gray-700">
+          <!-- Markers will be generated dynamically -->
+        </div>
       </div>
     </div>
   </div>
-  
    <!-- Result and timeslider modal end -->
 
 </div>
@@ -1369,18 +1347,20 @@ map.on(L.Draw.Event.CREATED, function (event) {
         export_params.endDate = document.getElementById("end-date-export").value;
         export_params.cloudCover = document.getElementById("cloud-cover-export").value;
         
-        var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}`;
-        // &timeseries=${encodeURIComponent(export_params.timeseries)}
+        var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&operation=${encodeURIComponent(export_params.operation)}&timeseries=${encodeURIComponent(export_params.timeseries)}`;
         
-        if(document.getElementById("operation").checked){
-          url_compute += "&operation=${encodeURIComponent(export_params.operation)}";
-        }
-        else if(document.getElementById("timeSeries").checked){
-          url_compute += "&timeseries=${encodeURIComponent(export_params.timeseries)}";
-        }
-        else if(document.getElementById("operation").checked && document.getElementById("timeSeries").checked){
-          url_compute += "&operation=${encodeURIComponent(export_params.operation)}&timeseries=${encodeURIComponent(export_params.timeseries)}";
-        }
+        //if operation and timeseries should not be sent in url. 
+        // var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}`;
+        
+        // if(document.getElementById("operation").checked){
+        //   url_compute += "&operation=${encodeURIComponent(export_params.operation)}";
+        // }
+        // else if(document.getElementById("timeSeries").checked){
+        //   url_compute += "&timeseries=${encodeURIComponent(export_params.timeseries)}";
+        // }
+        // else if(document.getElementById("operation").checked && document.getElementById("timeSeries").checked){
+        //   url_compute += "&operation=${encodeURIComponent(export_params.operation)}&timeseries=${encodeURIComponent(export_params.timeseries)}";
+        // }
         
         // console.log(url_compute);
         
@@ -1410,7 +1390,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
           })
             .then(response => response.text())
             .then(data => {
-              console.log('Success:', data);
+              console.log('Success log:', data);
               if (data.includes('Processing completed.')) {
                 clearInterval(intervalId);
                 console.log('Processing completed. Stopped checking.');
@@ -1453,18 +1433,28 @@ map.on(L.Draw.Event.CREATED, function (event) {
       document.addEventListener('DOMContentLoaded', (event) => {
       document.querySelectorAll('.output_type').forEach((radio) => {
         radio.addEventListener('change', function(event){
-          const radioId = event.target.id;
-          console.log('Layer ID:', radioId);
-          if(radioId == "operation"){
+          // const radioId = event.target.id;
+          var checkedStatusOperation = document.getElementById("operation").checked;
+          var checkedStatustimeSeries = document.getElementById("timeSeries").checked;
+
+          if(checkedStatusOperation){
             document.getElementById("operation-container").classList.remove("hidden");
+            
           }
-          else if(radioId == "timeSeries"){
+          else{
+            export_params.operation = "none";
+          }
+
+          if(checkedStatustimeSeries){
             document.getElementById("operation-container").classList.add("hidden");
             export_params.timeseries = "true";
-            export_params.operation = "none";
+        
 
             document.getElementById("export-map-view-button").classList.remove('bg-gray-500', 'pointer-events-none');
             document.getElementById("export-map-view-button").classList.add('bg-blue-700');
+          }
+          else{
+            export_params.timeseries = "false";
           }
       
         });
@@ -1695,7 +1685,7 @@ function startComputation(name) {
 
   <!-- result modal script for result and timeslider start -->
   <script>
-document.addEventListener('DOMContentLoaded', (event) => {
+    document.addEventListener('DOMContentLoaded', (event) => {
   let isPlaying = false;
   let playInterval;
   let pngImages = [];
@@ -1724,26 +1714,83 @@ document.addEventListener('DOMContentLoaded', (event) => {
     dates = imageDatePairs.map(pair => pair.date.toISOString().split('T')[0]);
   }
 
-  // Function to open the modal
+  // Function to open the modal and display images based on checkbox selections
   function openModal() {
-    document.getElementById('timeSliderModal').classList.remove('hidden');
+    const operationChecked = document.getElementById('operation').checked;
+    const timeSeriesChecked = document.getElementById('timeSeries').checked;
+    
+    if (operationChecked && !timeSeriesChecked) {
+      // Display single image for operation
+      document.getElementById('operationContainer').classList.remove('hidden');
+      document.getElementById('timeSeriesContainer').classList.add('hidden');
+      document.getElementById('tabs').classList.add('hidden');
+      document.getElementById('operationImageView').src = 'static/export/custom_band_output_aggregate_colormap.png';
+      document.getElementById('operationDateDisplay').textContent = '';
+      document.getElementById('timeSliderModal').classList.remove('hidden');
+    } else if (timeSeriesChecked && !operationChecked) {
+      // Display time series
+      document.getElementById('operationContainer').classList.add('hidden');
+      document.getElementById('timeSeriesContainer').classList.remove('hidden');
+      document.getElementById('tabs').classList.add('hidden');
+      document.getElementById('timeSliderModal').classList.remove('hidden');
 
-    // Fetch data
-    var utlLists = '/list-files';
-    fetch(utlLists, { method: 'GET' })
-      .then(response => response.json())
-      .then(data => {
-        processData(data);
-        initializeSlider();
-        // Load the first image at start
-        if (pngImages.length > 0 && dates.length > 0) {
-          document.getElementById('imageView').src = `static/export/${pngImages[0]}`;
-          document.getElementById('dateDisplay').textContent = new Date(dates[0]).toLocaleDateString();
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+      // Fetch data
+      var utlLists = '/list-files';
+      fetch(utlLists, { method: 'GET' })
+        .then(response => response.json())
+        .then(data => {
+          processData(data);
+          initializeSlider();
+          // Load the first image at start
+          if (pngImages.length > 0 && dates.length > 0) {
+            document.getElementById('timeSeriesImageView').src = `static/export/${pngImages[0]}`;
+            document.getElementById('dateDisplay').textContent = new Date(dates[0]).toLocaleDateString();
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    } else if (operationChecked && timeSeriesChecked) {
+      // Show tabs for both operation and time series
+      document.getElementById('tabs').classList.remove('hidden');
+      document.getElementById('operationContainer').classList.remove('hidden');
+      document.getElementById('timeSeriesContainer').classList.add('hidden');
+      document.getElementById('timeSliderModal').classList.remove('hidden');
+      
+      // Load operation image initially
+      document.getElementById('operationImageView').src = 'static/export/custom_band_output_aggregate_colormap.png';
+      document.getElementById('operationDateDisplay').textContent = '';
+
+      // Fetch data for time series
+      var utlLists = '/list-files';
+      fetch(utlLists, { method: 'GET' })
+        .then(response => response.json())
+        .then(data => {
+          processData(data);
+          initializeSlider();
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }
+  }
+
+  // Function to switch tabs
+  function switchTab(tab) {
+    if (tab === 'operation') {
+      document.getElementById('operationContainer').classList.remove('hidden');
+      document.getElementById('timeSeriesContainer').classList.add('hidden');
+      document.getElementById('operationImageView').src = 'static/export/custom_band_output_aggregate_colormap.png';
+      document.getElementById('operationDateDisplay').textContent = '';
+    } else if (tab === 'timeSeries') {
+      document.getElementById('operationContainer').classList.add('hidden');
+      document.getElementById('timeSeriesContainer').classList.remove('hidden');
+      // Show the first time series image and date
+      if (pngImages.length > 0 && dates.length > 0) {
+        document.getElementById('timeSeriesImageView').src = `static/export/${pngImages[0]}`;
+        document.getElementById('dateDisplay').textContent = new Date(dates[0]).toLocaleDateString();
+      }
+    }
   }
 
   // Function to close the modal
@@ -1759,7 +1806,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const selectedDate = dates[index];
     const selectedImage = pngImages[index];
     
-    document.getElementById('imageView').src = `static/export/${selectedImage}`;
+    document.getElementById('timeSeriesImageView').src = `static/export/${selectedImage}`;
     document.getElementById('dateDisplay').textContent = new Date(selectedDate).toLocaleDateString();
   }
 
@@ -1828,6 +1875,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
   // Event listeners for modal
   document.getElementById('view-result-image').addEventListener('click', openModal);
   document.querySelector('.close').addEventListener('click', closeModal);
+  document.getElementById('operationTabButton').addEventListener('click', () => switchTab('operation'));
+  document.getElementById('timeSeriesTabButton').addEventListener('click', () => switchTab('timeSeries'));
 
   // Optional: Close the modal when clicking outside of it
   window.addEventListener('click', (event) => {
@@ -1836,11 +1885,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
   });
 });
-
-
-
-
-
 
   </script>
   <!-- result modal end -->
