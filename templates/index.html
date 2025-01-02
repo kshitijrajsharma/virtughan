@@ -319,7 +319,7 @@
                         <div class="absolute inset-0 flex items-center justify-center text-white" style="font-size:10px;" id="compute_progress_text">0%</div>
                         <div class="bg-green-500 h-3 rounded transition-all duration-500 ease-in-out" id="compute_progress" style="width: 0%"></div>
                       </div>
-                      <div class="flex items-center justify-end mt-2 space-x-4">
+                      <div id = "after-compute-buttons" class="flex items-center justify-end mt-2 space-x-4 hidden">
                         <button title="Download" class="text-gray-500 hover:text-gray-700">
                           <i id = "download-result-image" class="fas fa-download"></i>
                         </button>
@@ -918,7 +918,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           document.getElementById("resultTab").click();
           document.getElementById("progressContainer").classList.remove("hidden");
           document.getElementById("searchLayerSwitcher").classList.remove("hidden");
-          startComputation('search');
+          startProgressComputation('search', null);
 
           var bounds = map.getBounds();
           tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
@@ -1346,9 +1346,12 @@ map.on(L.Draw.Event.CREATED, function (event) {
         export_params.startDdate = document.getElementById("start-date-export").value;
         export_params.endDate = document.getElementById("end-date-export").value;
         export_params.cloudCover = document.getElementById("cloud-cover-export").value;
+
+        document.getElementById("after-compute-buttons").classList.add("hidden");
+        document.getElementById('compute_progress_text').style.color = 'white';
         
         var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&operation=${encodeURIComponent(export_params.operation)}&timeseries=${encodeURIComponent(export_params.timeseries)}`;
-        
+
         //if operation and timeseries should not be sent in url. 
         // var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}`;
         
@@ -1380,8 +1383,6 @@ map.on(L.Draw.Event.CREATED, function (event) {
         document.getElementById("progressContainer").classList.remove("hidden");
         document.getElementById("computeLayerSwitcher").classList.remove("hidden");
 
-        startComputation('compute');
-
         //show the progress to the user
         
         function checkProcessingStatus() {
@@ -1391,6 +1392,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
             .then(response => response.text())
             .then(data => {
               console.log('Success log:', data);
+              updateProgress(data);
               if (data.includes('Processing completed.')) {
                 clearInterval(intervalId);
                 console.log('Processing completed. Stopped checking.');
@@ -1401,7 +1403,23 @@ map.on(L.Draw.Event.CREATED, function (event) {
             });
         }
 
-        const intervalId = setInterval(checkProcessingStatus, 4000);
+        // Initial call to set progress to 0%
+          startProgressComputation('compute', 0);
+          // Start checking the processing status every 4 seconds
+          const intervalId = setInterval(checkProcessingStatus, 4000);
+
+          function updateProgress(logData) {
+            if (logData.includes('No images found') || logData.includes('Filtered 0 items')) {
+              displayNoImageFoundMessage();
+            } else {
+              const progressMatches = logData.match(/(\d+)%/g);
+              if (progressMatches) {
+                const lastProgress = progressMatches[progressMatches.length - 1];
+                const progress = parseInt(lastProgress.replace('%', ''), 10);
+                startProgressComputation('compute', progress);
+              }
+            }
+          }
 
 
 
@@ -1641,34 +1659,44 @@ map.on(L.Draw.Event.CREATED, function (event) {
 
   <!-- computation progress code start -->
    <script>
-// Function to start a new computation and update progress
-function startComputation(name) {  
-  // Simulate progress (for demo purposes)
-  let progress = 0;
-  const interval = setInterval(() => {
-    console.log(name);
-    progress += Math.random() * 10;
-    if (progress > 100) progress = 100;
-    document.getElementById(`${name}_progress`).style.width = progress + '%';
-    document.getElementById(`${name}_progress_text`).textContent = `${Math.floor(progress)}%`;
-    
-    // Remove progress bar if complete
-    if (progress >= 100) {
-      clearInterval(interval);
-      setTimeout(() => {
-        const progressBar = document.getElementById(`${name}_progressbar`);
-        if (progressBar) {
-          // progressBar.remove();
-        }
-      }, 1000);
+    // Function to start a new computation and update progress
+    function startProgressComputation(name, progress) {
+  // Update progress based on fetched data
+  const progressBar = document.getElementById(`${name}_progress`);
+  const progressBarContainer = document.getElementById(`${name}_progressbar`);
+
+  progressBar.style.width = progress + '%';
+  document.getElementById(`${name}_progress_text`).textContent = `${Math.floor(progress)}%`;
+
+  // Hide progress bar if complete
+  if (progress >= 100) {
+    setTimeout(() => {
+      if (progressBarContainer) {
+        progressBarContainer.style.display = 'none';
+        document.getElementById("after-compute-buttons").classList.remove("hidden");
+      }
+    }, 1000);
+  } else {
+    // Ensure progress bar is visible if not complete
+    if (progressBarContainer) {
+      progressBarContainer.style.display = 'block';
     }
-  }, 500);
+  }
+}
+
+function displayNoImageFoundMessage() {
+  const progressBarContainer = document.getElementById('compute_progressbar');
+  const progressText = document.getElementById('compute_progress_text');
+  
+  progressText.textContent = 'No image found/ try smaller AOI';
+  progressText.style.color = 'red';
+  progressBarContainer.style.display = 'block';
 }
 
 // Start multiple computations
 
-// startComputation('Computation 2');
-// startComputation('Computation 3');
+// startProgressComputation('Computation 2');
+// startProgressComputation('Computation 3');
 
   </script>
   <!-- computation progress code end -->
