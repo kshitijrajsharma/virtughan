@@ -857,6 +857,8 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+    <script src="https://unpkg.com/georaster"></script>
+    <script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
     <script>
       var map = L.map("map").setView([28.202082, 83.987222], 10);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -866,7 +868,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
       var geojsonLayer;
       var liveLayer;
-      var computeLayer;
+      var computeLayer = null;
       var highlightedLayer = L.layerGroup();
       var clickedResultList = false;
       var previousListMouseIn;
@@ -1319,9 +1321,18 @@ map.on(L.Draw.Event.CREATED, function (event) {
                   map.removeLayer(liveLayer);
                 }
             }
-            else{
-
+            else if(layerId == "compute_layer"){
+              console.log("entered compute_layer");
+              console.log("compute checked status: "+checkedStatus);
+              console.log(computeLayer);
+              if(checkedStatus == true){
+                  map.addLayer(computeLayer);
+                }
+                else{
+                  map.removeLayer(computeLayer);
+                }
             }
+
             
           }
 
@@ -1350,14 +1361,14 @@ map.on(L.Draw.Event.CREATED, function (event) {
         document.getElementById("after-compute-buttons").classList.add("hidden");
         document.getElementById('compute_progress_text').style.color = 'white';
         
-        var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&operation=${encodeURIComponent(export_params.operation)}&timeseries=${encodeURIComponent(export_params.timeseries)}`;
+        var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&timeseries=${encodeURIComponent(export_params.timeseries)}`;
 
         //if operation and timeseries should not be sent in url. 
         // var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}`;
         
-        // if(document.getElementById("operation").checked){
-        //   url_compute += "&operation=${encodeURIComponent(export_params.operation)}";
-        // }
+        if(document.getElementById("operation").checked){
+          url_compute += `&operation=${encodeURIComponent(export_params.operation)}`;
+        }
         // else if(document.getElementById("timeSeries").checked){
         //   url_compute += "&timeseries=${encodeURIComponent(export_params.timeseries)}";
         // }
@@ -1393,9 +1404,13 @@ map.on(L.Draw.Event.CREATED, function (event) {
             .then(data => {
               // console.log('Success log:', data);
               updateProgress(data);
-              if (data.includes('Processing completed.')) {
+              if (data.includes('Processing completed.') || data.includes('100%')) {
                 clearInterval(intervalId);
                 console.log('Processing completed. Stopped checking.');
+                if(data.includes('Filtered 0 items')){}
+                else{
+                  plotGeoTIFF('static/export/custom_band_output_aggregate.tif');
+                }    
               }
             })
             .catch((error) => {
@@ -1442,8 +1457,47 @@ map.on(L.Draw.Event.CREATED, function (event) {
 
       });
 
+
+      function plotGeoTIFF(tifUrl) {
+        if (computeLayer) {
+                  map.removeLayer(computeLayer);
+        }
+
+        fetch(tifUrl)
+          .then(response => response.arrayBuffer())
+          .then(arrayBuffer => {
+            parseGeoraster(arrayBuffer).then(georaster => {
+              console.log("georaster:", georaster);
+
+              /*
+                  GeoRasterLayer is an extension of GridLayer,
+                  which means can use GridLayer options like opacity.
+
+                  Just make sure to include the georaster option!
+
+                  Optionally set the pixelValuesToColorFn function option to customize
+                  how values for a pixel are translated to a color.
+
+                  https://leafletjs.com/reference.html#gridlayer
+              */
+              computeLayer = new GeoRasterLayer({
+                  georaster: georaster,
+                  opacity: 0.7,
+                  // pixelValuesToColorFn: values => values[0] === 42 ? '#ffffff' : '#000000',
+                  // resolution: 64 // optional parameter for adjusting display resolution
+              });
+              computeLayer.addTo(map);
+
+              map.fitBounds(computeLayer.getBounds());
+
+          });
+        });
+      }
+
     </script>
     <!-- /export api end -->
+
+
 
     <!-- operation script start  -->
      
@@ -1927,17 +1981,18 @@ map.on(L.Draw.Event.CREATED, function (event) {
           window.location.href = 'static/export/custom_band_output_aggregate.tif';
         } else if (timeSeriesChecked && !operationChecked) {
           // Download .zip file for time series
-          window.location.href = 'static/export/timeseries.zip';
+          window.location.href = 'static/export/tiff_files.zip';
         } else if (operationChecked && timeSeriesChecked) {
           // Download both files
           downloadFile('static/export/custom_band_output_aggregate.tif');
-          downloadFile('static/export/timeseries.zip');
+          downloadFile('static/export/tiff_files.zip');
         }
       }
 
       function downloadFile(filePath) {
         const link = document.createElement('a');
         link.href = filePath;
+        link.target = '_blank';
         link.download = filePath.split('/').pop();
         document.body.appendChild(link);
         link.click();
