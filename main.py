@@ -67,14 +67,10 @@ async def list_files():
 
 @app.get("/logs")
 async def get_logs():
-    def log_stream():
-        log_file = "static/runtime.log"
-        with open(log_file, "r") as log_file:
-            last_lines = deque(log_file, maxlen=20)
-            for line in last_lines:
-                yield line
-
-    return StreamingResponse(log_stream(), media_type="text/plain")
+    log_file = "static/runtime.log"
+    with open(log_file, "r") as file:
+        logs = file.readlines()[-30:]
+    return Response("\n".join(logs), media_type="text/plain")
 
 
 @app.get("/sentinel2-bands")
@@ -158,7 +154,7 @@ async def compute_aoi_over_time(
             },
             status_code=400,
         )
-
+    print("Received request for formula : ", formula)
     bbox = list(map(float, bbox.split(",")))
 
     output_dir = "static/export"

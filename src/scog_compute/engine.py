@@ -144,11 +144,13 @@ def save_aggregated_result_with_colormap(
     operation,
     cmap="RdYlGn",
 ):
+    result_aggregate = np.ma.masked_invalid(result_aggregate)
+
     colormap = plt.get_cmap(cmap)
     if result_aggregate.shape[0] == 1:
         # Single-band image
         result_aggregate_m = result_aggregate[0]
-        result_aggregate_m = np.ma.masked_invalid(result_aggregate_m)
+        # result_aggregate_m = np.ma.masked_invalid(result_aggregate_m)
 
         result_normalized = (result_aggregate_m - result_aggregate_m.min()) / (
             result_aggregate_m.max() - result_aggregate_m.min()
@@ -199,19 +201,25 @@ def save_aggregated_result_with_colormap(
 
     result_aggregate = np.transpose(result_aggregate, (1, 2, 0))
 
+    nodata_value = -9999
+    result_aggregate_filled = np.where(
+        np.isnan(result_aggregate), nodata_value, result_aggregate
+    )
+
     with rasterio.open(
         output_file,
         "w",
         driver="GTiff",
-        height=result_aggregate.shape[0],
-        width=result_aggregate.shape[1],
-        count=result_aggregate.shape[2],
-        dtype=result_aggregate.dtype,
+        height=result_aggregate_filled.shape[0],
+        width=result_aggregate_filled.shape[1],
+        count=result_aggregate_filled.shape[2],
+        dtype=result_aggregate_filled.dtype,
         crs=crs,
         transform=transform,
+        nodata=nodata_value,
     ) as dst:
-        for band in range(1, result_aggregate.shape[2] + 1):
-            dst.write(result_aggregate[:, :, band - 1], band)
+        for band in range(1, result_aggregate_filled.shape[2] + 1):
+            dst.write(result_aggregate_filled[:, :, band - 1], band)
 
     print(f"Saved aggregated custom band result to {output_file}")
     print(f"Saved color-mapped image to {output_file.replace('.tif', '_colormap.png')}")
