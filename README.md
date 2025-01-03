@@ -1,4 +1,6 @@
-# scog-compute
+# VirtuGhan
+
+Name is combination of virtual cube , where cube translated to nepali word “घन”
 
 ## Purpose
 
@@ -67,5 +69,5 @@ We started converting Sentinel-2 images to Cloud Optimized GeoTIFFs (COGs) and e
 
 We wanted to build something to show that this approach actually works and is scalable. We deliberately chose to use only our laptops to run the prototype and process a year’s worth of data without expensive servers.
 
-### Copyright © 2024 – Concept by Kshitij and Upen
+#### Copyright © 2024 – Concept by Kshitij and Upen
 
