@@ -376,7 +376,7 @@
                         <label for="transparency_computeLayer" class="text-sm mr-2 text-gray-500">Transparency:</label>
                         <input id="transparency_computeLayer" type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
                       </div>
-                      <div class="mb-2 w-full">
+                      <div id="colorPalettes" class="mb-2 w-full">
                         <div class="text-sm text-gray-500">Color Palette:</div>
                         <select id="paletteSelect" class="form-select mt-1 w-full text-gray-500 text-sm p-1">
                           <option value="Viridis" style="background: linear-gradient(to right, #440154, #FDE724);">Viridis</option>
@@ -813,10 +813,10 @@
    <div id="timeSliderModal" class="modal hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-40">
     <div class="modal-content bg-white p-4 rounded-md w-full max-w-md">
       <span class="close text-gray-500 hover:text-gray-700 float-right text-2xl cursor-pointer">&times;</span>
-      <h2 class="text-lg font-semibold mb-4">Select Date Range</h2>
-      <div class="tabs mb-4 hidden" id="tabs">
-        <button id="operationTabButton" class="bg-blue-500 text-white p-2 rounded-l">Operation</button>
-        <button id="timeSeriesTabButton" class="bg-blue-500 text-white p-2 rounded-r">Time Series</button>
+      <h2 class="text-lg font-semibold mb-4">View Result</h2>
+      <div class="tabs mb-4" id="tabs">
+        <button id="operationTabButton" class="tab-button active bg-blue-500 text-white py-2 px-4 rounded-tl-lg">Operation Result</button>
+        <button id="timeSeriesTabButton" class="tab-button bg-gray-200 text-blue-500 py-2 px-4 rounded-tr-lg">Time Series Result</button>
       </div>
       <div id="operationContainer" class="hidden">
         <div id="imageContainer" class="mb-4">
@@ -1700,6 +1700,16 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
         document.getElementById("layerSwitcherBox").classList.add("hidden");
         document.getElementById('ProgressTextsBefore').innerHTML = `<li style = "font-size: 10px;">Please Wait Computing...</li>`;
+
+        if(document.getElementById("operation").checked){
+          document.getElementById("compute_layer").classList.remove("hidden");
+          document.getElementById("colorPalettes").classList.remove("hidden");
+        }
+        else{
+          document.getElementById("compute_layer").classList.add("hidden");
+          document.getElementById("colorPalettes").classList.add("hidden");
+        }
+        
         
         var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&timeseries=${encodeURIComponent(export_params.timeseries)}`;
 
@@ -1750,9 +1760,10 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
                 if(data.includes('Filtered 0 items')){}
                 else{
                   document.getElementById("layerSwitcherBox").classList.remove("hidden");
-                  plotGeoTIFF('static/export/custom_band_output_aggregate.tif');
-                  
-                  console.log("palette select value: "+document.getElementById('paletteSelect').value);
+                  if(document.getElementById("operation").checked){
+                    plotGeoTIFF('static/export/custom_band_output_aggregate.tif');
+                    console.log("palette select value: "+document.getElementById('paletteSelect').value);
+                }
                 
                 }    
               }
@@ -2465,6 +2476,20 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 });
 
   </script>
+   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.tab-button');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active', 'bg-blue-500', 'text-white'));
+                tabs.forEach(t => t.classList.add('bg-gray-200', 'text-blue-500'));
+                this.classList.add('active', 'bg-blue-500', 'text-white');
+                this.classList.remove('bg-gray-200', 'text-blue-500');
+            });
+        });
+    });
+</script>
     <!-- result modal end -->
 
   <!-- download file script -->
