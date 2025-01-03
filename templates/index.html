@@ -161,6 +161,11 @@
       margin-right: 5px;
     }
 
+
+    #compute_progressbar #compute_progress_text { 
+      font-size: 10px !important; 
+    }
+
   </style>
 
   </head>
@@ -180,7 +185,7 @@
       </div>
     </header>
     <div class = "flex flex-col md:flex-row h-screen overflow-y-auto custom-scrollbar md:overflow-hidden">
-      <div id="info" class="w-full md:w-1/4 space-y-12 bg-gray-50 z-10 border-r border-gray-300">
+      <div id="info" class="w-full md:w-1/4 md:min-w-[25%] space-y-12 bg-gray-50 z-10 border-r border-gray-300">
       <div class="container mx-auto pb-4 pt-1">
         <div class="tabs">
           <div class="flex justify-center mb-2">
@@ -189,26 +194,26 @@
             <button id="exportTab" class="tab w-1/3 py-2 text-center text-gray-600 border-b-2 border-transparent hover:border-blue-500 focus:outline-none focus:border-blue-500">Export</button>
           </div>
           <div class="tab-content">
-            <div class="tab-panel hidden">
+            <div class="tab-panel hidden overflow-y-scroll custom-scrollbar" style="max-height: 500px">
       
             <div class="border-b border-gray-900/10 p-4">
               <!-- <h2 class="text-base/7 font-semibold text-gray-900">Apply Filters</h2>
               <p class="mt-1 text-sm/6 text-gray-600">Select the filters you want to apply.</p> -->
-              <div class = "pb-4">
-                <label id="listbox-label" class="block text-sm/6 font-medium text-gray-900">Filter Option</label>
+              <div id = "filterOption_search" class = "pb-4">
+                <label id="listbox-label_search" class="block text-sm/6 font-medium text-gray-900">Filter Option</label>
                 <div class="relative mt-2">
-                  <button id="select-button" type="button" class="cursor-pointer grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label">
+                  <button id="select-button_search" type="button" class="cursor-pointer grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label_search">
                     <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
                       <img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full">
-                      <span id = "selected_filter_value" class="block truncate">Select Option</span>
+                      <span id = "selected-filter-value_search" class="block truncate text-gray-800">Select Option</span>
                     </span>
                     <svg class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                       <path fill-rule="evenodd" d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" />
                     </svg>
                   </button>
               
-                  <ul id="select-list" class="hidden absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3">
-                    <li class="template-filters relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-0" role="option">
+                  <ul id="select-list_search" class="hidden absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label_search" aria-activedescendant="listbox-option-3">
+                    <li class="template-filters relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-0_search" role="option">
                       <div class="flex items-center">
                         <img src="static/img/ndvi.png" alt="" class="size-5 shrink-0 rounded-full">
                         <span class="template-filters-value ml-3 block truncate font-normal" value= "NDVI">NDVI</span>
@@ -220,7 +225,7 @@
                       </span>
                     </li>
                     <!-- More items... -->
-                    <li class="template-filters relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1" role="option">
+                    <li class="template-filters relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1_search" role="option">
                       <div class="flex items-center">
                         <img src="static/img/basemap.png" alt="" class="size-5 shrink-0 rounded-full">
                         <span class="template-filters-value ml-3 block truncate font-normal" value = "NDWI">NDWI</span>
@@ -231,7 +236,7 @@
                         </svg>
                       </span>
                     </li>
-                    <li class="template-filters relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1" role="option">
+                    <li class="template-filters relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1_search" role="option">
                       <div class="flex items-center">
                         <img src="static/img/visual.png" alt="" class="size-5 shrink-0 rounded-full">
                         <span class="template-filters-value ml-3 block truncate font-normal" value = "visual">Visual Bands</span>
@@ -243,7 +248,7 @@
                       </span>
                     </li>
                     <hr/>
-                    <li id = "custom-filter" class="relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1" role="option">
+                    <li id = "custom-filter_search" class="relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1_search" role="option">
                       <div class="flex items-center">
                         <img src="static/img/plus.png" alt="" class="size-5 shrink-0 rounded-full">
                         <span class="ml-3 block truncate font-normal text-blue-500">Custom Filter</span>
@@ -261,24 +266,24 @@
               <div class = "pb-4">
                 <label class="block text-sm/6 font-medium text-gray-900 pb-4">Select Date</label>
                 <div class="relative h-10 w-full min-w-[200px] mb-4">
-                  <input id="start-date" class="bg-white my-dates peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" placeholder=" "/>
+                  <input id="start-date" class="bg-white my-dates peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-gray-800 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" placeholder=" "/>
                   <label id = "start-date" class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
                     Start Date
                   </label>
                 </div>
                 <div class="relative h-10 w-full min-w-[200px]">
-                  <input id="end-date" class="bg-white my-dates peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" placeholder=" "/>
+                  <input id="end-date" class="bg-white my-dates peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-gray-800 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" placeholder=" "/>
                   <label id = "" class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
                     End Date
                   </label>
                 </div>
               </div>
               <div>
-                <label class="block text-sm/6 font-medium text-gray-900 pb-1">Select Cloud Cover <i title = "Less than the input value in percentage" class="fa-solid fa-circle-info"></i></label>
+                <label class="block text-sm/6 font-medium text-gray-900 pb-1" >Select Cloud Cover <i title = "Less than the input value in percentage" class="fa-solid fa-circle-info"></i></label>
                 
                 <div class="bg-white mt-4">
                   <div class="relative bg-inherit">
-                      <input type="number" id="cloud-cover" name="" value = "30" class="peer bg-transparent h-10 w-full rounded-lg text-gray-900 placeholder-transparent ring-1 px-2 ring-gray-200 focus:ring-sky-600 focus:outline-none focus:border-rose-600" placeholder="Cloud Cover"/><label for="" class="absolute cursor-text left-0 -top-3 text-sm text-gray-500 bg-inherit mx-1 px-1 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-2 peer-focus:-top-3 peer-focus:text-sky-600 peer-focus:text-sm transition-all">Cloud Cover</label>
+                      <input type="number" id="cloud-cover" name="" value = "30" style = "font-size:14px !important;" class="peer bg-transparent h-10 w-full rounded-lg text-gray-800 placeholder-transparent ring-1 px-2 ring-gray-200 focus:ring-sky-600 focus:outline-none focus:border-rose-600" placeholder="Cloud Cover"/><label for="" style = "font-size:12px !important;" class="absolute cursor-text left-0 -top-3 text-sm text-gray-500 bg-inherit mx-1 px-1 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-2 peer-focus:-top-3 peer-focus:text-sky-600 peer-focus:text-sm transition-all">Cloud Cover</label>
                   </div>
                 </div>
               </div>
@@ -295,9 +300,9 @@
                 </div>
             </div>
             </div>
-            <div class="tab-panel hidden p-4">
+            <div class="tab-panel hidden">
               <!-- Content for Tab 2 -->
-              <div id="sidebar">
+              <div id="sidebar" class="p-4">
                 <div id="layerSwitcherContainer" class="hidden w-full max-w-md mx-auto rounded-lg pb-4"> 
                   <label class="block text-sm/6 font-medium text-gray-900 pb-2">Output Layer</label> 
                   <div id="layerSwitcherList" class="">
@@ -375,6 +380,8 @@
                         <div class="text-sm text-gray-500">Color Palette:</div>
                         <select id="paletteSelect" class="form-select mt-1 w-full text-gray-500 text-sm p-1">
                           <option value="Viridis" style="background: linear-gradient(to right, #440154, #FDE724);">Viridis</option>
+                          <option value="Rgb" style="background: linear-gradient(to right, #440154, #FDE724);">RGB</option>
+                          <option value="Grayscale" style="background: linear-gradient(to right, #440154, #FDE724);">Grayscale</option>
                           <option value="Plasma" style="background: linear-gradient(to right, #0D0887, #FCA636);">Plasma</option>
                           <option value="Magma" style="background: linear-gradient(to right, #000004, #FE9F6D);">Magma</option>
                           <option value="Inferno" style="background: linear-gradient(to right, #000004, #FEA97D);">Inferno</option>
@@ -384,6 +391,13 @@
                           <option value="HSV" style="background: linear-gradient(to right, #FF0000, #CC00FF);">HSV</option>
                           <option value="Cool" style="background: linear-gradient(to right, #00FFFF, #FFCC88);">Cool</option>
                           <option value="Spring" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Spring</option>
+                          <option value="Sequential" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Sequential</option>
+                          <option value="SequentialMultiHue" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">SequentialMultiHue</option>
+                          <option value="Diverging" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Diverging</option>
+                          <option value="Categorical" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Categorical</option>
+                          <option value="Spectral1" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Spectral1</option>
+                          <option value="HeatMap" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">HeatMap</option>
+                          <option value="Terrain" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Terrain</option>
                         </select>
                       </div>
                       <div id="after-compute-buttons" class="flex items-center justify-end mt-2 space-x-4 hidden">
@@ -424,9 +438,9 @@
                 </div>
               </div>
             </div>
-            <div class="tab-panel hidden p-4">
+            <div class="tab-panel hidden">
               <!-- Content for Tab 3 -->
-              <div id="sidebar1" class = "overflow-y-scroll custom-scrollbar" style = "max-height: 550px;">
+              <div id="sidebar1" class = "overflow-y-scroll custom-scrollbar  p-4" style = "max-height: 550px;">
                <div class = "pb-4">
                 <label class="block text-sm font-medium text-gray-700 pb-2">Select Area of Interest <i title = "Less than the input value in percentage" class="fa-solid fa-circle-info"></i></label>
                 <!-- dropdown start -->
@@ -434,7 +448,7 @@
                   <button id="select-button-bbox" type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label">
                     <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
                       <i class="fa-regular fa-square"></i>
-                      <span id = "selected_filter_value_bbox" class="block truncate text-gray-600">Map Window</span>
+                      <span id = "selected-filter-value-bbox" class="block truncate text-gray-600">Map Window</span>
                     </span>
                     <svg class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                       <path fill-rule="evenodd" d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" />
@@ -481,7 +495,7 @@
                 <!-- dropdown end -->
                 <div class = "mt-1 p-1 w-full">
                   <label class="block text-xs text-gray-500 pb-1">BBOX:
-                  <div id="map-window-content" class = "break-words w-64 text-xs text-gray-500" >
+                  <div id="map-window-content" class = "break-words w-64 text-xs text-gray-500 w-full" >
 
                   </div>
                   </label>
@@ -500,11 +514,75 @@
                 </div>
 
                 <div class = "pb-4">
-                  <label class="block text-sm font-medium text-gray-700 pb-2">Set the Formula</label>
+                  <div id = "filterOption_export" class = "pb-4">
+                    <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-900">Filter Option</label>
+                    <div class="relative mt-2">
+                      <button id="select-button_export" type="button" class="cursor-pointer grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label_export">
+                        <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
+                          <img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full">
+                          <span id = "selected-filter-value_export" class="block truncate">Select Option</span>
+                        </span>
+                        <svg class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                          <path fill-rule="evenodd" d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" />
+                        </svg>
+                      </button>
+                  
+                      <ul id="select-list_export" class="hidden absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label_export" aria-activedescendant="listbox-option-3">
+                        <li class="template-filters relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-0" role="option">
+                          <div class="flex items-center">
+                            <img src="static/img/ndvi.png" alt="" class="size-5 shrink-0 rounded-full">
+                            <span class="template-filters-value ml-3 block truncate font-normal" value= "NDVI">NDVI</span>
+                          </div>
+                          <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+                            <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                              <!-- <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" /> -->
+                            </svg>
+                          </span>
+                        </li>
+                        <!-- More items... -->
+                        <li class="template-filters relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1" role="option">
+                          <div class="flex items-center">
+                            <img src="static/img/basemap.png" alt="" class="size-5 shrink-0 rounded-full">
+                            <span class="template-filters-value ml-3 block truncate font-normal" value = "NDWI">NDWI</span>
+                          </div>
+                          <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+                            <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
+                              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+                            </svg>
+                          </span>
+                        </li>
+                        <li class="template-filters relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1" role="option">
+                          <div class="flex items-center">
+                            <img src="static/img/visual.png" alt="" class="size-5 shrink-0 rounded-full">
+                            <span class="template-filters-value ml-3 block truncate font-normal" value = "visual">Visual Bands</span>
+                          </div>
+                          <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+                            <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
+                              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+                            </svg>
+                          </span>
+                        </li>
+                        <hr/>
+                        <li id = "custom-filter_export" class="relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1" role="option">
+                          <div class="flex items-center">
+                            <img src="static/img/plus.png" alt="" class="size-5 shrink-0 rounded-full">
+                            <span class="ml-3 block truncate font-normal text-blue-500">Custom Filter</span>
+                          </div>
+                          <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+                            <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
+                              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+                            </svg>
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+                    
+                  </div>
+                  <!-- <label class="block text-sm font-medium text-gray-700 pb-2">Set the Formula</label>
                   <button id="setFormula-export" class="w-full bg-white text-gray-500 border-gray-600 rounded-md px-4 py-2 flex items-center text-sm" style="border: 1px solid #dedede;">
                     <img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full mr-2">Set the formula
-                  </button>                  
-                  <div id = "custom-formula-view-export" class = "mt-1 p-1 border border-gray-300 w-full bg-white hidden">
+                  </button>                   -->
+                  <div id = "custom-formula-view_export" class = "mt-1 p-1 border border-gray-300 w-full bg-white hidden">
                     <label id = "formulaHeading-export" class="block text-xs font-medium text-gray-600 pb-1 pt-1">Custom Formula: <span id="formula-text-export" class = "break-words w-64 text-xs text-gray-500" ></span></label>
                   </div>
                 </div>
@@ -585,7 +663,7 @@
       </div>
 
   </div>
-  <div id="map" class = "w-full md:w-3/4 min-h-screen md:min-h-full z-0"></div>
+  <div id="map" class = "w-full md:w-3/4 md:min-w-[75%] min-h-screen md:min-h-full z-0"></div>
   <div id="legend" class="legends hidden text-gray-xs"></div>
   
 
@@ -785,7 +863,9 @@
       // Activate the first tab by default
       tabs[0].classList.add('border-blue-500', 'text-blue-500');
       tabPanels[0].classList.remove('hidden');
+
     });
+
   </script>
 
 <script>
@@ -847,6 +927,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("search-button").classList.add('bg-blue-700');
 
         document.getElementById("formulaHeading").classList.add('hidden'); 
+        document.getElementById("formulaHeading-export").classList.add('hidden'); 
+
 
         // Update the button text and image/icon with the selected item's data
         const selectedItemText = item.querySelector('.truncate').innerText;
@@ -914,22 +996,32 @@ document.addEventListener('DOMContentLoaded', function() {
 document.querySelectorAll('.template-filters').forEach(function(item) {
     item.addEventListener('click', function() {
         const templateText = item.querySelector('.template-filters-value').getAttribute('value');
-        // console.log(templateText); 
+        console.log(templateText); 
+        var param;
+        //check if dropwn inside export is clicked or search is clicked
+        if (this.closest('#select-list_export')) {
+          console.log("yes this is export");
+          param = export_params;
+        }
+        else{
+          console.log("no this is search");
+          param = tile_params;
+        }
 
       if(templateText == "NDVI"){
-        tile_params.formula = "(band2 - band1) / (band2 + band1)";
-        tile_params.band1 = 'red';
-        tile_params.band2 = 'nir';
+        param.formula = "(band2 - band1) / (band2 + band1)";
+        param.band1 = 'red';
+        param.band2 = 'nir';
       }
       else if(templateText == "NDWI"){
-        tile_params.formula = "(band2 - band1) / (band2 + band1)";
-        tile_params.band1 = 'swir22';
-        tile_params.band2 = 'nir';
+        param.formula = "(band2 - band1) / (band2 + band1)";
+        param.band1 = 'swir22';
+        param.band2 = 'nir';
       }
       else if(templateText == "visual"){
-        tile_params.formula = "visual";
-        tile_params.band1 = 'visual';
-        tile_params.band2 = '';
+        param.formula = "visual";
+        param.band1 = 'visual';
+        param.band2 = '';
       }
       
     });
@@ -952,6 +1044,21 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
+
+      // Function to update scroll zoom based on screen size -this is set because mobile devices face problem when they scroll, map zooms.
+      function updateScrollZoom() {
+        if (window.innerWidth < 768) { // this is screen size less than tab
+          map.scrollWheelZoom.disable();
+        } else {
+          map.scrollWheelZoom.enable();
+        }
+      }
+
+      // Initial check on page load
+      updateScrollZoom();
+      // Update on window resize
+      window.addEventListener('resize', updateScrollZoom);
+
 
       var geojsonLayer;
       var liveLayer;
@@ -1127,6 +1234,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
               });
               if(document.getElementById("search_bbox_layer").checked){
                 geojsonLayer.addTo(map);
+                initializeTransparency();
               }
 
               var featureList = document.getElementById("feature-list");
@@ -1236,6 +1344,8 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
                       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
                   }
                 ).addTo(map);
+
+                initializeTransparency();
               
             });
         });
@@ -1271,7 +1381,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         .getElementById("export-clear-button")
         .addEventListener("click", function () {
           document.getElementById("clear-sidebar-button").click();
-          document.getElementById("custom-formula-view-export").classList.add('hidden'); 
+          document.getElementById("custom-formula-view_export").classList.add('hidden'); 
 
           document.getElementById("computeLayerSwitcher").classList.add("hidden");
 
@@ -1289,9 +1399,9 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
         document.getElementById("cloud-cover").value = "30";
 
-        document.getElementById("select-button").innerHTML = `<span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
+        document.getElementById("select-button_search").innerHTML = `<span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
                       <img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full">
-                      <span id = "selected_filter_value" class="block truncate">Select Option</span>
+                      <span id = "selected-filter-value_search" class="block truncate">Select Option</span>
                     </span>`;
 
         document.getElementById("search-button").classList.add('bg-gray-500', 'pointer-events-none');
@@ -1495,6 +1605,69 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
 </script>
 
+
+<script>
+  //to interpolate the colors to multiple colors
+        function interpolateColors(startColor, endColor, steps) {
+          const start = parseInt(startColor.slice(1), 16); // Convert hex to int
+          const end = parseInt(endColor.slice(1), 16); // Convert hex to int
+          const rStart = (start >> 16) & 0xff, gStart = (start >> 8) & 0xff, bStart = start & 0xff;
+          const rEnd = (end >> 16) & 0xff, gEnd = (end >> 8) & 0xff, bEnd = end & 0xff;
+          const colors = [];
+
+          for (let i = 0; i < steps; i++) {
+              const ratio = i / (steps - 1);
+              const r = Math.round(rStart + ratio * (rEnd - rStart));
+              const g = Math.round(gStart + ratio * (gEnd - gStart));
+              const b = Math.round(bStart + ratio * (bEnd - bStart));
+              colors.push(`#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`);
+          }
+          return colors;
+      }
+
+      function generateColorScales(colorScales, steps) {
+          const interpolatedScales = {};
+          for (const scale in colorScales) {
+              const colors = colorScales[scale];
+              const interpolated = [];
+              for (let i = 0; i < colors.length - 1; i++) {
+                  const segment = interpolateColors(colors[i], colors[i + 1], Math.ceil(steps / (colors.length - 1)));
+                  interpolated.push(...segment.slice(0, -1)); // Exclude last color to avoid duplication
+              }
+              interpolated.push(colors[colors.length - 1]); // Add the last color explicitly
+              interpolatedScales[scale] = interpolated.slice(0, steps); // Ensure exact number of steps
+          }
+          return interpolatedScales;
+      }
+
+      const colorScales = {
+        Viridis: ['#440154', '#482777', '#3E4989', '#31688E', '#26838F', '#1F9D8A', '#6DCD59', '#B6DE2B', '#FDE724'],
+        Rgb:['#0000FF', '#0033CC', '#006699', '#009966', '#00FF00', '#66CC00', '#CC9900', '#FF6600', '#FF0000'],
+        Grayscale: ['#000000', '#1C1C1C', '#383838', '#555555', '#717171', '#8D8D8D', '#AAAAAA', '#C6C6C6', '#E2E2E2', '#FFFFFF'],
+        Plasma: ['#0D0887', '#41049D', '#6A00A8', '#8F0DA4', '#B12A90', '#CC4678', '#E16462', '#F1824D', '#FCA636'],
+        Magma: ['#000004', '#140E36', '#3B0F70', '#641A80', '#8C2981', '#B63679', '#DA4453', '#F1605D', '#FE9F6D'],
+        Inferno: ['#000004', '#160B39', '#420A68', '#6A176E', '#932667', '#BC3754', '#DE4968', '#F66E5B', '#FEA97D'],
+        Cividis: ['#00204C', '#244B5A', '#467B65', '#68A56A', '#93BF72', '#C2CF80', '#EBE983', '#F2F252', '#FFFFD8'],
+        Spectral: ['#9E0142', '#D53E4F', '#F46D43', '#FDAE61', '#FEE08B', '#FFFFBF', '#E6F598', '#ABDDA4', '#66C2A5'],
+        Jet: ['#000083', '#001CE3', '#1CFFFE', '#83FF00', '#FFDD00', '#FF0000', '#B80000', '#7C0000', '#3A0000'],
+        HSV: ['#FF0000', '#FF9900', '#FFFF00', '#33FF00', '#00FF66', '#00FFFF', '#0066FF', '#3300FF', '#CC00FF'],
+        Cool: ['#00FFFF', '#61E3FF', '#9AD3FF', '#C5C6FF', '#ECBCFF', '#FFB7FB', '#FFB6D9', '#FFBCB3', '#FFCC88'],
+        Spring: ['#FF00FF', '#FF69FF', '#FF8FFF', '#FFA2FF', '#FFB1FF', '#FFBFFF', '#FFCFFF', '#FFDEFF', '#FFECFF'],
+
+        Sequential: ['#f7fbff', '#deebf7', '#c6dbef', '#9ecae1', '#6baed6', '#4292c6', '#2171b5', '#08519c', '#08306b'],
+        SequentialMultiHue: ['#f7fcf5', '#e5f5e0', '#c7e9c0', '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#006d2c', '#00441b'],
+        Diverging: ['#d73027', '#fc8d59', '#fee090', '#ffffbf', '#e0f3f8', '#91bfdb', '#4575b4'],
+        Categorical: ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf'],
+        Spectral1: ['#9e0142', '#d53e4f', '#f46d43', '#fdae61', '#fee08b', '#e6f598', '#abdda4', '#66c2a5', '#3288bd', '#5e4fa2'],
+        HeatMap: ['#ffffcc', '#ffeda0', '#fed976', '#feb24c', '#fd8d3c', '#fc4e2a', '#e31a1c', '#bd0026', '#800026'],
+        Terrain: ['#a6611a', '#dfc27d', '#f5f5f5', '#80cdc1', '#018571']
+      };
+
+      const steps = 100;
+      const interpolatedColorScales = generateColorScales(colorScales, steps);
+  
+</script>
+
     <!-- /export api start -->
     <script>
       document.getElementById("export-map-view-button").addEventListener('click', function() {
@@ -1549,7 +1722,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
           })
             .then(response => response.text())
             .then(data => {
-              console.log('Success log:', data);
+              // console.log('Success log:', data);
               updateProgress(data);
               if (data.includes('Processing completed.') || data.includes('100%')) {
                 clearInterval(intervalId);
@@ -1588,7 +1761,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
               progressTextsBefore.innerHTML = ""; // Clear existing items
               nonComputationLogs.forEach(step => {
                 const listItem = document.createElement('li');
-                listItem.style.fontSize = "10px";
+                listItem.style.fontSize = "10px !important";
                 listItem.textContent = step;
                 progressTextsBefore.appendChild(listItem);
               });
@@ -1609,18 +1782,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
       var max;
       var geoRaster;
 
-      const colorScales = {
-        Viridis: ['#440154', '#482777', '#3E4989', '#31688E', '#26838F', '#1F9D8A', '#6DCD59', '#B6DE2B', '#FDE724'],
-        Plasma: ['#0D0887', '#41049D', '#6A00A8', '#8F0DA4', '#B12A90', '#CC4678', '#E16462', '#F1824D', '#FCA636'],
-        Magma: ['#000004', '#140E36', '#3B0F70', '#641A80', '#8C2981', '#B63679', '#DA4453', '#F1605D', '#FE9F6D'],
-        Inferno: ['#000004', '#160B39', '#420A68', '#6A176E', '#932667', '#BC3754', '#DE4968', '#F66E5B', '#FEA97D'],
-        Cividis: ['#00204C', '#244B5A', '#467B65', '#68A56A', '#93BF72', '#C2CF80', '#EBE983', '#F2F252', '#FFFFD8'],
-        Spectral: ['#9E0142', '#D53E4F', '#F46D43', '#FDAE61', '#FEE08B', '#FFFFBF', '#E6F598', '#ABDDA4', '#66C2A5'],
-        Jet: ['#000083', '#001CE3', '#1CFFFE', '#83FF00', '#FFDD00', '#FF0000', '#B80000', '#7C0000', '#3A0000'],
-        HSV: ['#FF0000', '#FF9900', '#FFFF00', '#33FF00', '#00FF66', '#00FFFF', '#0066FF', '#3300FF', '#CC00FF'],
-        Cool: ['#00FFFF', '#61E3FF', '#9AD3FF', '#C5C6FF', '#ECBCFF', '#FFB7FB', '#FFB6D9', '#FFBCB3', '#FFCC88'],
-        Spring: ['#FF00FF', '#FF69FF', '#FF8FFF', '#FFA2FF', '#FFB1FF', '#FFBFFF', '#FFCFFF', '#FFDEFF', '#FFECFF']
-      };
+      // console.log(interpolatedColorScales);
 
       function plotGeoTIFF(tifUrl) {
         if (computeLayer) {
@@ -1653,7 +1815,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
               const paletteSelect = document.getElementById('paletteSelect');
               const selectedPalette = paletteSelect.value;
-              const colorScale = colorScales[selectedPalette];
+              const colorScale = interpolatedColorScales[selectedPalette];
 
               computeLayer = new GeoRasterLayer({
                 georaster: georaster,
@@ -1670,7 +1832,8 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
               //add legend after adding layer
               updateLegend(document.getElementById('paletteSelect').value);
               document.getElementById("legend").classList.remove("hidden");
-
+              
+              initializeTransparency();
           });
         });
       }
@@ -1683,7 +1846,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
       function updateRasterColor(paletteName) {
         if (computeLayer) {
-          const colorScale = colorScales[paletteName];
+          const colorScale = interpolatedColorScales[paletteName];
 
           // Remove the existing layer from the map
           if (map.hasLayer(computeLayer)) {
@@ -1759,6 +1922,30 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
           } else {
               console.error(`Layer ${layerName} not found`);
           }
+      }
+
+      // Initialize the slider values based on current layer transparency
+      function initializeTransparency() {
+        const layers = {
+            "liveLayer": liveLayer,
+            "geojsonLayer": geojsonLayer,
+            "computeLayer": computeLayer
+          };
+          document.querySelectorAll('input[id^="transparency_"]').forEach(input => {
+              const layerName = input.id.split('_')[1];
+              const layer = layers[layerName];
+              if (layer) {
+                  let transparencyValue = 100; // Default to 100% if no transparency is set
+
+                  if (layer.options && layer.options.opacity !== undefined) {
+                      transparencyValue = layer.options.opacity * 100;
+                  } else if (layer.options && layer.options.fillOpacity !== undefined) {
+                      transparencyValue = layer.options.fillOpacity * 100;
+                  }
+
+                  input.value = transparencyValue;
+              }
+          });
       }
 
       // Query all inputs with an ID starting with "transparency_"
@@ -1891,7 +2078,8 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
     <script>
       
      document.addEventListener('DOMContentLoaded', function() {
-        const openModalButton = document.getElementById('custom-filter');
+        const openModalButton1 = document.getElementById('custom-filter_search');
+        const openModalButton2 = document.getElementById('custom-filter_export');
         const closeModalButton = document.getElementById('closeModal');
         const modal = document.getElementById('modal');
         const queryTextarea = document.getElementById('query');
@@ -1904,7 +2092,8 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
         }
 
         // Event listeners to open and close the modal
-        openModalButton.addEventListener('click', toggleModal);
+        openModalButton1.addEventListener('click', toggleModal);
+        openModalButton2.addEventListener('click', toggleModal);
         closeModalButton.addEventListener('click', toggleModal);
 
         // Function to append text to the textarea
@@ -1938,16 +2127,16 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
             console.log('formula:', tile_params.formula);
             document.getElementById("formulaHeading").classList.remove('hidden'); 
-            document.getElementById("custom-formula-view-export").classList.remove('hidden');
+            document.getElementById("custom-formula-view_export").classList.remove('hidden');
             document.getElementById("formulaText").innerHTML = tile_params.formula;
             document.getElementById("formula-text-export").innerHTML = export_params.formula; 
             closeModalButton.click();
         });
 
-        //open formula modal from export section
-        document.getElementById("setFormula-export").addEventListener('click', function() {
-          document.getElementById("custom-filter").click();
-        });
+        // // open formula modal from export section
+        // document.getElementById("setFormula-export").addEventListener('click', function() {
+        //   document.getElementById("custom-filter_search").click();
+        // });
     });
 
 
@@ -2016,9 +2205,11 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
     function displayNoImageFoundMessage() {
       const progressBarContainer = document.getElementById('compute_progressbar');
       const progressText = document.getElementById('compute_progress_text');
+      document.getElementById("ProgressTextsBefore").innerHTML = "";
       
+      progressText.style.removeProperty('font-size');
       progressText.textContent = 'No image found/ try smaller AOI';
-      progressText.style.fontSize = "10px";
+      progressText.style.fontSize = "10px !important";
       progressText.style.color = 'red';
       progressBarContainer.style.display = 'block';
     }
