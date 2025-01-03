@@ -4,7 +4,6 @@ import os
 import shutil
 import sys
 import time
-from collections import deque
 from datetime import datetime, timedelta
 from io import BytesIO
 
@@ -14,18 +13,35 @@ import numpy as np
 from aiocache import cached
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from matplotlib import pyplot as plt
 from PIL import Image
 from rio_tiler.io import COGReader
 from shapely.geometry import box, mapping
+from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 
 from src.scog_compute.engine import compute as compute_engine
 
 app = FastAPI()
+
+
+class TimeoutMiddleware(BaseHTTPMiddleware):
+    def __init__(self, app, timeout: int):
+        super().__init__(app)
+        self.timeout = timeout
+
+    async def dispatch(self, request: Request, call_next):
+        try:
+            return await asyncio.wait_for(call_next(request), timeout=self.timeout)
+        except asyncio.TimeoutError:
+            return Response("Request timed out", status_code=504)
+
+
+app.add_middleware(TimeoutMiddleware, timeout=120)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -386,8 +402,8 @@ async def get_tile(
         }
 
         return Response(content=image_bytes, media_type="image/png", headers=headers)
-    except HTTPException as e:
-        return JSONResponse(content={"error": e.detail}, status_code=e.status_code)
+    except Exception as ex:
+        return JSONResponse(content={"error": "Computation Error"}, status_code=504)
 
 
 def apply_colormap(result):
