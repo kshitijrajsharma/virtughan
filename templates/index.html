@@ -305,14 +305,14 @@
                       <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center space-x-2">
                           <input id="search_layer" type="checkbox" class="layerSwitcher form-checkbox h-4 w-4 text-blue-600" checked>
-                          <label class="block text-sm/6 font-medium text-gray-700">search</label>
+                          <label class="block text-sm/6 font-medium text-gray-700">Search Output Layer</label>
                         </div>
                         <button title="Zoom to Layer" class="text-gray-500 hover:text-gray-700">
                           <i id="search_zoom" class="zoom-to-layer fas fa-search-plus"></i>
                         </button>
                       </div>
                       <div class="flex items-center mb-2">
-                        <span class="text-sm mr-2">Transparency:</span>
+                        <span class="text-sm mr-2 text-gray-500">Transparency:</span>
                         <input type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
                       </div>
                       <!-- <div id="search_progressbar" class="relative w-full bg-gray-300 h-3">
@@ -332,15 +332,15 @@
                       <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center space-x-2">
                           <input id="search_bbox_layer" type="checkbox" class="layerSwitcher form-checkbox h-4 w-4 text-blue-600">
-                          <label class="block text-sm/6 font-medium text-gray-700">Bbox Layer</label>
+                          <label class="block text-sm/6 font-medium text-gray-700">Searched Images Bbox</label>
                         </div>
                         <button title="Zoom to Layer" class="text-gray-500 hover:text-gray-700">
                           <i id="search_bbox_zoom" class="zoom-to-layer fas fa-search-plus"></i>
                         </button>
                       </div>
                       <div class="flex items-center mb-2">
-                        <span class="text-sm mr-2">Transparency:</span>
-                        <input type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
+                        <span class="text-sm mr-2 text-gray-500">Transparency:</span>
+                        <input type="range" class="transparency-slider h-1 w-full text-gray-500" style="accent-color: gray;" min="0" max="100" value="100">
                       </div>
                       <!-- <div id="search_bbox_progressbar" class="relative w-full bg-gray-300 h-3">
                         <div class="absolute inset-0 flex items-center justify-center text-white" style="font-size:10px;" id="search_progress_text">0%</div>
@@ -361,19 +361,19 @@
                       <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center space-x-2">
                           <input id="compute_layer" type="checkbox" class="layerSwitcher form-checkbox h-4 w-4 text-blue-600" checked>
-                          <label for="compute_layer" class="block text-sm font-medium text-gray-700">Compute</label>
+                          <label for="compute_layer" class="block text-sm font-medium text-gray-700">Export Output Layer</label>
                         </div>
                         <button title="Zoom to Layer" class="text-gray-500 hover:text-gray-700">
                           <i id="compute_zoom" class="zoom-to-layer fas fa-search-plus"></i>
                         </button>
                       </div>
                       <div class="flex items-center mb-2">
-                        <label for="transparency" class="text-sm mr-2">Transparency:</label>
+                        <label for="transparency" class="text-sm mr-2 text-gray-500">Transparency:</label>
                         <input id="transparency" type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
                       </div>
                       <div class="mb-2 w-full">
-                        <div class="text-sm">Color Palette:</div>
-                        <select id="paletteSelect" class="form-select mt-1 w-full">
+                        <div class="text-sm text-gray-500">Color Palette:</div>
+                        <select id="paletteSelect" class="form-select mt-1 w-full text-gray-500 text-sm">
                           <option value="Viridis" style="background: linear-gradient(to right, #440154, #FDE724);">Viridis</option>
                           <option value="Plasma" style="background: linear-gradient(to right, #0D0887, #FCA636);">Plasma</option>
                           <option value="Magma" style="background: linear-gradient(to right, #000004, #FE9F6D);">Magma</option>
@@ -1513,7 +1513,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
           })
             .then(response => response.text())
             .then(data => {
-              // console.log('Success log:', data);
+              console.log('Success log:', data);
               updateProgress(data);
               if (data.includes('Processing completed.') || data.includes('100%')) {
                 clearInterval(intervalId);
@@ -1534,36 +1534,36 @@ map.on(L.Draw.Event.CREATED, function (event) {
         }
 
         // Initial call to set progress to 0%
-          startProgressComputation('compute', 0);
-          // Start checking the processing status every 4 seconds
-          const intervalId = setInterval(checkProcessingStatus, 4000);
+        startProgressComputation('compute', 0);
+        // Start checking the processing status every 4 seconds
+        const intervalId = setInterval(checkProcessingStatus, 4000);
 
-          function updateProgress(logData) {
+        function updateProgress(logData) {
 
-            if (logData.includes('No images found') || logData.includes('Filtered 0 items')) {
-              displayNoImageFoundMessage();
-            } else {
-                // Extract non-computation log lines
-                const logLines = logData.split('\n');
-                const nonComputationLogs = logLines.filter(line => !line.includes('Computing Band Calculation'));
-                
-                // Add non-computation logs to the progress list
-                const progressTextsBefore = document.getElementById('ProgressTextsBefore');
-                progressTextsBefore.innerHTML = ""; // Clear existing items
-                nonComputationLogs.forEach(step => {
-                  const listItem = document.createElement('li');
-                  listItem.style.fontSize = "10px";
-                  listItem.textContent = step;
-                  progressTextsBefore.appendChild(listItem);
-                });
+          if (logData.includes('No images found') || logData.includes('Filtered 0 items')) {
+            displayNoImageFoundMessage();
+          } else {
+              // Extract non-computation log lines
+              const logLines = logData.split('\n');
+              const nonComputationLogs = logLines.filter(line => !line.includes('Computing Band Calculation'));
+              
+              // Add non-computation logs to the progress list
+              const progressTextsBefore = document.getElementById('ProgressTextsBefore');
+              progressTextsBefore.innerHTML = ""; // Clear existing items
+              nonComputationLogs.forEach(step => {
+                const listItem = document.createElement('li');
+                listItem.style.fontSize = "10px";
+                listItem.textContent = step;
+                progressTextsBefore.appendChild(listItem);
+              });
 
-              const progressMatches = logData.match(/(\d+)%/g);
-              if (progressMatches) {
-                const lastProgress = progressMatches[progressMatches.length - 1];
-                const progress = parseInt(lastProgress.replace('%', ''), 10);
-                startProgressComputation('compute', progress);
-              }
+            const progressMatches = logData.match(/(\d+)%/g);
+            if (progressMatches) {
+              const lastProgress = progressMatches[progressMatches.length - 1];
+              const progress = parseInt(lastProgress.replace('%', ''), 10);
+              startProgressComputation('compute', progress);
             }
+          }
           }
 
 
