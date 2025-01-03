@@ -2,15 +2,15 @@
 
 ## Purpose
 
-### Efficient On-the-Fly Tile Processing 
+### 1. Efficient On-the-Fly Tile Processing 
 
 The project demonstrates the capability to perform on-the-fly computation at various zoom levels, similar to Google Earth Engine, but using an open-source approach with Cloud Optimized GeoTIFFs (COGs) for Sentinel-2 imagery. This means that users can zoom in and out of large images and perform computations in real-time, without the need for pre-processing or storing the entire image. The project showcases the efficiency and scalability of this approach, which can be achieved with minimal hardware resources.
 
-### Virtual Data Cubes: Shifting from Storage to Computation 
+### 2. Virtual Data Cubes: Shifting from Storage to Computation 
 
 The focus of data cubes should shift from storing huge images to optimizing computation, as COGs enable efficient computation without the need for storing the entire image. This approach introduces the concept of a virtual data cube, where images are stacked and computed over time, allowing for semantic layers and time dimensions to be processed without requiring storage of the entire dataset. In this approach, one provider can store the data, convert it to COG, and save it, while other users can focus on optimizing the computation without needing to store the image. This enables a more efficient use of resources and allows for the creation of virtual data cubes that can be processed and analyzed in real-time.
 
-### Cloud Optiized Geotiff & STAC API for Earth Observation data and Computation
+### 3. Cloud Optiized Geotiff & STAC API for Earth Observation data and Computation
 The project showcases the effectiveness of COGs not only in terms of data access but also the efficient computation, enabling users to focus on areas of interest and process data accross different bands and semantic layers along time dimention maintaining resolution in optimal speed with low hardware and resources. The use of STAC API simplifies search and computation, allowing for the creation of virtual data cubes in any part of the world, without the need for downloading or storing entire images. This approach enables users to access and process only the parts of the image that are required, reducing the computational resources needed and increasing the speed of processing. The project demonstrates the potential of COGs to revolutionize the way we work with large geospatial datasets, enabling faster, more efficient, and more scalable computation and analysis.
 
 ![image](https://github.com/user-attachments/assets/e5741f6b-d6c2-4e47-a794-21c2244a7476)
