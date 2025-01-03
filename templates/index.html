@@ -301,7 +301,7 @@
                 <div id="layerSwitcherContainer" class="hidden w-full max-w-md mx-auto rounded-lg pb-4"> 
                   <label class="block text-sm/6 font-medium text-gray-900 pb-2">Output Layer</label> 
                   <div id="layerSwitcherList" class="">
-                    <div id = "searchLayerSwitcher" class="progressItem p-2 bg-gray-100 rounded-md shadow-sm hidden">
+                    <div id = "searchLayerSwitcher" class="progressItem p-2 bg-gray-100 rounded-md shadow-sm mt-2 hidden">
                       <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center space-x-2">
                           <input id="search_layer" type="checkbox" class="layerSwitcher form-checkbox h-4 w-4 text-blue-600" checked>
@@ -315,10 +315,37 @@
                         <span class="text-sm mr-2">Transparency:</span>
                         <input type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
                       </div>
-                      <div id="search_progressbar" class="relative w-full bg-gray-300 h-3">
+                      <!-- <div id="search_progressbar" class="relative w-full bg-gray-300 h-3">
                         <div class="absolute inset-0 flex items-center justify-center text-white" style="font-size:10px;" id="search_progress_text">0%</div>
                         <div class="bg-green-500 h-3 rounded transition-all duration-500 ease-in-out" id="search_progress" style="width: 0%"></div>
+                      </div> -->
+                      <!-- <div class="flex items-center justify-end mt-2 space-x-4">
+                        <button title="Download" class="text-gray-500 hover:text-gray-700">
+                          <i id = "download-result-image" class="fas fa-download"></i>
+                        </button>
+                        <button title="View" class="text-gray-500 hover:text-gray-700">
+                          <i id = "view-result-image" class="fas fa-eye"></i>
+                        </button>
+                      </div> -->
+                    </div>
+                    <div id = "searchBboxLayerSwitcher" class="progressItem p-2 bg-gray-100 rounded-md shadow-sm mt-2 hidden">
+                      <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                          <input id="search_bbox_layer" type="checkbox" class="layerSwitcher form-checkbox h-4 w-4 text-blue-600">
+                          <label class="block text-sm/6 font-medium text-gray-700">Bbox Layer</label>
+                        </div>
+                        <button title="Zoom to Layer" class="text-gray-500 hover:text-gray-700">
+                          <i id="search_bbox_zoom" class="zoom-to-layer fas fa-search-plus"></i>
+                        </button>
                       </div>
+                      <div class="flex items-center mb-2">
+                        <span class="text-sm mr-2">Transparency:</span>
+                        <input type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
+                      </div>
+                      <!-- <div id="search_bbox_progressbar" class="relative w-full bg-gray-300 h-3">
+                        <div class="absolute inset-0 flex items-center justify-center text-white" style="font-size:10px;" id="search_progress_text">0%</div>
+                        <div class="bg-green-500 h-3 rounded transition-all duration-500 ease-in-out" id="search_progress" style="width: 0%"></div>
+                      </div> -->
                       <!-- <div class="flex items-center justify-end mt-2 space-x-4">
                         <button title="Download" class="text-gray-500 hover:text-gray-700">
                           <i id = "download-result-image" class="fas fa-download"></i>
@@ -329,7 +356,7 @@
                       </div> -->
                     </div>
 
-                    <div id="computeLayerSwitcher" class="progressItem p-2 bg-gray-100 rounded-md shadow-sm hidden">
+                    <div id="computeLayerSwitcher" class="progressItem p-2 bg-gray-100 rounded-md shadow-sm mt-2 hidden">
                       <div id = "layerSwitcherBox" class = "hidden">
                       <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center space-x-2">
@@ -980,7 +1007,8 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           document.getElementById("resultTab").click();
           document.getElementById("layerSwitcherContainer").classList.remove("hidden");
           document.getElementById("searchLayerSwitcher").classList.remove("hidden");
-          startProgressComputation('search', null);
+          document.getElementById("searchBboxLayerSwitcher").classList.remove("hidden");
+          // startProgressComputation('search', null);
 
           var bounds = map.getBounds();
           tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
@@ -1079,7 +1107,10 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
                     highlightedLayer.addLayer(clickedLayer);
                     highlightedLayer.addTo(map);
                     // map.fitBounds(clickedLayer.getBounds());
-                    map.fitBounds(geojsonLayer.getBounds());
+                    if(document.getElementById("search_bbox_layer").checked){
+                      map.fitBounds(geojsonLayer.getBounds());
+                    }
+                    
                     
                     layer.bindPopup(createPopup(feature)/*, { keepInView: true }*/).openPopup();
 
@@ -1093,7 +1124,10 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
                       });
                   });
                 },
-              }).addTo(map);
+              });
+              if(document.getElementById("search_bbox_layer").checked){
+                geojsonLayer.addTo(map);
+              }
 
               var featureList = document.getElementById("feature-list");
               featureList.innerHTML = "";
@@ -1159,7 +1193,9 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
                   // }
                   highlightedLayer.addTo(map);
                   // map.fitBounds(hoveredLayer.getBounds());
-                  map.fitBounds(geojsonLayer.getBounds());
+                  if(document.getElementById("search_bbox_layer").checked){
+                    map.fitBounds(geojsonLayer.getBounds());
+                  }
                   
 
                   // document
@@ -1228,6 +1264,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         .addEventListener("click", function () {
           document.getElementById("clear-sidebar-button").click();
           document.getElementById("searchLayerSwitcher").classList.add("hidden");
+          document.getElementById("searchBboxLayerSwitcher").classList.add("hidden");
         })
 
         document
@@ -1379,6 +1416,14 @@ map.on(L.Draw.Event.CREATED, function (event) {
                 }
                 else{
                   map.removeLayer(liveLayer);
+                }
+            }
+            else if(layerId=="search_bbox_layer"){
+              if(checkedStatus){
+                  map.addLayer(geojsonLayer);
+                }
+                else{
+                  map.removeLayer(geojsonLayer);
                 }
             }
             else if(layerId == "compute_layer"){
