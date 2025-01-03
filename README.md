@@ -2,17 +2,17 @@
 
 ## Purpose
 
-### 1. Efficient On-the-Fly Tile Processing 
+### 1. Efficient On-the-Fly Tile Computation
 
-The project demonstrates the capability to perform on-the-fly computation at various zoom levels, similar to Google Earth Engine, but using an open-source approach with Cloud Optimized GeoTIFFs (COGs) for Sentinel-2 imagery. This means that users can zoom in and out of large images and perform computations in real-time, without the need for pre-processing or storing the entire image. The project showcases the efficiency and scalability of this approach, which can be achieved with minimal hardware resources.
+This research explores how to perform real-time calculations on satellite images at different zoom levels, similar to Google Earth Engine, but using open-source tools. By using Cloud Optimized GeoTIFFs (COGs) with Sentinel-2 imagery, large images can be analyzed without needing to pre-process or store them. The study highlights how this method can scale well and work efficiently, even with limited hardware. Our main focus is on how to scale the computation on different zoom-levels without introducing server overhead 
 
-### 2. Virtual Data Cubes: Shifting from Storage to Computation 
+### 2. Virtual Data Cubes: Focusing on Computation Instead of Storage
 
-The focus of data cubes should shift from storing huge images to optimizing computation, as COGs enable efficient computation without the need for storing the entire image. This approach introduces the concept of a virtual data cube, where images are stacked and computed over time, allowing for semantic layers and time dimensions to be processed without requiring storage of the entire dataset. In this approach, one provider can store the data, convert it to COG, and save it, while other users can focus on optimizing the computation without needing to store the image. This enables a more efficient use of resources and allows for the creation of virtual data cubes that can be processed and analyzed in reasonable-time.
+We believe that instead of focusing on storing large images, data cube systems should prioritize efficient computation. COGs make it possible to analyze images directly without storing the entire dataset. This introduces the idea of virtual data cubes, where images are stacked and processed over time, allowing for analysis across different layers ( including semantic layers ) without needing to download or save everything. So original data is never replicated. In this setup, a data provider can store and convert images to COGs, while users or service providers focus on calculations. This approach reduces the need for terra-bytes of storage and makes it easier to process large datasets quickly.
 
-### 3. Cloud Optiized Geotiff & STAC API for Earth Observation large data
-The project presents the methods using COG , STAC API and numpy array , not only in terms of data access but also the efficient computation, enabling users to focus on areas of interest and process data accross different bands and semantic layers along time dimention maintaining resolution in optimal speed . The use of STAC API simplifies search and computation, allowing for the creation of virtual data cubes in any part of the world, without the need for downloading or storing entire images. This approach enables users to access and process only the parts of the image that are required, reducing the computational resources needed and increasing the speed of processing. The project demonstrates the potential of COGs to mdernize the way we work with large large earth observation datasets, enabling faster, efficient, maintainable and more scalable computation and analysis.
+### 3. Cloud Optimized GeoTIFF and STAC API for Large Earth Observation Data
 
+This research introduces methods on how to use COGs, the SpatioTemporal Asset Catalog (STAC) API, and NumPy arrays to improve the way large Earth observation datasets are accessed and processed. The method allows users to focus on specific areas of interest, process data across different bands and layers over time, and maintain optimal resolution while ensuring fast performance. By using the STAC API, it becomes easier to search for and only process the necessary data without needing to download entire images ( not even the single scene , only accessing the parts ) The study shows how COGs can improve the handling of large datasets, not only making  the access faster but also making computation efficient, and scalable across different zoom levels . 
 ![image](https://github.com/user-attachments/assets/e5741f6b-d6c2-4e47-a794-21c2244a7476)
 
 
