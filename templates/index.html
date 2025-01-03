@@ -278,7 +278,7 @@
                 
                 <div class="bg-white mt-4">
                   <div class="relative bg-inherit">
-                      <input type="number" id="cloud-cover" name="" value = "50" class="peer bg-transparent h-10 w-full rounded-lg text-gray-900 placeholder-transparent ring-1 px-2 ring-gray-200 focus:ring-sky-600 focus:outline-none focus:border-rose-600" placeholder="Cloud Cover"/><label for="" class="absolute cursor-text left-0 -top-3 text-sm text-gray-500 bg-inherit mx-1 px-1 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-2 peer-focus:-top-3 peer-focus:text-sky-600 peer-focus:text-sm transition-all">Cloud Cover</label>
+                      <input type="number" id="cloud-cover" name="" value = "30" class="peer bg-transparent h-10 w-full rounded-lg text-gray-900 placeholder-transparent ring-1 px-2 ring-gray-200 focus:ring-sky-600 focus:outline-none focus:border-rose-600" placeholder="Cloud Cover"/><label for="" class="absolute cursor-text left-0 -top-3 text-sm text-gray-500 bg-inherit mx-1 px-1 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-2 peer-focus:-top-3 peer-focus:text-sky-600 peer-focus:text-sm transition-all">Cloud Cover</label>
                   </div>
                 </div>
               </div>
@@ -307,13 +307,13 @@
                           <input id="search_layer" type="checkbox" class="layerSwitcher form-checkbox h-4 w-4 text-blue-600" checked>
                           <label class="block text-sm/6 font-medium text-gray-700">Search Output Layer</label>
                         </div>
-                        <button title="Zoom to Layer" class="text-gray-500 hover:text-gray-700">
-                          <i id="search_zoom" class="zoom-to-layer fas fa-search-plus"></i>
-                        </button>
+                        <!-- <button title="Zoom to Layer" class="text-gray-500 hover:text-gray-700">
+                          <i id="zoom_liveLayer" class="zoom-to-layer fas fa-search-plus"></i>
+                        </button> -->
                       </div>
                       <div class="flex items-center mb-2">
                         <span class="text-sm mr-2 text-gray-500">Transparency:</span>
-                        <input type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
+                        <input id = "transparency_liveLayer" type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
                       </div>
                       <!-- <div id="search_progressbar" class="relative w-full bg-gray-300 h-3">
                         <div class="absolute inset-0 flex items-center justify-center text-white" style="font-size:10px;" id="search_progress_text">0%</div>
@@ -335,12 +335,12 @@
                           <label class="block text-sm/6 font-medium text-gray-700">Searched Images Bbox</label>
                         </div>
                         <button title="Zoom to Layer" class="text-gray-500 hover:text-gray-700">
-                          <i id="search_bbox_zoom" class="zoom-to-layer fas fa-search-plus"></i>
+                          <i id="zoom_geojsonLayer" class="zoom-to-layer fas fa-search-plus"></i>
                         </button>
                       </div>
                       <div class="flex items-center mb-2">
                         <span class="text-sm mr-2 text-gray-500">Transparency:</span>
-                        <input type="range" class="transparency-slider h-1 w-full text-gray-500" style="accent-color: gray;" min="0" max="100" value="100">
+                        <input id = "transparency_geojsonLayer" type="range" class="transparency-slider h-1 w-full text-gray-500" style="accent-color: gray;" min="0" max="100" value="100">
                       </div>
                       <!-- <div id="search_bbox_progressbar" class="relative w-full bg-gray-300 h-3">
                         <div class="absolute inset-0 flex items-center justify-center text-white" style="font-size:10px;" id="search_progress_text">0%</div>
@@ -364,16 +364,16 @@
                           <label for="compute_layer" class="block text-sm font-medium text-gray-700">Export Output Layer</label>
                         </div>
                         <button title="Zoom to Layer" class="text-gray-500 hover:text-gray-700">
-                          <i id="compute_zoom" class="zoom-to-layer fas fa-search-plus"></i>
+                          <i id="zoom_computeLayer" class="zoom-to-layer fas fa-search-plus"></i>
                         </button>
                       </div>
                       <div class="flex items-center mb-2">
-                        <label for="transparency" class="text-sm mr-2 text-gray-500">Transparency:</label>
-                        <input id="transparency" type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
+                        <label for="transparency_computeLayer" class="text-sm mr-2 text-gray-500">Transparency:</label>
+                        <input id="transparency_computeLayer" type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
                       </div>
                       <div class="mb-2 w-full">
                         <div class="text-sm text-gray-500">Color Palette:</div>
-                        <select id="paletteSelect" class="form-select mt-1 w-full text-gray-500 text-sm">
+                        <select id="paletteSelect" class="form-select mt-1 w-full text-gray-500 text-sm p-1">
                           <option value="Viridis" style="background: linear-gradient(to right, #440154, #FDE724);">Viridis</option>
                           <option value="Plasma" style="background: linear-gradient(to right, #0D0887, #FCA636);">Plasma</option>
                           <option value="Magma" style="background: linear-gradient(to right, #000004, #FE9F6D);">Magma</option>
@@ -1287,7 +1287,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         document.getElementById("start-date").value = lastYearDate;
         document.getElementById("end-date").value = today;
 
-        document.getElementById("cloud-cover").value = "50";
+        document.getElementById("cloud-cover").value = "30";
 
         document.getElementById("select-button").innerHTML = `<span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
                       <img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full">
@@ -1314,7 +1314,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         document.getElementById("start-date-export").value = lastMonthDate;
         document.getElementById("end-date-export").value = today;
 
-        document.getElementById("cloud-cover-export").value = "50";
+        document.getElementById("cloud-cover-export").value = "30";
 
         document.getElementById("export-map-view-button").classList.add('bg-gray-500', 'pointer-events-none');
         document.getElementById("export-map-view-button").classList.remove('bg-blue-700');
@@ -1445,16 +1445,51 @@ map.on(L.Draw.Event.CREATED, function (event) {
             
           }
 
-          //zoom to layer click on layerswitcher
-          if (event.target && event.target.classList.contains('zoom-to-layer')) {
-            const zoomId = event.target.id;
-            console.log('zoom ID:', zoomId);
+          // //zoom to layer click on layerswitcher
+          // if (event.target && event.target.classList.contains('zoom-to-layer')) {
+          //   const zoomId = event.target.id;
+          //   console.log('zoom ID:', zoomId);
 
-            if(zoomId == "search_zoom"){
-              //get bound at the time of apply and fit it. I will do it later.
-            }
-          }
+          //   if(zoomId == "search_zoom"){
+          //     //get bound at the time of apply and fit it. I will do it later.
+          //   }
+          // }
         });
+
+
+       
+
+// Function to zoom to a layer
+function zoomToLayer(layerName) {
+  const layers = {
+    "liveLayer": liveLayer,
+    "geojsonLayer": geojsonLayer,
+    "computeLayer": computeLayer
+  };
+    const layer = layers[layerName];
+    if (layer) {
+        if (layer.getBounds) {
+            // For vector layers
+            map.fitBounds(layer.getBounds());
+        } else if (layer.getBounds === undefined && layer._bounds) {
+            // For raster layers
+            map.fitBounds(layer._bounds);
+        } else {
+            console.error(`Layer ${layerName} does not support bounding box`);
+        }
+        console.log(`Zooming to ${layerName}`);
+    } else {
+        console.error(`Layer ${layerName} not found`);
+    }
+}
+
+// Query all zoom icons with an ID starting with "zoom_"
+document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
+    icon.addEventListener('click', function() {
+        const layerName = this.id.split('_')[1];
+        zoomToLayer(layerName);
+    });
+});
 
         
 
@@ -1471,6 +1506,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
         document.getElementById('compute_progress_text').style.color = 'white';
 
         document.getElementById("layerSwitcherBox").classList.add("hidden");
+        document.getElementById('ProgressTextsBefore').innerHTML = `<li style = "font-size: 10px;">Please Wait Computing...</li>`;
         
         var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&timeseries=${encodeURIComponent(export_params.timeseries)}`;
 
@@ -1566,26 +1602,9 @@ map.on(L.Draw.Event.CREATED, function (event) {
           }
           }
 
-
-
-        //load tiles in map. i will do it later after this api is developed.
-        
-        // if (computeLayer) {
-        //   map.removeLayer(computeLayer);
-        // }
-                
-        // const encodedUrl_tiles = `/tile/{z}/{x}/{y}?start_date=${encodeURIComponent(tile_params.startDate)}&end_date=${encodeURIComponent(tile_params.endDate)}&cloud_cover=${encodeURIComponent(tile_params.cloudCover)}&formula=${encodeURIComponent(tile_params.formula)}&band1=${encodeURIComponent(tile_params.band1)}&band2=${encodeURIComponent(tile_params.band2)}`;
-        // computeLayer = L.tileLayer(
-        //     encodedUrl_tiles,
-        //     {
-        //       tileSize: 256,
-        //       opacity: 0.8,
-        //       attribution:
-        //         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        //     }
-        // ).addTo(map);
-
       });
+
+
       var min;
       var max;
       var geoRaster;
@@ -1718,7 +1737,38 @@ map.on(L.Draw.Event.CREATED, function (event) {
         });
       }
 
+      //for updating the transparency of layers
+      
+      function setLayerTransparency(layerName, value) {
+          const layers = {
+            "liveLayer": liveLayer,
+            "geojsonLayer": geojsonLayer,
+            "computeLayer": computeLayer
+          };
+          const layer = layers[layerName];
+          console.log(layer);
+          if (layer) {
+              if (layer.setOpacity) {
+                  // For raster layers (e.g., imageOverlay)
+                  layer.setOpacity(value / 100);
+              } else if (layer.setStyle) {
+                  // For vector layers (e.g., geoJSON)
+                  layer.setStyle({ opacity: value / 100/*, fillOpacity: value / 100*/ });
+              }
+              console.log(`Setting transparency of ${layerName} to ${value}%`);
+          } else {
+              console.error(`Layer ${layerName} not found`);
+          }
+      }
 
+      // Query all inputs with an ID starting with "transparency_"
+      document.querySelectorAll('input[id^="transparency_"]').forEach(input => {
+          input.addEventListener('input', function() {
+              const layerName = this.id.split('_')[1];
+              const transparencyValue = this.value;
+              setLayerTransparency(layerName, transparencyValue);
+          });
+      });
 
     </script>
     <!-- /export api end -->
