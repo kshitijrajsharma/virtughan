@@ -442,7 +442,7 @@
               <!-- Content for Tab 3 -->
               <div id="sidebar1" class = "overflow-y-scroll custom-scrollbar  p-4" style = "max-height: 550px;">
                <div class = "pb-4">
-                <label class="block text-sm font-medium text-gray-700 pb-2">Select Area of Interest <i title = "Less than the input value in percentage" class="fa-solid fa-circle-info"></i></label>
+                <label class="block text-sm font-medium text-gray-800 pb-2">Select Area of Interest <i title = "Less than the input value in percentage" class="fa-solid fa-circle-info"></i></label>
                 <!-- dropdown start -->
                 <div class="relative mt-2">
                   <button id="select-button-bbox" type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label">
@@ -515,7 +515,7 @@
 
                 <div class = "pb-4">
                   <div id = "filterOption_export" class = "pb-4">
-                    <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-900">Filter Option</label>
+                    <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-800">Filter Option</label>
                     <div class="relative mt-2">
                       <button id="select-button_export" type="button" class="cursor-pointer grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label_export">
                         <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
@@ -591,14 +591,14 @@
                 <div class="w-full bg-white rounded-lg mb-4">
                   <div class="relative">
                       <button id="collapsibleButton" class="w-full text-left font-medium bg-white border border-gray-200 p-2 rounded-md flex items-center justify-between">
-                        <label class="block text-sm font-medium text-gray-700">Select More Options</label> 
+                        <label class="block text-sm font-medium text-gray-600">Select More Options</label> 
                           <svg id="arrowIcon" class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                           </svg>
                       </button>
                       <ul id="collapsibleContent" class="hidden mt-2 bg-white border border-gray-50 rounded-md w-full">
                           <li class="p-2 border-b border-gray-200">
-                              <label class="block text-sm font-medium text-gray-600 pb-4">Select Date</label>
+                              <label class="block text-sm font-medium text-gray-700 pb-4">Select Date</label>
                               <div class="relative h-10 w-full min-w-[200px] mb-4">
                                   <input id="start-date-export" class="bg-white my-dates peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-2.5 font-sans text-sm font-normal text-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" placeholder=" "/>
                                   <label class="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
@@ -613,7 +613,7 @@
                               </div>
                           </li>
                           <li class="p-2 border-b border-gray-200">
-                              <label class="block text-sm/6 font-medium text-gray-600 pb-1">Select Cloud Cover <i title = "Less than the input value in percentage" class="fa-solid fa-circle-info"></i></label>
+                              <label class="block text-sm/6 font-medium text-gray-700 pb-1">Select Cloud Cover <i title = "Less than the input value in percentage" class="fa-solid fa-circle-info"></i></label>
                               <div class="bg-white mt-4">
                                   <div class="relative bg-inherit">
                                       <input type="number" style="font-size:14px;" id="cloud-cover-export" name="" value="50" class="peer bg-transparent h-10 w-full rounded-lg text-gray-600 placeholder-transparent ring-1 px-2 ring-gray-200 focus:ring-sky-600 focus:outline-none focus:border-rose-600" placeholder="Cloud Cover"/>
@@ -627,7 +627,7 @@
                 </div>
 
                 <div class="mb-4 mt-2">
-                  <label class="block text-sm font-medium text-gray-700 pb-4">Select Output Type</label>
+                  <label class="block text-sm font-medium text-gray-800 pb-4">Select Output Type</label>
                   <div class="flex items-center mb-2">
                     <input id="operation" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600" checked>
                     <label for="operation" class="ml-2 text-sm text-gray-600">Operation</label>
@@ -641,12 +641,12 @@
 
                 <div id="operation-container" class="w-full">
                   <label class="block text-sm font-medium text-gray-700">Operation</label>
-                  <select id="operation_menu" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                      <option value="min" class="text-gray-600">Select Option</option>
+                  <select id="operation_menu" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                      <!-- <option value="min" class="text-gray-600">Select Option</option> -->
+                      <option value="median" class="text-gray-600">Median</option>
+                      <option value="mean" class="text-gray-600">Mean</option>
                       <option value="min" class="text-gray-600">Min</option>
                       <option value="max" class="text-gray-600">Max</option>
-                      <option value="mean" class="text-gray-600">Mean</option>
-                      <option value="median" class="text-gray-600">Median</option>
                   </select>
               </div>
 
@@ -1449,7 +1449,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         document.getElementById("export-map-view-button").classList.add('bg-gray-500', 'pointer-events-none');
         document.getElementById("export-map-view-button").classList.remove('bg-blue-700');
 
-        document.getElementById("operation_menu").value = "Select Option";
+        document.getElementById("operation_menu").value = "median";
       }
       setDefaultFiltersExport();
 </script>
@@ -1457,6 +1457,13 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
 <script>
 //draw start    
+document.addEventListener('DOMContentLoaded', function() {
+  const toolbar = document.querySelector('.leaflet-draw-toolbar');
+  if (toolbar) {
+    toolbar.style.display = 'none';
+  }
+});
+
 // Initialize the FeatureGroup to store editable layers
 var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
