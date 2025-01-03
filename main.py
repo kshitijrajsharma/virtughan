@@ -68,9 +68,12 @@ async def list_files():
 @app.get("/logs")
 async def get_logs():
     log_file = "static/runtime.log"
-    with open(log_file, "r") as file:
-        logs = file.readlines()[-30:]
-    return Response("\n".join(logs), media_type="text/plain")
+    if os.path.exists(log_file):
+        with open(log_file, "r") as file:
+            logs = file.readlines()[-30:]
+        return Response("\n".join(logs), media_type="text/plain")
+    else:
+        return JSONResponse(content={"error": "Log file not found"}, status_code=404)
 
 
 @app.get("/sentinel2-bands")
