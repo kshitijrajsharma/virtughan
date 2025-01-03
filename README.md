@@ -2,6 +2,19 @@
 
 Name is combination of virtual cube , where cube translated to nepali word “घन”
 
+### Background
+
+We started initially by looking at how Google Earth Engine (GEE) computes results on-the-fly at different zoom levels on large-scale Earth observation datasets. We were fascinated by the approach and felt an urge to replicate something similar on our own in an open-source manner. We knew Google uses their own kind of tiling, so we started from there.
+
+Initially, we faced a challenge – how could we generate tiles and compute at the same time without pre-computing the whole dataset? Pre-computation would lead to larger processed data sizes, which we didn’t want. And so, the exploration began and the concept of on the fly tiling computation introduced 
+
+At university, we were introduced to the concept of data cubes and the advantages of having a time dimension and semantic layers in the data. It seemed fascinating, despite the challenge of maintaining terabytes of satellite imagery. We thought – maybe we could achieve something similar by developing an approach where one doesn’t need to replicate data but can still build a data cube with semantic layers and computation. This raised another challenge – how to make it work? And hence come the virtual data cube
+
+We started converting Sentinel-2 images to Cloud Optimized GeoTIFFs (COGs) and experimented with the time dimension using Python’s xarray to compute the data. We found that AWS’s effort to store Sentinel images as COGs made it easier for us to build virtual data cubes across the world without storing any data. This felt like an achievement and proof that modern data cubes should focus on improving computation rather than worrying about how to manage terabytes of data.
+
+We wanted to build something to show that this approach actually works and is scalable. We deliberately chose to use only our laptops to run the prototype and process a year’s worth of data without expensive servers.
+
+
 ## Purpose
 
 ### 1. Efficient On-the-Fly Tile Computation
@@ -57,17 +70,6 @@ poetry run uvicorn main:app --reload
 
 - https://registry.opendata.aws/sentinel-2-l2a-cogs/ COGS Stac API for sentinel-2
 
-### Background
-
-We started initially by looking at how Google Earth Engine (GEE) computes results on-the-fly at different zoom levels on large-scale Earth observation datasets. We were fascinated by the approach and felt an urge to replicate something similar on our own in an open-source manner. We knew Google uses their own kind of tiling, so we started from there.
-
-Initially, we faced a challenge – how could we generate tiles and compute at the same time without pre-computing the whole dataset? Pre-computation would lead to larger processed data sizes, which we didn’t want. And so, the exploration began and the concept of on the fly tiling computation introduced 
-
-At university, we were introduced to the concept of data cubes and the advantages of having a time dimension and semantic layers in the data. It seemed fascinating, despite the challenge of maintaining terabytes of satellite imagery. We thought – maybe we could achieve something similar by developing an approach where one doesn’t need to replicate data but can still build a data cube with semantic layers and computation. This raised another challenge – how to make it work? And hence come the virtual data cube
-
-We started converting Sentinel-2 images to Cloud Optimized GeoTIFFs (COGs) and experimented with the time dimension using Python’s xarray to compute the data. We found that AWS’s effort to store Sentinel images as COGs made it easier for us to build virtual data cubes across the world without storing any data. This felt like an achievement and proof that modern data cubes should focus on improving computation rather than worrying about how to manage terabytes of data.
-
-We wanted to build something to show that this approach actually works and is scalable. We deliberately chose to use only our laptops to run the prototype and process a year’s worth of data without expensive servers.
 
 #### Copyright © 2024 – Concept by Kshitij and Upen
 
