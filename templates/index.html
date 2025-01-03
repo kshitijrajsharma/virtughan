@@ -136,7 +136,7 @@
   </style>
 
   <style>
-    .legend {
+    .legends {
       position: absolute;
       bottom: 20px;
       right: 20px;
@@ -146,6 +146,7 @@
       border-radius: 5px;
       display: flex;
       flex-direction: column;
+      font-size:14px;
     }
 
     .legend-item {
@@ -376,7 +377,7 @@
                           </ul>
                         </div>
                         <div class="relative w-full bg-gray-300 h-3 rounded mt-4">
-                          <div class="absolute inset-0 flex items-center justify-center text-white text-xs" id="compute_progress_text">0%</div>
+                          <div class="absolute inset-0 flex items-center justify-center text-white" id="compute_progress_text">0%</div>
                           <div class="bg-green-500 h-full rounded transition-all duration-500 ease-in-out" id="compute_progress" style="width: 0%"></div>
                         </div>
                       </div>
@@ -547,7 +548,7 @@
               <div class="pb-4 mt-6 float-right">
                 <button id="export-clear-button" class="clear-visualize-filter bg-transparent rounded-lg text-gray-500 text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-solid fa-rotate-right"></i> Clear</button>
                 <button id="export-map-view-button" title= "Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Visualize and Export</button>
-                <button id="export-file-button" title= "Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Export</button>
+                <!-- <button id="export-file-button" title= "Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Export</button> -->
               </div>
 
               </div>
@@ -558,7 +559,7 @@
 
   </div>
   <div id="map" class = "w-full md:w-3/4 min-h-screen md:min-h-full z-0"></div>
-  <div id="legend" class="legend"></div>
+  <div id="legend" class="legends hidden text-gray-xs"></div>
   
 
   <!-- filter modal start -->
@@ -1467,7 +1468,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
           })
             .then(response => response.text())
             .then(data => {
-              console.log('Success log:', data);
+              // console.log('Success log:', data);
               updateProgress(data);
               if (data.includes('Processing completed.') || data.includes('100%')) {
                 clearInterval(intervalId);
@@ -1476,6 +1477,9 @@ map.on(L.Draw.Event.CREATED, function (event) {
                 else{
                   document.getElementById("layerSwitcherBox").classList.remove("hidden");
                   plotGeoTIFF('static/export/custom_band_output_aggregate.tif');
+                  
+                  console.log("palette select value: "+document.getElementById('paletteSelect').value);
+                
                 }    
               }
             })
@@ -1599,6 +1603,10 @@ map.on(L.Draw.Event.CREATED, function (event) {
 
               map.fitBounds(computeLayer.getBounds());
 
+              //add legend after adding layer
+              updateLegend(document.getElementById('paletteSelect').value);
+              document.getElementById("legend").classList.remove("hidden");
+
           });
         });
       }
@@ -1607,8 +1615,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
         updateRasterColor(event.target.value);
         updateLegend(event.target.value);
       });
-      // Initial legend update
-      updateLegend(document.getElementById('paletteSelect').value);
+      
 
       function updateRasterColor(paletteName) {
         if (computeLayer) {
@@ -1640,12 +1647,16 @@ map.on(L.Draw.Event.CREATED, function (event) {
       function updateLegend(paletteName) {
         const legend = document.getElementById('legend');
         const colorScale = colorScales[paletteName];
+        const step = (max - min) / (colorScale.length - 1);
 
         // Clear existing legend items
         legend.innerHTML = '';
 
-        // Create legend items based on color scale
-        colorScale.forEach(color => {
+        // Create legend items based on color scale and pixel value range
+        colorScale.forEach((color, index) => {
+          const rangeMin = min + index * step;
+          const rangeMax = index === colorScale.length - 1 ? max : min + (index + 1) * step;
+
           const legendItem = document.createElement('div');
           legendItem.className = 'legend-item';
 
@@ -1653,10 +1664,16 @@ map.on(L.Draw.Event.CREATED, function (event) {
           colorBox.className = 'legend-color';
           colorBox.style.backgroundColor = color;
 
+          const labelText = document.createElement('span');
+          labelText.textContent = `${rangeMin.toFixed(2)} - ${rangeMax.toFixed(2)}`;
+
           legendItem.appendChild(colorBox);
+          legendItem.appendChild(labelText);
           legend.appendChild(legendItem);
         });
       }
+
+
 
     </script>
     <!-- /export api end -->
