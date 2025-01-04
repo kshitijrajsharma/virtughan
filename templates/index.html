@@ -135,6 +135,9 @@
       color: #6b7280; /* Tailwind gray-500 */
     }
 
+    .custom-height-icon {
+            font-size: 2rem; 
+        }
   </style>
 
   <style>
@@ -174,19 +177,21 @@
   <body>
     <header class="bg-white shadow-md py-4 border-b border-gray-300">
       <div class="container mx-auto flex items-center justify-between px-4">
-        <!-- Logo -->
-        <div class="flex items-center">
-          <a href="/"><img src="static/img/virtughan-logo.png" alt="Logo" class="h-10 w-10 mr-2"></a>
-
-          <span class="text-xl font-bold text-gray-800">VirtuGhan</span>
-        </div>
-        <!-- Navigation Links -->
-        <nav class="flex space-x-8">
-          <a href="/" class="text-gray-600 hover:text-gray-900">Data</a>
-          <a href="/about" class="text-gray-600 hover:text-gray-900">About</a>
-        </nav>
+          <!-- Logo -->
+          <div class="flex items-center">
+              <a href="/"><img src="static/img/virtughan-logo.png" alt="Logo" class="h-10 w-10 mr-2"></a>
+              <span class="text-xl font-bold text-gray-800">VirtuGhan</span>
+          </div>
+          <!-- Navigation Links -->
+          <nav class="flex space-x-8">
+              <a href="/" class="text-gray-600 hover:text-gray-900">Data</a>
+              <a href="/about" class="text-gray-600 hover:text-gray-900">About</a>
+              <a href="https://github.com/kshitijrajsharma/VirtuGhan" class="text-gray-600 hover:text-gray-900">
+                  <i class="fab fa-github custom-height-icon"></i>
+              </a>
+          </nav>
       </div>
-    </header>
+  </header>
     <div class = "flex flex-col md:flex-row h-screen overflow-y-auto custom-scrollbar md:overflow-hidden">
       <div id="info" class="w-full md:w-1/4 md:min-w-[25%] space-y-12 bg-gray-50 z-10 border-r border-gray-300">
       <div class="container mx-auto pb-4 pt-1">
