@@ -203,7 +203,7 @@
               <!-- <h2 class="text-base/7 font-semibold text-gray-900">Apply Filters</h2>
               <p class="mt-1 text-sm/6 text-gray-600">Select the filters you want to apply.</p> -->
               <div id = "filterOption_search" class = "pb-4">
-                <label id="listbox-label_search" class="block text-sm/6 font-medium text-gray-900">Filter Option</label>
+                <label id="listbox-label_search" class="block text-sm/6 font-medium text-gray-900">Filter Option *</label>
                 <div class="relative mt-2">
                   <button id="select-button_search" type="button" class="cursor-pointer grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label_search">
                     <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
@@ -518,7 +518,7 @@
 
                 <div class = "pb-4">
                   <div id = "filterOption_export" class = "pb-4">
-                    <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-800">Filter Option</label>
+                    <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-800">Filter Option *</label>
                     <div class="relative mt-2">
                       <button id="select-button_export" type="button" class="cursor-pointer grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label_export">
                         <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
@@ -677,7 +677,7 @@
           <i class="fas fa-times"></i>
       </button>
       <h3 class="text-xl font-semibold mb-4 text-gray-800">Finalize the formula to generate the result</h3>
-      <label class="block font-xs text-gray-500 pb-4">Double click on the Bands and Operators to select them.</label>
+      <label class="block font-xs text-gray-500 pb-4">Click on the Bands and Operators to select them.</label>
       
       <!-- Section for mapping bands -->
       <div class="mb-4">
@@ -774,7 +774,7 @@
           
           <div class="mb-4">
               <label for="query" class="block text-sm font-medium text-gray-700">Query</label>
-              <textarea id="query" rows="3" class="mt-1 p-2 text-gray-800 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm pointer-events-none"></textarea>
+              <textarea id="query" rows="3" class="mt-1 p-2 text-gray-800 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
           </div>
           <div class="flex justify-between float-right">
               <button id="resetButton" class="text-gray-500 mr-2"><i class="fa-solid fa-rotate-right"></i> Reset</button>  
@@ -945,9 +945,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     listItems.forEach(item => {
       item.addEventListener('click', function() {
+        if (this.closest('#select-list_search')) {
+          document.getElementById("search-button").classList.remove('bg-gray-500', 'pointer-events-none');
+          document.getElementById("search-button").classList.add('bg-blue-700');
+        }
+        else if (this.closest('#select-list_export')) {
+          document.getElementById("export-map-view-button").classList.remove('bg-gray-500', 'pointer-events-none');
+          document.getElementById("export-map-view-button").classList.add('bg-blue-700');
+        }
         //activate visualize/search button
-        document.getElementById("search-button").classList.remove('bg-gray-500', 'pointer-events-none');
-        document.getElementById("search-button").classList.add('bg-blue-700');
+        
 
         document.getElementById("formulaHeading").classList.add('hidden'); 
         document.getElementById("formulaHeading-export").classList.add('hidden'); 
@@ -2063,9 +2070,6 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
           if(checkedStatustimeSeries){
             export_params.timeseries = "true";
-
-            document.getElementById("export-map-view-button").classList.remove('bg-gray-500', 'pointer-events-none');
-            document.getElementById("export-map-view-button").classList.add('bg-blue-700');
           }
           else{
             export_params.timeseries = "false";
@@ -2077,8 +2081,6 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
       
       document.getElementById("operation_menu").addEventListener('change', function() {
         export_params.operation = this.value;
-        document.getElementById("export-map-view-button").classList.remove('bg-gray-500', 'pointer-events-none');
-        document.getElementById("export-map-view-button").classList.add('bg-blue-700');
       });
 
     </script>
@@ -2181,17 +2183,17 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
             queryTextarea.value += text + ' ';
         }
 
-        // Add double-click event listeners to attributes list items
-        document.getElementById('attributes-list').addEventListener('dblclick', function(event) { 
+        // Add click event listeners to attributes list items
+        document.getElementById('attributes-list').addEventListener('click', function(event) { 
           if (event.target && event.target.classList.contains('attribute-item')) { 
             var separated_band_text = event.target.textContent.split(" ")[0];
             appendToQuery(separated_band_text); 
           } 
         });
 
-        // Add double-click event listeners to operators list items
+        // Add click event listeners to operators list items
         document.querySelectorAll('#operators-list .operator-item').forEach(function(item) {
-            item.addEventListener('dblclick', function() {
+            item.addEventListener('click', function() {
                 appendToQuery(item.textContent);
             });
         });
