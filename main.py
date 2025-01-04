@@ -22,6 +22,7 @@ from PIL import Image
 from rio_tiler.io import COGReader
 from shapely.geometry import box, mapping
 from starlette.requests import Request
+from starlette.status import HTTP_504_GATEWAY_TIMEOUT
 
 from src.scog_compute.engine import compute as compute_engine
 
@@ -36,6 +37,21 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+REQUEST_TIMEOUT = 2 * 60  ## seconds
+
+
+@app.middleware("http")
+async def timeout_middleware(request: Request, call_next):
+    try:
+
+        return await asyncio.wait_for(call_next(request), timeout=REQUEST_TIMEOUT)
+    except asyncio.TimeoutError:
+
+        return JSONResponse(
+            {"detail": "Request processing exceeded the time limit."},
+            status_code=HTTP_504_GATEWAY_TIMEOUT,
+        )
 
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
