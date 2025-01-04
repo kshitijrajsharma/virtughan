@@ -132,6 +132,8 @@ def zip_files(file_list, zip_path):
         for file in file_list:
             zipf.write(file, os.path.basename(file))
     print(f"Saved ZIP to {zip_path}")
+    for file in file_list:
+        os.remove(file)
 
 
 def save_aggregated_result_with_colormap(
