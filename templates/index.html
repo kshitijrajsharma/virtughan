@@ -179,7 +179,7 @@
       <div class="container mx-auto flex items-center justify-between px-4">
           <!-- Logo -->
           <div class="flex items-center">
-              <a href="/"><img src="static/img/virtughan-logo.png" alt="Logo" class="h-10 w-10 mr-2"></a>
+            <a href="/"><img src="static/img/virtughan-logo.png" alt="Logo" class="h-10 w-10 mr-2"></a>
               <span class="text-xl font-bold text-gray-800">VirtuGhan</span>
           </div>
           <!-- Navigation Links -->
@@ -694,8 +694,9 @@
           <div class="flex flex-col md:flex-row md:space-x-4">
               <div class="w-full md:w-1/2 mb-4 md:mb-0">
                   <label class="block text-sm font-medium text-gray-700">Band 1</label>
-                  <select id="band1" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                      <option value="">Select Band 1</option>
+                  <select id="band1" style="border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option value="">Select Band 1</option>
+                    <optgroup label="Bands">
                       <option value="RED">RED</option>
                       <option value="GREEN">GREEN</option>
                       <option value="BLUE">BLUE</option>
@@ -710,16 +711,20 @@
                       <option value="NIR08">NIR08</option>
                       <option value="SCL">SCL</option>
                       <option value="AOT">AOT</option>
+                    </optgroup>
+                    <optgroup label="Semantic Bands">
                       <option value="COASTAL">COASTAL</option>
                       <option value="NIR09">NIR09</option>
                       <option value="CLOUD">CLOUD</option>
                       <option value="SNOW">SNOW</option>
-                  </select>
+                    </optgroup>
+                  </select>                  
               </div>
               <div class="w-full md:w-1/2">
                   <label class="block text-sm font-medium text-gray-700">Band 2</label>
-                  <select id="band2" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                      <option value="">Select Band 2</option>
+                  <select id="band1" style="border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option value="">Select Band 1</option>
+                    <optgroup label="Bands">
                       <option value="RED">RED</option>
                       <option value="GREEN">GREEN</option>
                       <option value="BLUE">BLUE</option>
@@ -734,11 +739,15 @@
                       <option value="NIR08">NIR08</option>
                       <option value="SCL">SCL</option>
                       <option value="AOT">AOT</option>
+                    </optgroup>
+                    <optgroup label="Semantic Bands">
                       <option value="COASTAL">COASTAL</option>
                       <option value="NIR09">NIR09</option>
                       <option value="CLOUD">CLOUD</option>
                       <option value="SNOW">SNOW</option>
+                    </optgroup>
                   </select>
+                  
               </div>
           </div>
       </div>
