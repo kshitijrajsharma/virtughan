@@ -6,12 +6,12 @@
     <title>About VirtuGhan</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style> 
-        body { 
+        /* body { 
             font-family: 'Inter', sans-serif; 
-        } 
+        }  */
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-gray-50 text-gray-700">
     <header class="bg-white shadow-md py-4 border-b border-gray-300">
         <div class="container mx-auto flex items-center justify-between px-4">
           <!-- Logo -->
@@ -53,7 +53,6 @@
             <p class="mb-4">We started converting Sentinel-2 images to Cloud Optimized GeoTIFFs (COGs) and experimented with the time dimension using Python’s xarray to compute the data. We found that AWS’s effort to store Sentinel images as COGs made it easier for us to build virtual data cubes across the world without storing any data. This felt like an achievement and proof that modern data cubes should focus on improving computation rather than worrying about how to manage terabytes of data.</p>
             <p class="mb-4">We wanted to build something to show that this approach actually works and is scalable. We deliberately chose to use only our laptops to run the prototype and process a year’s worth of data without expensive servers.</p>
             
-            <h2 class="text-2xl font-semibold mb-4 mt-10">Purpose</h2>
             <h2 class="text-2xl font-semibold mb-4 mt-10">Purpose</h2>
             <div class="flex mb-4">
                 <div class="flex-grow">
