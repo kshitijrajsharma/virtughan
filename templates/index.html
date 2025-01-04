@@ -421,7 +421,7 @@
                       <div id="compute_progressbar" class="relative w-full">
                         <div class="mb-4">
                           <label class="block text-xs font-medium text-gray-900 pb-2">Computation Progress</label>
-                          <ul id="ProgressTextsBefore" class="list-none list-inside text-xs text-gray-700 mb-2">
+                          <ul id="ProgressTextsBefore" class="list-none list-inside text-xs text-gray-700 mb-2 max-h-40 overflow-y-auto custom-scrollbar">
                             <li style = "font-size: 10px;">Please Wait Computing...</li>
                           </ul>
                         </div>
@@ -722,7 +722,7 @@
               </div>
               <div class="w-full md:w-1/2">
                   <label class="block text-sm font-medium text-gray-700">Band 2</label>
-                  <select id="band1" style="border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                  <select id="band2" style="border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                     <option value="">Select Band 1</option>
                     <optgroup label="Bands">
                       <option value="RED">RED</option>
@@ -1195,7 +1195,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         "formula": "(band2 - band1) / (band2 + band1)",
         "band1": "red",
         "band2": "nir",
-        "operation": "mean",
+        "operation": "median",
         "timeseries": "false",
       }
 
@@ -1885,36 +1885,86 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
         // Initial call to set progress to 0%
         startProgressComputation('compute', 0);
-        // Start checking the processing status every 4 seconds
-        const intervalId = setInterval(checkProcessingStatus, 4000);
+        
+        // Start checking the processing status every 5 seconds
+        const intervalId = setInterval(checkProcessingStatus, 5000);
 
         function updateProgress(logData) {
-
           if (logData.includes('No images found') || logData.includes('Filtered 0 items')) {
-            displayNoImageFoundMessage();
+              displayNoImageFoundMessage();
           } else {
-              // Extract non-computation log lines
+              // Extract log lines
               const logLines = logData.split('\n');
               const nonComputationLogs = logLines.filter(line => !line.includes('Computing Band Calculation'));
-              
-              // Add non-computation logs to the progress list
+
+              document.getElementById('ProgressTextsBefore').innerHTML = "";
+
+              // Get the progress list element
               const progressTextsBefore = document.getElementById('ProgressTextsBefore');
-              progressTextsBefore.innerHTML = ""; // Clear existing items
+              // Get the existing list items text content
+              const existingItems = Array.from(progressTextsBefore.getElementsByTagName('li')).map(item => item.textContent);
+
+              // Add non-computation logs to the progress list if they are not already present
               nonComputationLogs.forEach(step => {
-                const listItem = document.createElement('li');
-                listItem.style.fontSize = "10px !important";
-                listItem.textContent = step;
-                progressTextsBefore.appendChild(listItem);
+                  if (!existingItems.includes(step)) {
+                      const listItem = document.createElement('li');
+                      listItem.style.fontSize = "10px !important";
+                      listItem.textContent = step;
+                      progressTextsBefore.appendChild(listItem);
+                  }
               });
 
-            const progressMatches = logData.match(/(\d+)%/g);
-            if (progressMatches) {
-              const lastProgress = progressMatches[progressMatches.length - 1];
-              const progress = parseInt(lastProgress.replace('%', ''), 10);
-              startProgressComputation('compute', progress);
-            }
+              // Handle "Computing Band Calculation" logs
+              const computationLogs = logLines.filter(line => line.includes('Computing Band Calculation'));
+              const latestLog = computationLogs[computationLogs.length - 1]; // Get the latest log
+
+              if (latestLog) {
+                  const matches = latestLog.match(/(\d+)%.*\| (\d+)\/(\d+).* \[(.*?)<(.*?)\]/);
+                  if (matches) {
+                      const current = matches[2];
+                      const total = matches[3];
+                      const elapsed = matches[4];
+                      const remaining = matches[5].slice(0, -3); // Remove the last 3 characters
+
+                      const logMessages = [
+                          '-', //one space added
+                          `Images Processed: ${current}/${total}`,
+                          `Time Elapsed: ${elapsed}`,
+                          `Time Remaining: ${remaining}`
+                      ];
+
+                      // Add/update the log messages
+                      logMessages.forEach((logMessage, index) => {
+                          let existingLog = progressTextsBefore.querySelector(`.computation-log-${index}`);
+                          if (existingLog) {
+                              existingLog.textContent = logMessage;
+                          } else {
+                              const listItem = document.createElement('li');
+                              listItem.classList.add(`computation-log-${index}`);
+                              listItem.style.fontSize = "10px !important";
+                              listItem.innerHTML = logMessage === ' ' ? '&nbsp;' : logMessage;
+                              progressTextsBefore.appendChild(listItem);
+                          }
+                      });
+                  }
+              }
+
+              // Handle progress bar updates
+              const progressMatches = logData.match(/(\d+)%/g);
+              if (progressMatches) {
+                  const lastProgress = progressMatches[progressMatches.length - 1];
+                  const progress = parseInt(lastProgress.replace('%', ''), 10);
+                  startProgressComputation('compute', progress);
+              }
+              // Scroll the progress list to the bottom 
+              progressTextsBefore.scrollTop = progressTextsBefore.scrollHeight;
           }
-          }
+        }
+
+
+
+
+
 
       });
 
