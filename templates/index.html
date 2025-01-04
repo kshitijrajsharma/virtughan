@@ -1124,6 +1124,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
         export_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
         document.getElementById("coords").textContent = tile_params.bbox;
+        document.getElementById("map-window-content").innerHTML = export_params.bbox;
         document.getElementById("zoom-level").textContent = map.getZoom();
       });
 
