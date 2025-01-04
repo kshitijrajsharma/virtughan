@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About VirtuGhan</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style> 
+        body { 
+            font-family: 'Inter', sans-serif; 
+        } 
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <header class="bg-white shadow-md py-4 border-b border-gray-300">
+        <div class="container mx-auto flex items-center justify-between px-4">
+          <!-- Logo -->
+          <div class="flex items-center">
+            <a href="/"><img src="static/img/virtughan-logo.png" alt="Logo" class="h-10 w-10 mr-2"></a>
+  
+            <span class="text-xl font-bold text-gray-800">VirtuGhan</span>
+          </div>
+          <!-- Navigation Links -->
+          <nav class="flex space-x-8">
+            <a href="/" class="text-gray-600 hover:text-gray-900">Data</a>
+            <a href="/about" class="text-gray-600 hover:text-gray-900">About</a>
+          </nav>
+        </div>
+      </header>
+    <div class="container mx-auto py-10">
+        <div class="bg-gray-50 p-8 " style="width: 70%; margin: 0 auto;">
+            <h1 class="text-4xl font-bold mb-6 text-center">VirtuGhan</h1>
+            <p class="mb-4 text-center text-lg"><i><strong>Name</strong> is a combination of virtual cube, where cube translates to Nepali word “घन”</i></p>
+            <h2 class="text-2xl font-semibold mb-4">Background</h2>
+            <div class="flex mb-4">
+                <div class="flex-grow">
+                    <p>We started initially by looking at how Google Earth Engine (GEE) computes results on-the-fly at different zoom levels on large-scale Earth observation datasets. We were fascinated by the approach and felt an urge to replicate something similar on our own in an open-source manner. We knew Google uses their own kind of tiling, so we started from there.</p>
+                    <p>Initially, we faced a challenge – how could we generate tiles and compute at the same time without pre-computing the whole dataset? Pre-computation would lead to larger processed data sizes, which we didn’t want. And so, the exploration began and the concept of on the fly tiling computation introduced.</p>
+                </div>
+                <div class="flex-shrink-0 ml-4">
+                    <img src="static/img/about/satellite.png" alt="First Main Paragraph Image" class="w-96 h-auto rounded-lg shadow-md">
+                </div>
+            </div>
+
+            <div class="flex mb-4">
+                <div class="flex-grow">
+                    <p>At university, we were introduced to the concept of data cubes and the advantages of having a time dimension and semantic layers in the data. It seemed fascinating, despite the challenge of maintaining terabytes of satellite imagery. We thought – maybe we could achieve something similar by developing an approach where one doesn’t need to replicate data but can still build a data cube with semantic layers and computation. This raised another challenge – how to make it work? And hence came the virtual data cube.</p>
+                </div>
+                <div class="flex-shrink-0 ml-4">
+                    <img src="static/img/about/satellite.png" alt="Second Main Paragraph Image" class="w-96 h-auto rounded-lg shadow-md">
+                </div>
+            </div>
+            <p class="mb-4">We started converting Sentinel-2 images to Cloud Optimized GeoTIFFs (COGs) and experimented with the time dimension using Python’s xarray to compute the data. We found that AWS’s effort to store Sentinel images as COGs made it easier for us to build virtual data cubes across the world without storing any data. This felt like an achievement and proof that modern data cubes should focus on improving computation rather than worrying about how to manage terabytes of data.</p>
+            <p class="mb-4">We wanted to build something to show that this approach actually works and is scalable. We deliberately chose to use only our laptops to run the prototype and process a year’s worth of data without expensive servers.</p>
+            
+            <h2 class="text-2xl font-semibold mb-4 mt-10">Purpose</h2>
+            <h2 class="text-2xl font-semibold mb-4 mt-10">Purpose</h2>
+            <div class="flex mb-4">
+                <div class="flex-grow">
+                    <ul class="list-disc list-inside mb-4">
+                        <li class="mb-2 flex">
+                            <div class="flex-grow">
+                                <strong>Efficient On-the-Fly Tile Computation:</strong> This research explores how to perform real-time calculations on satellite images at different zoom levels, similar to Google Earth Engine, but using open-source tools. By using Cloud Optimized GeoTIFFs (COGs) with Sentinel-2 imagery, large images can be analyzed without needing to pre-process or store them. The study highlights how this method can scale well and work efficiently, even with limited hardware. Our main focus is on how to scale the computation on different zoom levels without introducing server overhead.
+                            </div>
+                            <div class="flex-shrink-0 ml-4">
+                                <img src="static/img/about/ndvi-img.png" alt="Satellite Map" class="w-96 h-auto rounded-lg shadow-md">
+                            </div>
+                        </li>
+                        <li class="mb-2"><strong>Virtual Data Cubes: Focusing on Computation Instead of Storage:</strong> We believe that instead of focusing on storing large images, data cube systems should prioritize efficient computation. COGs make it possible to analyze images directly without storing the entire dataset. This introduces the idea of virtual data cubes, where images are stacked and processed over time, allowing for analysis across different layers (including semantic layers) without needing to download or save everything. So, original data is never replicated. In this setup, a data provider can store and convert images to COGs, while users or service providers focus on calculations. This approach reduces the need for terabytes of storage and makes it easier to process large datasets quickly.</li>
+                        <li class="mb-2"><strong>Cloud Optimized GeoTIFF and STAC API for Large Earth Observation Data:</strong> This research introduces methods on how to use COGs, the SpatioTemporal Asset Catalog (STAC) API, and NumPy arrays to improve the way large Earth observation datasets are accessed and processed. The method allows users to focus on specific areas of interest, process data across different bands and layers over time, and maintain optimal resolution while ensuring fast performance. By using the STAC API, it becomes easier to search for and only process the necessary data without needing to download entire images (not even a single scene, only accessing the parts). The study shows how COGs can improve the handling of large datasets, not only making the access faster but also making computation efficient, and scalable across different zoom levels.</li>
+                    </ul>
+                </div>
+            </div>
+            
+
+            
+        </div>
+    </div>
+</body>
+</html>

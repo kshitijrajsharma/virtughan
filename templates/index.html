@@ -176,14 +176,14 @@
       <div class="container mx-auto flex items-center justify-between px-4">
         <!-- Logo -->
         <div class="flex items-center">
-          <img src="static/img/virtughan-logo.png" alt="Logo" class="h-10 w-10 mr-2">
+          <a href="/"><img src="static/img/virtughan-logo.png" alt="Logo" class="h-10 w-10 mr-2"></a>
 
           <span class="text-xl font-bold text-gray-800">VirtuGhan</span>
         </div>
         <!-- Navigation Links -->
         <nav class="flex space-x-8">
-          <a href="#map" class="text-gray-600 hover:text-gray-900">Data</a>
-          <a href="#about" class="text-gray-600 hover:text-gray-900">About</a>
+          <a href="/" class="text-gray-600 hover:text-gray-900">Data</a>
+          <a href="/about" class="text-gray-600 hover:text-gray-900">About</a>
         </nav>
       </div>
     </header>
@@ -416,7 +416,7 @@
                       <div id="compute_progressbar" class="relative w-full">
                         <div class="mb-4">
                           <label class="block text-xs font-medium text-gray-900 pb-2">Computation Progress</label>
-                          <ul id="ProgressTextsBefore" class="list-none list-inside text-sm text-gray-700 mb-2">
+                          <ul id="ProgressTextsBefore" class="list-none list-inside text-xs text-gray-700 mb-2">
                             <li style = "font-size: 10px;">Please Wait Computing...</li>
                           </ul>
                         </div>
@@ -459,7 +459,7 @@
                   </button>
               
                   <ul id="select-list-bbox" class="hidden absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3">
-                    <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-0" role="option">
+                    <li id = "map-window-bbox" class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-0" role="option">
                       <div class="flex items-center">
                         <i class="fa-regular fa-square"></i>
                         <span class="ml-3 block truncate font-normal text-gray-600">Map Window</span>
@@ -471,7 +471,7 @@
                       </span>
                     </li>
                     <!-- More items... -->
-                    <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-1" role="option">
+                    <li id="draw-aoi-on-map" class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-1" role="option">
                       <div class="flex items-center">
                         <i class="fa-solid fa-draw-polygon"></i>
                         <span class="ml-3 block truncate font-normal text-gray-600">Draw AOI on Map</span>
@@ -482,7 +482,7 @@
                         </svg>
                       </span>
                     </li>
-                    <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="upload-file-option" role="option">
+                    <li id = "upload-file-bbox" class="hidden relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" role="option">
                       <div class="flex items-center">
                         <i class="fa-solid fa-arrow-up-from-bracket"></i>
                         <span class="ml-3 block truncate font-normal text-gray-600">Upload File</span>
@@ -633,7 +633,7 @@
                   <label class="block text-sm font-medium text-gray-800 pb-4">Select Output Type</label>
                   <div class="flex items-center mb-2">
                     <input id="operation" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600" checked>
-                    <label for="operation" class="ml-2 text-sm text-gray-600">Operation</label>
+                    <label for="operation" class="ml-2 text-sm text-gray-600">Compute</label>
                   </div>
                   <div class="flex items-center">
                     <input id="timeSeries" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600">
@@ -650,6 +650,10 @@
                       <option value="mean" class="text-gray-600">Mean</option>
                       <option value="min" class="text-gray-600">Min</option>
                       <option value="max" class="text-gray-600">Max</option>
+                      <option value="std" class="text-gray-600">Std</option>
+                      <option value="sum" class="text-gray-600">Sum</option>
+                      <option value="var" class="text-gray-600">Variance</option>
+                      <option value="mode" class="text-gray-600">Mode</option>
                   </select>
               </div>
 
@@ -823,13 +827,13 @@
       </div>
       <div id="operationContainer" class="hidden">
         <div id="imageContainer" class="mb-4">
-          <!-- <img id="operationImageView" class="w-full rounded-md" src="images/image_2022-01-01.jpg" alt="Image"> -->
+          <img id="operationImageView" class="w-full rounded-md" src="images/image_2022-01-01.jpg" alt="Image">
         </div>
         <div id="operationDateDisplay" class="text-center text-sm text-gray-700 mb-4">Start Date</div>
       </div>
       <div id="timeSeriesContainer" class="hidden">
         <div id="imageContainer" class="mb-4">
-          <!-- <img id="timeSeriesImageView" class="w-full rounded-md" src="images/image_2022-01-01.jpg" alt="Image"> -->
+          <img id="timeSeriesImageView" class="w-full rounded-md" src="images/image_2022-01-01.jpg" alt="Image">
         </div>
         <div id="dateDisplay" class="text-center text-sm text-gray-700 mb-4">Start Date</div>
         <div class="flex items-center mb-4">
@@ -954,13 +958,24 @@ document.addEventListener('DOMContentLoaded', function() {
           document.getElementById("export-map-view-button").classList.add('bg-blue-700');
         }
         //activate visualize/search button
-        
+        // console.log("entered here");
+        if (this.closest('#select-list-bbox')) {
+          // console.log("entered inside");
+          // console.log(drawToolbar);
+          if (drawToolbar) {
+            drawToolbar.style.display = 'none';
+          }
+          // if(drawnItems){
+          //   map.removeLayer(drawnItems);
+          // }
+        }
 
         document.getElementById("formulaHeading").classList.add('hidden'); 
         document.getElementById("formulaHeading-export").classList.add('hidden'); 
 
 
         // Update the button text and image/icon with the selected item's data
+        const selectedItemId = item.id;
         const selectedItemText = item.querySelector('.truncate').innerText;
         const selectedItemIcon = item.querySelector('img, i'); // Select either img or i element
 
@@ -998,16 +1013,29 @@ document.addEventListener('DOMContentLoaded', function() {
         const uploadBBoxFileOption = document.getElementById('upload-bbox-file-option');
 
         // Hide all sections first
-        coords.classList.add('hidden');
+        // coords.classList.add('hidden');
         drawBBoxOption.classList.add('hidden');
         uploadBBoxFileOption.classList.add('hidden');
 
         // Show the corresponding section based on the selected item
-        if (selectedItemText === 'Map Window') {
+        if (selectedItemId === 'map-window-bbox') {
           coords.classList.remove('hidden');
-        } else if (selectedItemText === 'Draw AOI on Map') {
+
+          if(Object.keys(drawnItems._layers).length > 0){
+            // console.log(drawnItems);
+            map.removeLayer(drawnItems);
+          }
+        } else if (selectedItemId === 'draw-aoi-on-map') {
+          console.log("fired");
+          coords.classList.add('hidden');
           drawBBoxOption.classList.remove('hidden');
-        } else if (selectedItemText === 'Upload File') {
+          console.log(Object.keys(highlightedLayer._layers).length > 0);
+          if(Object.keys(drawnItems._layers).length > 0){
+            // console.log(drawnItems);
+            map.addLayer(drawnItems);
+          }
+        } else if (selectedItemId === 'upload-file-bbox') {
+          coords.classList.add('hidden');
           uploadBBoxFileOption.classList.remove('hidden');
         }
       });
@@ -1505,11 +1533,12 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
 
 <script>
-//draw start    
+//draw start 
+var drawToolbar;   
 document.addEventListener('DOMContentLoaded', function() {
-  const toolbar = document.querySelector('.leaflet-draw-toolbar');
-  if (toolbar) {
-    toolbar.style.display = 'none';
+  drawToolbar = document.querySelector('.leaflet-draw-toolbar');
+  if (drawToolbar) {
+    drawToolbar.style.display = 'none';
   }
 });
 
@@ -1559,6 +1588,13 @@ function metersToDegrees(meters) {
     return deltaDeg * radToDeg; 
 }
 
+// Event listener for the drawstart event 
+map.on(L.Draw.Event.DRAWSTART, function (e) {
+  if (drawToolbar) {
+    drawToolbar.style.display = 'block';
+  }
+});
+
 // Event for creating new layers
 map.on(L.Draw.Event.CREATED, function (event) {
     // Clear existing layers before adding the new layer
@@ -1580,6 +1616,10 @@ map.on(L.Draw.Event.CREATED, function (event) {
         var lng = latlng.lng;
 
         export_params.bbox = `${lng - radiusInDegrees},${lat - radiusInDegrees},${lng + radiusInDegrees},${lat + radiusInDegrees}`;
+        document.getElementById("map-window-content").innerHTML = export_params.bbox;
+        if (drawToolbar) {
+          drawToolbar.style.display = 'none';
+        }
     }
 });
 
@@ -2091,7 +2131,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
       const uploadArea = document.getElementById('upload-area');
       const fileInput = document.getElementById('file-input');
       const textarea = document.getElementById('geojson-textarea');
-      const openModalButton = document.getElementById('upload-file-option');
+      const openModalButton = document.getElementById('upload-file-bbox');
       const closeModalButton = document.getElementById('closeModalButton');
       const uploadModal = document.getElementById('uploadModal');
       
