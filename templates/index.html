@@ -3,7 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VirtuGhan</title>
+
+    <title>VirtuGhan - A virtual data cube</title>
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
 
@@ -174,7 +176,9 @@
       <div class="container mx-auto flex items-center justify-between px-4">
         <!-- Logo -->
         <div class="flex items-center">
+          <img src="static/img/virtughan-logo.png" alt="Logo" class="h-10 w-10 mr-2">
           <img src="static/img/ku_logo.png" alt="Logo" class="h-10 w-10 mr-2">
+
           <span class="text-xl font-bold text-gray-800">VirtuGhan</span>
         </div>
         <!-- Navigation Links -->
@@ -1060,10 +1064,10 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
     <script>
       var map = L.map("map").setView([28.202082, 83.987222], 10);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
+      // L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      //   attribution:
+      //     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      // }).addTo(map);
 
       // Function to update scroll zoom based on screen size -this is set because mobile devices face problem when they scroll, map zooms.
       function updateScrollZoom() {
@@ -1078,6 +1082,44 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
       updateScrollZoom();
       // Update on window resize
       window.addEventListener('resize', updateScrollZoom);
+
+
+      var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        });
+
+        var satellite = L.tileLayer('https://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
+            attribution: '&copy; Google',
+            maxZoom: 21
+        });
+
+
+        var opentopomap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenTopoMap contributors'
+        });
+
+        var cartoDBPositron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap contributors & CartoDB'
+        });
+
+        var cartoDBDarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap contributors & CartoDB'
+        });
+
+        // Add the default base layer to the map
+        osm.addTo(map);
+
+        // Create a base layers object
+        var baseLayers = {
+            "OpenStreetMap": osm,
+            "Satellite":satellite,
+            "Open Topomap": opentopomap,
+            "CartoDB Positron": cartoDBPositron,
+            "CartoDB Dark Matter": cartoDBDarkMatter
+        };
+
+        // Add the layers control to the map
+        L.control.layers(baseLayers).addTo(map);
 
 
       var geojsonLayer;
@@ -1124,6 +1166,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
         export_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
         document.getElementById("coords").textContent = tile_params.bbox;
+        document.getElementById("map-window-content").innerHTML = export_params.bbox;
         document.getElementById("zoom-level").textContent = map.getZoom();
       });
 
