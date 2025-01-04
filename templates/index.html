@@ -135,6 +135,9 @@
       color: #6b7280; /* Tailwind gray-500 */
     }
 
+    .custom-height-icon {
+            font-size: 2rem; 
+        }
   </style>
 
   <style>
@@ -174,19 +177,21 @@
   <body>
     <header class="bg-white shadow-md py-4 border-b border-gray-300">
       <div class="container mx-auto flex items-center justify-between px-4">
-        <!-- Logo -->
-        <div class="flex items-center">
-          <img src="static/img/virtughan-logo.png" alt="Logo" class="h-10 w-10 mr-2">
-
-          <span class="text-xl font-bold text-gray-800">VirtuGhan</span>
-        </div>
-        <!-- Navigation Links -->
-        <nav class="flex space-x-8">
-          <a href="#map" class="text-gray-600 hover:text-gray-900">Data</a>
-          <a href="#about" class="text-gray-600 hover:text-gray-900">About</a>
-        </nav>
+          <!-- Logo -->
+          <div class="flex items-center">
+            <a href="/"><img src="static/img/virtughan-logo.png" alt="Logo" class="h-10 w-10 mr-2"></a>
+              <span class="text-xl font-bold text-gray-800">VirtuGhan</span>
+          </div>
+          <!-- Navigation Links -->
+          <nav class="flex space-x-8">
+              <a href="/" class="text-gray-600 hover:text-gray-900">Data</a>
+              <a href="/about" class="text-gray-600 hover:text-gray-900">About</a>
+              <a href="https://github.com/kshitijrajsharma/VirtuGhan" class="text-gray-600 hover:text-gray-900">
+                  <i class="fab fa-github custom-height-icon"></i>
+              </a>
+          </nav>
       </div>
-    </header>
+  </header>
     <div class = "flex flex-col md:flex-row h-screen overflow-y-auto custom-scrollbar md:overflow-hidden">
       <div id="info" class="w-full md:w-1/4 md:min-w-[25%] space-y-12 bg-gray-50 z-10 border-r border-gray-300">
       <div class="container mx-auto pb-4 pt-1">
@@ -234,7 +239,7 @@
                         <span class="template-filters-value ml-3 block truncate font-normal" value = "NDWI">NDWI</span>
                       </div>
                       <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
-                        <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
+                        <svg class="size-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                           <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
                         </svg>
                       </span>
@@ -245,7 +250,7 @@
                         <span class="template-filters-value ml-3 block truncate font-normal" value = "visual">Visual Bands</span>
                       </div>
                       <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
-                        <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
+                        <svg class="size-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                           <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
                         </svg>
                       </span>
@@ -257,7 +262,7 @@
                         <span class="ml-3 block truncate font-normal text-blue-500">Custom Filter</span>
                       </div>
                       <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
-                        <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
+                        <svg class="size-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                           <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
                         </svg>
                       </span>
@@ -416,7 +421,7 @@
                       <div id="compute_progressbar" class="relative w-full">
                         <div class="mb-4">
                           <label class="block text-xs font-medium text-gray-900 pb-2">Computation Progress</label>
-                          <ul id="ProgressTextsBefore" class="list-none list-inside text-sm text-gray-700 mb-2">
+                          <ul id="ProgressTextsBefore" class="list-none list-inside text-xs text-gray-700 mb-2 max-h-40 overflow-y-auto custom-scrollbar">
                             <li style = "font-size: 10px;">Please Wait Computing...</li>
                           </ul>
                         </div>
@@ -459,7 +464,7 @@
                   </button>
               
                   <ul id="select-list-bbox" class="hidden absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3">
-                    <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-0" role="option">
+                    <li id = "map-window-bbox" class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-0" role="option">
                       <div class="flex items-center">
                         <i class="fa-regular fa-square"></i>
                         <span class="ml-3 block truncate font-normal text-gray-600">Map Window</span>
@@ -471,24 +476,24 @@
                       </span>
                     </li>
                     <!-- More items... -->
-                    <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-1" role="option">
+                    <li id="draw-aoi-on-map" class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-1" role="option">
                       <div class="flex items-center">
                         <i class="fa-solid fa-draw-polygon"></i>
                         <span class="ml-3 block truncate font-normal text-gray-600">Draw AOI on Map</span>
                       </div>
                       <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
-                        <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
+                        <svg class="size-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                           <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
                         </svg>
                       </span>
                     </li>
-                    <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="upload-file-option" role="option">
+                    <li id = "upload-file-bbox" class="hidden relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" role="option">
                       <div class="flex items-center">
                         <i class="fa-solid fa-arrow-up-from-bracket"></i>
                         <span class="ml-3 block truncate font-normal text-gray-600">Upload File</span>
                       </div>
                       <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
-                        <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
+                        <svg class="size-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                           <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
                         </svg>
                       </span>
@@ -549,7 +554,7 @@
                             <span class="template-filters-value ml-3 block truncate font-normal" value = "NDWI">NDWI</span>
                           </div>
                           <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
-                            <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
+                            <svg class="size-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                               <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
                             </svg>
                           </span>
@@ -560,7 +565,7 @@
                             <span class="template-filters-value ml-3 block truncate font-normal" value = "visual">Visual Bands</span>
                           </div>
                           <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
-                            <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
+                            <svg class="size-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                               <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
                             </svg>
                           </span>
@@ -572,7 +577,7 @@
                             <span class="ml-3 block truncate font-normal text-blue-500">Custom Filter</span>
                           </div>
                           <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
-                            <svg class="size-0" viewBox="" fill="currentColor" aria-hidden="true">
+                            <svg class="size-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                               <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
                             </svg>
                           </span>
@@ -633,7 +638,7 @@
                   <label class="block text-sm font-medium text-gray-800 pb-4">Select Output Type</label>
                   <div class="flex items-center mb-2">
                     <input id="operation" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600" checked>
-                    <label for="operation" class="ml-2 text-sm text-gray-600">Operation</label>
+                    <label for="operation" class="ml-2 text-sm text-gray-600">Compute</label>
                   </div>
                   <div class="flex items-center">
                     <input id="timeSeries" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600">
@@ -650,6 +655,10 @@
                       <option value="mean" class="text-gray-600">Mean</option>
                       <option value="min" class="text-gray-600">Min</option>
                       <option value="max" class="text-gray-600">Max</option>
+                      <option value="std" class="text-gray-600">Std</option>
+                      <option value="sum" class="text-gray-600">Sum</option>
+                      <option value="var" class="text-gray-600">Variance</option>
+                      <option value="mode" class="text-gray-600">Mode</option>
                   </select>
               </div>
 
@@ -685,8 +694,9 @@
           <div class="flex flex-col md:flex-row md:space-x-4">
               <div class="w-full md:w-1/2 mb-4 md:mb-0">
                   <label class="block text-sm font-medium text-gray-700">Band 1</label>
-                  <select id="band1" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                      <option value="">Select Band 1</option>
+                  <select id="band1" style="border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option value="">Select Band 1</option>
+                    <optgroup label="Bands">
                       <option value="RED">RED</option>
                       <option value="GREEN">GREEN</option>
                       <option value="BLUE">BLUE</option>
@@ -701,16 +711,20 @@
                       <option value="NIR08">NIR08</option>
                       <option value="SCL">SCL</option>
                       <option value="AOT">AOT</option>
+                    </optgroup>
+                    <optgroup label="Semantic Bands">
                       <option value="COASTAL">COASTAL</option>
                       <option value="NIR09">NIR09</option>
                       <option value="CLOUD">CLOUD</option>
                       <option value="SNOW">SNOW</option>
-                  </select>
+                    </optgroup>
+                  </select>                  
               </div>
               <div class="w-full md:w-1/2">
                   <label class="block text-sm font-medium text-gray-700">Band 2</label>
-                  <select id="band2" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                      <option value="">Select Band 2</option>
+                  <select id="band2" style="border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option value="">Select Band 1</option>
+                    <optgroup label="Bands">
                       <option value="RED">RED</option>
                       <option value="GREEN">GREEN</option>
                       <option value="BLUE">BLUE</option>
@@ -725,11 +739,15 @@
                       <option value="NIR08">NIR08</option>
                       <option value="SCL">SCL</option>
                       <option value="AOT">AOT</option>
+                    </optgroup>
+                    <optgroup label="Semantic Bands">
                       <option value="COASTAL">COASTAL</option>
                       <option value="NIR09">NIR09</option>
                       <option value="CLOUD">CLOUD</option>
                       <option value="SNOW">SNOW</option>
+                    </optgroup>
                   </select>
+                  
               </div>
           </div>
       </div>
@@ -954,13 +972,24 @@ document.addEventListener('DOMContentLoaded', function() {
           document.getElementById("export-map-view-button").classList.add('bg-blue-700');
         }
         //activate visualize/search button
-        
+        // console.log("entered here");
+        if (this.closest('#select-list-bbox')) {
+          // console.log("entered inside");
+          // console.log(drawToolbar);
+          if (drawToolbar) {
+            drawToolbar.style.display = 'none';
+          }
+          // if(drawnItems){
+          //   map.removeLayer(drawnItems);
+          // }
+        }
 
         document.getElementById("formulaHeading").classList.add('hidden'); 
         document.getElementById("formulaHeading-export").classList.add('hidden'); 
 
 
         // Update the button text and image/icon with the selected item's data
+        const selectedItemId = item.id;
         const selectedItemText = item.querySelector('.truncate').innerText;
         const selectedItemIcon = item.querySelector('img, i'); // Select either img or i element
 
@@ -998,16 +1027,29 @@ document.addEventListener('DOMContentLoaded', function() {
         const uploadBBoxFileOption = document.getElementById('upload-bbox-file-option');
 
         // Hide all sections first
-        coords.classList.add('hidden');
+        // coords.classList.add('hidden');
         drawBBoxOption.classList.add('hidden');
         uploadBBoxFileOption.classList.add('hidden');
 
         // Show the corresponding section based on the selected item
-        if (selectedItemText === 'Map Window') {
+        if (selectedItemId === 'map-window-bbox') {
           coords.classList.remove('hidden');
-        } else if (selectedItemText === 'Draw AOI on Map') {
+
+          if(Object.keys(drawnItems._layers).length > 0){
+            // console.log(drawnItems);
+            map.removeLayer(drawnItems);
+          }
+        } else if (selectedItemId === 'draw-aoi-on-map') {
+          console.log("fired");
+          coords.classList.add('hidden');
           drawBBoxOption.classList.remove('hidden');
-        } else if (selectedItemText === 'Upload File') {
+          console.log(Object.keys(highlightedLayer._layers).length > 0);
+          if(Object.keys(drawnItems._layers).length > 0){
+            // console.log(drawnItems);
+            map.addLayer(drawnItems);
+          }
+        } else if (selectedItemId === 'upload-file-bbox') {
+          coords.classList.add('hidden');
           uploadBBoxFileOption.classList.remove('hidden');
         }
       });
@@ -1153,7 +1195,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         "formula": "(band2 - band1) / (band2 + band1)",
         "band1": "red",
         "band2": "nir",
-        "operation": "mean",
+        "operation": "median",
         "timeseries": "false",
       }
 
@@ -1505,11 +1547,12 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
 
 <script>
-//draw start    
+//draw start 
+var drawToolbar;   
 document.addEventListener('DOMContentLoaded', function() {
-  const toolbar = document.querySelector('.leaflet-draw-toolbar');
-  if (toolbar) {
-    toolbar.style.display = 'none';
+  drawToolbar = document.querySelector('.leaflet-draw-toolbar');
+  if (drawToolbar) {
+    drawToolbar.style.display = 'none';
   }
 });
 
@@ -1559,6 +1602,13 @@ function metersToDegrees(meters) {
     return deltaDeg * radToDeg; 
 }
 
+// Event listener for the drawstart event 
+map.on(L.Draw.Event.DRAWSTART, function (e) {
+  if (drawToolbar) {
+    drawToolbar.style.display = 'block';
+  }
+});
+
 // Event for creating new layers
 map.on(L.Draw.Event.CREATED, function (event) {
     // Clear existing layers before adding the new layer
@@ -1580,6 +1630,10 @@ map.on(L.Draw.Event.CREATED, function (event) {
         var lng = latlng.lng;
 
         export_params.bbox = `${lng - radiusInDegrees},${lat - radiusInDegrees},${lng + radiusInDegrees},${lat + radiusInDegrees}`;
+        document.getElementById("map-window-content").innerHTML = export_params.bbox;
+        if (drawToolbar) {
+          drawToolbar.style.display = 'none';
+        }
     }
 });
 
@@ -1831,36 +1885,86 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
         // Initial call to set progress to 0%
         startProgressComputation('compute', 0);
-        // Start checking the processing status every 4 seconds
-        const intervalId = setInterval(checkProcessingStatus, 4000);
+        
+        // Start checking the processing status every 5 seconds
+        const intervalId = setInterval(checkProcessingStatus, 5000);
 
         function updateProgress(logData) {
-
           if (logData.includes('No images found') || logData.includes('Filtered 0 items')) {
-            displayNoImageFoundMessage();
+              displayNoImageFoundMessage();
           } else {
-              // Extract non-computation log lines
+              // Extract log lines
               const logLines = logData.split('\n');
               const nonComputationLogs = logLines.filter(line => !line.includes('Computing Band Calculation'));
-              
-              // Add non-computation logs to the progress list
+
+              document.getElementById('ProgressTextsBefore').innerHTML = "";
+
+              // Get the progress list element
               const progressTextsBefore = document.getElementById('ProgressTextsBefore');
-              progressTextsBefore.innerHTML = ""; // Clear existing items
+              // Get the existing list items text content
+              const existingItems = Array.from(progressTextsBefore.getElementsByTagName('li')).map(item => item.textContent);
+
+              // Add non-computation logs to the progress list if they are not already present
               nonComputationLogs.forEach(step => {
-                const listItem = document.createElement('li');
-                listItem.style.fontSize = "10px !important";
-                listItem.textContent = step;
-                progressTextsBefore.appendChild(listItem);
+                  if (!existingItems.includes(step)) {
+                      const listItem = document.createElement('li');
+                      listItem.style.fontSize = "10px !important";
+                      listItem.textContent = step;
+                      progressTextsBefore.appendChild(listItem);
+                  }
               });
 
-            const progressMatches = logData.match(/(\d+)%/g);
-            if (progressMatches) {
-              const lastProgress = progressMatches[progressMatches.length - 1];
-              const progress = parseInt(lastProgress.replace('%', ''), 10);
-              startProgressComputation('compute', progress);
-            }
+              // Handle "Computing Band Calculation" logs
+              const computationLogs = logLines.filter(line => line.includes('Computing Band Calculation'));
+              const latestLog = computationLogs[computationLogs.length - 1]; // Get the latest log
+
+              if (latestLog) {
+                  const matches = latestLog.match(/(\d+)%.*\| (\d+)\/(\d+).* \[(.*?)<(.*?)\]/);
+                  if (matches) {
+                      const current = matches[2];
+                      const total = matches[3];
+                      const elapsed = matches[4];
+                      const remaining = matches[5].slice(0, -3); // Remove the last 3 characters
+
+                      const logMessages = [
+                          '-', //one space added
+                          `Images Processed: ${current}/${total}`,
+                          `Time Elapsed: ${elapsed}`,
+                          `Time Remaining: ${remaining}`
+                      ];
+
+                      // Add/update the log messages
+                      logMessages.forEach((logMessage, index) => {
+                          let existingLog = progressTextsBefore.querySelector(`.computation-log-${index}`);
+                          if (existingLog) {
+                              existingLog.textContent = logMessage;
+                          } else {
+                              const listItem = document.createElement('li');
+                              listItem.classList.add(`computation-log-${index}`);
+                              listItem.style.fontSize = "10px !important";
+                              listItem.innerHTML = logMessage === ' ' ? '&nbsp;' : logMessage;
+                              progressTextsBefore.appendChild(listItem);
+                          }
+                      });
+                  }
+              }
+
+              // Handle progress bar updates
+              const progressMatches = logData.match(/(\d+)%/g);
+              if (progressMatches) {
+                  const lastProgress = progressMatches[progressMatches.length - 1];
+                  const progress = parseInt(lastProgress.replace('%', ''), 10);
+                  startProgressComputation('compute', progress);
+              }
+              // Scroll the progress list to the bottom 
+              progressTextsBefore.scrollTop = progressTextsBefore.scrollHeight;
           }
-          }
+        }
+
+
+
+
+
 
       });
 
@@ -2091,7 +2195,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
       const uploadArea = document.getElementById('upload-area');
       const fileInput = document.getElementById('file-input');
       const textarea = document.getElementById('geojson-textarea');
-      const openModalButton = document.getElementById('upload-file-option');
+      const openModalButton = document.getElementById('upload-file-bbox');
       const closeModalButton = document.getElementById('closeModalButton');
       const uploadModal = document.getElementById('uploadModal');
       
@@ -2236,7 +2340,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
       dateInputs.forEach(input => {
         const datepicker = flatpickr(input, {
           onReady: function(selectedDates, dateStr, instance) {
-            console.log("datepicker: ", instance);
+            // console.log("datepicker: ", instance);
             
             // Styling the date picker
             const calendarContainer = instance.calendarContainer;

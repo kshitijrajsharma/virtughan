@@ -45,6 +45,10 @@ templates = Jinja2Templates(directory="templates")
 async def read_index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+@app.get("/about", response_class=HTMLResponse)
+async def read_index(request: Request):
+    return templates.TemplateResponse("about.html", {"request": request})
+
 
 with open("data/sentinel-2-bands.json") as f:
     sentinel2_assets = json.load(f)
