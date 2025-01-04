@@ -2011,6 +2011,8 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
               computeLayer = new GeoRasterLayer({
                 georaster: georaster,
                 opacity: 0.8,
+                resolution: 256,
+                // updateWhenZooming:true,
                 pixelValuesToColorFn: values => {
                   const normalizedValue = (values[0] - min) / (max - min);
                   return colorScale[Math.floor(normalizedValue * (colorScale.length - 1))];
@@ -2050,6 +2052,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
           computeLayer = new GeoRasterLayer({
             georaster: geoRaster,
             opacity: 0.8,
+            resolution: 256,
             pixelValuesToColorFn: values => {
               const normalizedValue = (values[0] - min) / (max - min);
               return colorScale[Math.floor(normalizedValue * (colorScale.length - 1))];
