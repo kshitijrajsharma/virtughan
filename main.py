@@ -281,7 +281,7 @@ async def search_images(
     return results
 
 
-@cached(ttl=3600)
+@cached(ttl=60 * 1)
 async def cached_generate_tile(
     x: int,
     y: int,
