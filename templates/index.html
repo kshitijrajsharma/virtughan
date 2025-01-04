@@ -677,7 +677,7 @@
           <i class="fas fa-times"></i>
       </button>
       <h3 class="text-xl font-semibold mb-4 text-gray-800">Finalize the formula to generate the result</h3>
-      <label class="block font-xs text-gray-500 pb-4">Double click on the Bands and Operators to select them.</label>
+      <label class="block font-xs text-gray-500 pb-4">Click on the Bands and Operators to select them.</label>
       
       <!-- Section for mapping bands -->
       <div class="mb-4">
@@ -2181,17 +2181,17 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
             queryTextarea.value += text + ' ';
         }
 
-        // Add double-click event listeners to attributes list items
-        document.getElementById('attributes-list').addEventListener('dblclick', function(event) { 
+        // Add click event listeners to attributes list items
+        document.getElementById('attributes-list').addEventListener('click', function(event) { 
           if (event.target && event.target.classList.contains('attribute-item')) { 
             var separated_band_text = event.target.textContent.split(" ")[0];
             appendToQuery(separated_band_text); 
           } 
         });
 
-        // Add double-click event listeners to operators list items
+        // Add click event listeners to operators list items
         document.querySelectorAll('#operators-list .operator-item').forEach(function(item) {
-            item.addEventListener('dblclick', function() {
+            item.addEventListener('click', function() {
                 appendToQuery(item.textContent);
             });
         });
