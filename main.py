@@ -20,27 +20,11 @@ from matplotlib import pyplot as plt
 from PIL import Image
 from rio_tiler.io import COGReader
 from shapely.geometry import box, mapping
-from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 
 from src.scog_compute.engine import compute as compute_engine
 
 app = FastAPI()
-
-
-class TimeoutMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app, timeout: int):
-        super().__init__(app)
-        self.timeout = timeout
-
-    async def dispatch(self, request: Request, call_next):
-        try:
-            return await asyncio.wait_for(call_next(request), timeout=self.timeout)
-        except asyncio.TimeoutError:
-            return Response("Request timed out", status_code=504)
-
-
-app.add_middleware(TimeoutMiddleware, timeout=120)
 
 
 app.add_middleware(
