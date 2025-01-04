@@ -1,4 +1,5 @@
 import asyncio
+import gc
 import json
 import os
 import shutil
@@ -240,6 +241,10 @@ async def run_computation(
 
         except Exception as e:
             print(f"Error processing : {e}")
+
+        finally:
+            # Final garbage collection
+            gc.collect()
 
 
 @app.get("/search")
