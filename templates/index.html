@@ -203,7 +203,7 @@
               <!-- <h2 class="text-base/7 font-semibold text-gray-900">Apply Filters</h2>
               <p class="mt-1 text-sm/6 text-gray-600">Select the filters you want to apply.</p> -->
               <div id = "filterOption_search" class = "pb-4">
-                <label id="listbox-label_search" class="block text-sm/6 font-medium text-gray-900">Filter Option</label>
+                <label id="listbox-label_search" class="block text-sm/6 font-medium text-gray-900">Filter Option *</label>
                 <div class="relative mt-2">
                   <button id="select-button_search" type="button" class="cursor-pointer grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label_search">
                     <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
@@ -518,7 +518,7 @@
 
                 <div class = "pb-4">
                   <div id = "filterOption_export" class = "pb-4">
-                    <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-800">Filter Option</label>
+                    <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-800">Filter Option *</label>
                     <div class="relative mt-2">
                       <button id="select-button_export" type="button" class="cursor-pointer grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label_export">
                         <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
@@ -945,9 +945,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     listItems.forEach(item => {
       item.addEventListener('click', function() {
+        if (this.closest('#select-list_search')) {
+          document.getElementById("search-button").classList.remove('bg-gray-500', 'pointer-events-none');
+          document.getElementById("search-button").classList.add('bg-blue-700');
+        }
+        else if (this.closest('#select-list_export')) {
+          document.getElementById("export-map-view-button").classList.remove('bg-gray-500', 'pointer-events-none');
+          document.getElementById("export-map-view-button").classList.add('bg-blue-700');
+        }
         //activate visualize/search button
-        document.getElementById("search-button").classList.remove('bg-gray-500', 'pointer-events-none');
-        document.getElementById("search-button").classList.add('bg-blue-700');
+        
 
         document.getElementById("formulaHeading").classList.add('hidden'); 
         document.getElementById("formulaHeading-export").classList.add('hidden'); 
@@ -2063,9 +2070,6 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
           if(checkedStatustimeSeries){
             export_params.timeseries = "true";
-
-            document.getElementById("export-map-view-button").classList.remove('bg-gray-500', 'pointer-events-none');
-            document.getElementById("export-map-view-button").classList.add('bg-blue-700');
           }
           else{
             export_params.timeseries = "false";
@@ -2077,8 +2081,6 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
       
       document.getElementById("operation_menu").addEventListener('change', function() {
         export_params.operation = this.value;
-        document.getElementById("export-map-view-button").classList.remove('bg-gray-500', 'pointer-events-none');
-        document.getElementById("export-map-view-button").classList.add('bg-blue-700');
       });
 
     </script>
