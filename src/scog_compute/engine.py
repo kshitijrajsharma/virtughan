@@ -2,6 +2,7 @@ import os
 import zipfile
 
 import imageio.v3 as iio
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import rasterio
@@ -13,6 +14,8 @@ from rasterio.windows import from_bounds
 from scipy.stats import mode
 from shapely.geometry import box, shape
 from tqdm import tqdm
+
+matplotlib.use("Agg")
 
 
 def fetch_process_custom_band(band1_url, band2_url, bbox, formula):

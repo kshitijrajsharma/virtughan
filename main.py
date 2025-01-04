@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from io import BytesIO
 
 import httpx
+import matplotlib
 import mercantile
 import numpy as np
 from aiocache import cached
@@ -26,6 +27,7 @@ from src.scog_compute.engine import compute as compute_engine
 
 app = FastAPI()
 
+matplotlib.use("Agg")
 
 app.add_middleware(
     CORSMiddleware,
@@ -44,6 +46,7 @@ templates = Jinja2Templates(directory="templates")
 @app.get("/", response_class=HTMLResponse)
 async def read_index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
 
 @app.get("/about", response_class=HTMLResponse)
 async def read_index(request: Request):
