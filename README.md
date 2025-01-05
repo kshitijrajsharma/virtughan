@@ -102,7 +102,10 @@ Learn about COG and how to generate one for this project [Here](./docs/cog.md)
 
 
 ## Local Setup 
-Follow [this](./docs/install.md)
+
+This project has FASTAPI and Plain JS Frontend.
+
+Inorder to setup project , follow [here](./docs/install.md)
 
 ## Resources and Credits 
 
