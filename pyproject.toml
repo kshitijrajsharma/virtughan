@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "VirtuGhan"
-version = "0.0.1"
+version = "0.0.2"
 description = "Virtual Computation Cube"
 authors = ["kshitijrajsharma <skshitizraj@gmail.com>"]
 readme = "README.md"
@@ -28,6 +28,16 @@ requests = "^2.32.3"
 scipy = "^1.14.1"
 
 
+[tool.poetry.group.dev.dependencies]
+commitizen = "^4.1.0"
+
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "$version"
+version_scheme = "semver2"
+version_provider = "poetry"
+update_changelog_on_bump = true
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
