@@ -1143,9 +1143,9 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
 
       // Initial check on page load
-      updateScrollZoom();
+      updateMapInteractions();
       // Update on window resize
-      window.addEventListener('resize', updateScrollZoom);
+      window.addEventListener('resize', updateMapInteractions);
 
 
       var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
