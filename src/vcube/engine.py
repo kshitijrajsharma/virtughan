@@ -1,6 +1,7 @@
 import os
 import sys
 import zipfile
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import imageio.v3 as iio
 import matplotlib
@@ -12,7 +13,8 @@ from matplotlib.colors import Normalize
 from PIL import Image
 from pyproj import Transformer
 from rasterio.windows import from_bounds
-from scipy.stats import mode
+
+# from scipy.stats import mode
 from shapely.geometry import box, shape
 from tqdm import tqdm
 
@@ -32,8 +34,9 @@ class VCubeProcessor:
         operation,
         timeseries,
         output_dir,
-        log_file=None,
+        log_file=sys.stdout,
         cmap="RdYlGn",
+        workers=1,
     ):
         self.bbox = bbox
         self.start_date = start_date
@@ -47,6 +50,7 @@ class VCubeProcessor:
         self.output_dir = output_dir
         self.log_file = log_file
         self.cmap = cmap
+        self.workers = workers
         self.STAC_API_URL = "https://earth-search.aws.element84.com/v1/search"
         self.result_list = []
         self.crs = None
@@ -82,7 +86,12 @@ class VCubeProcessor:
                 else:
                     result = eval(self.formula) if band1.shape[0] == 1 else band1
 
-                return result, band1_cog.crs, band1_cog.window_transform(band1_window)
+            return (
+                result,
+                band1_cog.crs,
+                band1_cog.window_transform(band1_window),
+                band1_url,
+            )
         except Exception as e:
             print(f"Error fetching image: {e}")
             return None, None, None
@@ -110,7 +119,7 @@ class VCubeProcessor:
             "datetime": f"{self.start_date}T00:00:00Z/{self.end_date}T23:59:59Z",
             "query": {"eo:cloud_cover": {"lt": self.cloud_cover}},
             "bbox": self.bbox,
-            "limit": 100,
+            "limit": 1000,
         }
 
         response = requests.post(self.STAC_API_URL, json=search_params)
@@ -144,20 +153,42 @@ class VCubeProcessor:
             f"Filtered {len(filtered_features)} items that are completely within the input bounding box"
         )
 
-        for band1_url, band2_url in tqdm(
-            zip(band1_urls, band2_urls),
-            total=len(band1_urls),
-            desc="Computing Band Calculation",
-            file=self.log_file if self.log_file is not None else sys.stdout,
-        ):
-
-            result, self.crs, self.transform = self.fetch_process_custom_band(
-                band1_url, band2_url
-            )
-            if result is not None:
-                self.result_list.append(result)
-                if self.timeseries:
-                    self._save_intermediate_image(result, band1_url)
+        if self.workers > 1:
+            print("Using Parallel Processing...")
+            with ThreadPoolExecutor(max_workers=self.workers) as executor:
+                futures = [
+                    executor.submit(
+                        self.fetch_process_custom_band, band1_url, band2_url
+                    )
+                    for band1_url, band2_url in zip(band1_urls, band2_urls)
+                ]
+                for future in tqdm(
+                    as_completed(futures),
+                    total=len(futures),
+                    desc="Computing Band Calculation",
+                    file=self.log_file,
+                ):
+                    result, crs, transform, name_url = future.result()
+                    if result is not None:
+                        self.result_list.append(result)
+                        self.crs = crs
+                        self.transform = transform
+                        if self.timeseries:
+                            self._save_intermediate_image(result, name_url)
+        else:
+            for band1_url, band2_url in tqdm(
+                zip(band1_urls, band2_urls),
+                total=len(band1_urls),
+                desc="Computing Band Calculation",
+                file=self.log_file,
+            ):
+                result, self.crs, self.transform, name_url = (
+                    self.fetch_process_custom_band(band1_url, band2_url)
+                )
+                if result is not None:
+                    self.result_list.append(result)
+                    if self.timeseries:
+                        self._save_intermediate_image(result, name_url)
 
     def _save_intermediate_image(self, result, band1_url):
         parts = band1_url.split("/")
@@ -170,6 +201,9 @@ class VCubeProcessor:
         )
 
     def _save_geotiff(self, data, output_file):
+        nodata_value = -9999
+        data = np.where(np.isnan(data), nodata_value, data)
+
         with rasterio.open(
             output_file,
             "w",
@@ -180,6 +214,7 @@ class VCubeProcessor:
             dtype=data.dtype,
             crs=self.crs,
             transform=self.transform,
+            nodata=nodata_value,
         ) as dst:
             for band in range(1, data.shape[0] + 1):
                 dst.write(data[band - 1], band)
@@ -199,7 +234,7 @@ class VCubeProcessor:
             "std": np.ma.std,
             "sum": np.ma.sum,
             "var": np.ma.var,
-            "mode": lambda arr: mode(arr, axis=0, nan_policy="omit")[0].squeeze(),
+            # "mode": lambda arr: mode(arr, axis=0, nan_policy="omit")[0].squeeze(),
         }
 
         return operations[self.operation](result_stack, axis=0)
@@ -342,6 +377,7 @@ if __name__ == "__main__":
     operation = "median"
     timeseries = True
     output_dir = "./output"
+    workers = 1  # Number of parallel workers
     os.makedirs(output_dir, exist_ok=True)
 
     processor = VCubeProcessor(
@@ -355,5 +391,6 @@ if __name__ == "__main__":
         operation,
         timeseries,
         output_dir,
+        workers=workers,
     )
     processor.compute()
