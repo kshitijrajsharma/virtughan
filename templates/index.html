@@ -395,31 +395,7 @@
                         <label for="transparency_computeLayer" class="text-sm mr-2 text-gray-500">Transparency:</label>
                         <input id="transparency_computeLayer" type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
                       </div>
-                      <!-- <div id="colorPalettes" class="mb-2 w-full">
-                        <div class="text-sm text-gray-500">Color Palette:</div>
-                        <select id="paletteSelect" class="form-select mt-1 w-full text-gray-500 text-sm p-1">
-                          <option value="Viridis" style="background: linear-gradient(to right, #440154, #FDE724);">Viridis</option>
-                          <option value="Rgb" style="background: linear-gradient(to right, #440154, #FDE724);">RGB</option>
-                          <option value="Grayscale" style="background: linear-gradient(to right, #440154, #FDE724);">Grayscale</option>
-                          <option value="Plasma" style="background: linear-gradient(to right, #0D0887, #FCA636);">Plasma</option>
-                          <option value="Magma" style="background: linear-gradient(to right, #000004, #FE9F6D);">Magma</option>
-                          <option value="Inferno" style="background: linear-gradient(to right, #000004, #FEA97D);">Inferno</option>
-                          <option value="Cividis" style="background: linear-gradient(to right, #00204C, #FFFFD8);">Cividis</option>
-                          <option value="Spectral" style="background: linear-gradient(to right, #9E0142, #66C2A5);">Spectral</option>
-                          <option value="Jet" style="background: linear-gradient(to right, #000083, #FF0000);">Jet</option>
-                          <option value="HSV" style="background: linear-gradient(to right, #FF0000, #CC00FF);">HSV</option>
-                          <option value="Cool" style="background: linear-gradient(to right, #00FFFF, #FFCC88);">Cool</option>
-                          <option value="Spring" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Spring</option>
-                          <option value="Sequential" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Sequential</option>
-                          <option value="SequentialMultiHue" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">SequentialMultiHue</option>
-                          <option value="Diverging" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Diverging</option>
-                          <option value="Categorical" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Categorical</option>
-                          <option value="Spectral1" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Spectral1</option>
-                          <option value="HeatMap" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">HeatMap</option>
-                          <option value="Terrain" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Terrain</option>
-                        </select>
-                      </div> -->
-                      <div id="colorPalettes" class="relative inline-block w-64">
+                      <div id="colorPalettes" class="relative inline-block w-full">
                         <button id="PaletteSelectButton" class="block w-full px-4 py-2 mt-1 bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" onclick="toggleDropdown()">
                             <!-- Default selected color will be displayed here -->
                         </button>
@@ -1936,6 +1912,24 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
         return scale(value);
     }
+
+
+    // Function to process raster data and discard NaN values
+    function processRasterData(rasterData) {
+        const noDataValue = 100000000000000000000; // NaN value in data
+        let validValues = [];
+
+        rasterData[0].forEach(row => {
+            row.forEach(value => {
+                if (value !== noDataValue) {
+                  console.log(value);
+                    validValues.push(value);
+                }
+            });
+        });
+
+        return validValues;
+    }
 </script>
  <!-- color palette options end -->
 
@@ -2141,11 +2135,19 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
                   https://leafletjs.com/reference.html#gridlayer
               */
-              
-              min = georaster.mins[0];
-              max = georaster.maxs[0];
-              console.log(`Min pixel value: ${min}`);
-              console.log(`Max pixel value: ${max}`);
+            
+              // min = georaster.mins[0];
+              // max = georaster.maxs[0];
+
+              const validValues = processRasterData(georaster.values);
+
+              // Calculate min and max values
+              console.log(validValues);
+              min = Math.min(...validValues);
+              max = Math.max(...validValues);
+
+              console.log('Min Value:', min);
+              console.log('Max Value:', max);
 
               computeLayer = new GeoRasterLayer({
                   georaster: georaster,
@@ -2153,8 +2155,18 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
                   resolution: 256,
                   // updateWhenZooming:true,
                   pixelValuesToColorFn: values => {
-                      const normalizedValue = (values[0] - min) / (max - min); // Normalize the value
-                      return updateColor(normalizedValue, selectedPalette); // Get continuous color
+                      var normalizedValue = function(){
+                        
+                        const val = (values[0] - min) / (max - min);
+
+                        if(values[0] != 100000000000000000000){
+                          return val;
+                        }
+                        else{
+                          return min;
+                        }
+                      }
+                      return updateColor(normalizedValue(), selectedPalette); // Get continuous color
                   }
               });
               map.addLayer(computeLayer);
