@@ -201,6 +201,9 @@ class VCubeProcessor:
         )
 
     def _save_geotiff(self, data, output_file):
+        nodata_value = -9999
+        data = np.where(np.isnan(data), nodata_value, data)
+
         with rasterio.open(
             output_file,
             "w",
@@ -211,6 +214,7 @@ class VCubeProcessor:
             dtype=data.dtype,
             crs=self.crs,
             transform=self.transform,
+            nodata=nodata_value,
         ) as dst:
             for band in range(1, data.shape[0] + 1):
                 dst.write(data[band - 1], band)
