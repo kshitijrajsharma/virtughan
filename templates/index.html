@@ -846,7 +846,7 @@
         <div id="operationDateDisplay" class="text-center text-sm text-gray-700 mb-4">Start Date</div>
       </div>
       <div id="timeSeriesContainer" class="hidden">
-        <div id="imageContainer" class="mb-4">
+        <div id="timeSeriesImageContainer" class="mb-4">
           <img id="timeSeriesImageView" class="w-full rounded-md" src="images/image_2022-01-01.jpg" alt="Image">
         </div>
         <div id="dateDisplay" class="text-center text-sm text-gray-700 mb-4">Start Date</div>
@@ -1869,6 +1869,9 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
         document.getElementById("layerSwitcherBox").classList.add("hidden");
         document.getElementById('ProgressTextsBefore').innerHTML = `<li style = "font-size: 10px;">Please Wait Computing...</li>`;
+
+        document.getElementById('operationImageView').src ="";
+        document.getElementById('timeSeriesImageView').src = "";
 
         if(document.getElementById("operation").checked){
           document.getElementById("compute_layer").classList.remove("hidden");
