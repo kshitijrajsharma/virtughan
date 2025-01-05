@@ -1123,13 +1123,24 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
       // }).addTo(map);
 
       // Function to update scroll zoom based on screen size -this is set because mobile devices face problem when they scroll, map zooms.
-      function updateScrollZoom() {
-        if (window.innerWidth < 768) { // this is screen size less than tab
-          map.scrollWheelZoom.disable();
-        } else {
-          map.scrollWheelZoom.enable();
-        }
+      function updateMapInteractions() {
+          if (window.innerWidth < 768) { // this is for screen size less than tablet
+              map.scrollWheelZoom.disable();
+              map.dragging.disable();
+              map.touchZoom.disable();
+              map.doubleClickZoom.disable();
+              map.boxZoom.disable();
+              map.keyboard.disable();
+          } else {
+              map.scrollWheelZoom.enable();
+              map.dragging.enable();
+              map.touchZoom.enable();
+              map.doubleClickZoom.enable();
+              map.boxZoom.enable();
+              map.keyboard.enable();
+          }
       }
+
 
       // Initial check on page load
       updateScrollZoom();
