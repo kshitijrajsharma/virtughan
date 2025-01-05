@@ -43,6 +43,13 @@ def fetch_process_custom_band(band1_url, band2_url, bbox, formula):
 
             if band2_url:
                 with rasterio.open(band2_url) as band2_cog:
+                    transformer = Transformer.from_crs(
+                        "epsg:4326", band2_cog.crs, always_xy=True
+                    )
+
+                    min_x, min_y = transformer.transform(bbox[0], bbox[1])
+                    max_x, max_y = transformer.transform(bbox[2], bbox[3])
+
                     band2_window = from_bounds(
                         min_x, min_y, max_x, max_y, band2_cog.transform
                     )
