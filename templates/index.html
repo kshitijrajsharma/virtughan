@@ -1184,7 +1184,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
       var geojsonLayer;
       var liveLayer;
-      var computeLayer = null;
+      var computeLayer;
       var highlightedLayer = L.layerGroup();
       var clickedResultList = false;
       var previousListMouseIn;
@@ -1714,7 +1714,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
         document.addEventListener('click', function(event) {
           if (event.target && event.target.classList.contains('layerSwitcher')) {
             const layerId = event.target.id;
-            // console.log('Layer ID:', layerId);
+            console.log('Layer ID:', layerId);
             checkedStatus = document.getElementById(layerId).checked;
             if(layerId == "search_layer"){
                 if(checkedStatus){
@@ -1739,7 +1739,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
               
               if(checkedStatus){
                 // console.log("addRasterLayer");
-                map.addLayer(computeLayer);
+                map.addLayer(computeLayer); //remove comment
               }
               else{
                 // console.log("removeRasterLayer");
@@ -1936,7 +1936,7 @@ function updateColor(values, scaleName) {
 
     // Function to process raster data and discard NaN values
     function processRasterData(rasterData) {
-        const noDataValue = 100000000000000000000; // NaN value in data
+        const noDataValue = -9999; // NaN value in data
         let validValues = [];
 
         rasterData.values.forEach(val => {
@@ -1956,7 +1956,9 @@ function updateColor(values, scaleName) {
 
     <!-- /export api start -->
     <script>
+      var completed_log = false;
       document.getElementById("export-map-view-button").addEventListener('click', function() {
+        completed_log = false;
         export_params.startDdate = document.getElementById("start-date-export").value;
         export_params.endDate = document.getElementById("end-date-export").value;
         export_params.cloudCover = document.getElementById("cloud-cover-export").value;
@@ -2028,14 +2030,18 @@ function updateColor(values, scaleName) {
               if (data.includes('Processing completed.') || data.includes('100%')) {
                 clearInterval(intervalId);
                 console.log('Processing completed. Stopped checking.');
-                if(data.includes('Filtered 0 items')){}
+                if(completed_log){}
                 else{
-                  document.getElementById("layerSwitcherBox").classList.remove("hidden");
-                  if(document.getElementById("operation").checked){
-                    plotGeoTIFF('static/export/custom_band_output_aggregate.tif');
-                }
+                  if(data.includes('Filtered 0 items')){}
+                  else{
+                    document.getElementById("layerSwitcherBox").classList.remove("hidden");
+                    if(document.getElementById("operation").checked){
+                      plotGeoTIFF('static/export/custom_band_output_aggregate.tif');
+                      completed_log = true;
+                  }
                 
-                }    
+                  }  
+                }  
               }
             })
             .catch((error) => {
@@ -2158,11 +2164,12 @@ function updateColor(values, scaleName) {
 
                   https://leafletjs.com/reference.html#gridlayer
               */
-            
+              
+              //uncomment this if the raster contains min and max and handled nodata values. eg. min and max doesnot have values like 100000000000000.
               // min = georaster.mins[0];
               // max = georaster.maxs[0];
 
-              const validValues = processRasterData(georaster);
+              const validValues = processRasterData(georaster); //uncomment this if raster min, max has values like 1000000000000.
 
               // Calculate min and max values
               // console.log(validValues);
@@ -2180,7 +2187,7 @@ function updateColor(values, scaleName) {
                   pixelValuesToColorFn: values => {
                       // var normalizedValue = (values[0] - min) / (max - min);
                         // console.log(values);
-                        if(values[0] == 100000000000000000000){
+                        if(values[0] == -9999){
                           return 'rgba(0, 0, 0, 0)';
                         }
                         else{
@@ -2213,7 +2220,7 @@ function updateColor(values, scaleName) {
         // console.log("entered updaterastercolor");
         if (computeLayer) {
           computeLayer.updateColors(pixelValuesToColorFn = values => {
-              if (values[0] === 100000000000000000000) {
+              if (values[0] == -9999) {
                   return 'rgba(0, 0, 0, 0)'; // Transparent color for NaN values
               } else {
                   return updateColor(values, scaleName); // Handle single-band and multi-band rasters
@@ -2272,7 +2279,7 @@ function updateColor(values, scaleName) {
                   // For vector layers (e.g., geoJSON)
                   layer.setStyle({ opacity: value / 100/*, fillOpacity: value / 100*/ });
               }
-              console.log(`Setting transparency of ${layerName} to ${value}%`);
+              // console.log(`Setting transparency of ${layerName} to ${value}%`);
           } else {
               console.error(`Layer ${layerName} not found`);
           }
