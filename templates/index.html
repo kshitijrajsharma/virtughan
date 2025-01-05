@@ -1155,15 +1155,18 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
 
         var opentopomap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenTopoMap contributors'
+            attribution: '&copy; OpenTopoMap contributors',
+            zIndex: 1
         });
 
         var cartoDBPositron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap contributors & CartoDB'
+            attribution: '&copy; OpenStreetMap contributors & CartoDB',
+            zIndex: 1
         });
 
         var cartoDBDarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap contributors & CartoDB'
+            attribution: '&copy; OpenStreetMap contributors & CartoDB',
+            zIndex: 1
         });
 
         // Add the default base layer to the map
@@ -1973,6 +1976,9 @@ function updateColor(values, scaleName) {
         document.getElementById('timeSeriesImageContainer').innerHTML = "";
 
         document.getElementById("colorPalettes").classList.remove("hidden");
+
+        document.getElementById('timeSeriesImageContainer').innerHTML = ''; 
+        document.getElementById('dateDisplay').textContent ='';
 
         if(document.getElementById("operation").checked){
           document.getElementById("compute_layer").classList.remove("hidden");
