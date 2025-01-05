@@ -1,3 +1,10 @@
+## 0.1.3 (2025-01-05)
+
+### Fix
+
+- **imagetitle**: fixes bug on image title on giff
+- **nodata**: fix bug on nodata pixels for the output
+
 ## 0.1.2 (2025-01-05)
 
 ### Fix
