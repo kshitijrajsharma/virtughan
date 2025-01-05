@@ -2648,8 +2648,9 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
       } else {
         slider.value = parseInt(slider.value) + 1;
       }
+      document.getElementById('timeSeriesImageView').src = "";
       changeImage();
-    }, 1000); // Adjust the interval as needed
+    }, 2000); // Adjust the interval
   }
 
   // Function to stop the automatic play
@@ -2678,7 +2679,10 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
     slider.step = 1;
 
     // Event listeners for slider and play/pause button
-    slider.addEventListener('input', changeImage);
+    slider.addEventListener('input', function(){
+      document.getElementById('timeSeriesImageView').src = "";
+      changeImage();
+    });
     document.getElementById('playPauseButton').addEventListener('click', togglePlayPause);
     
     // Initialize markers for the slider
