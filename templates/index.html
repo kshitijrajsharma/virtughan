@@ -522,7 +522,7 @@
                 </div>
 
                 <div class = "pb-4">
-                  <div id = "filterOption_export" class = "pb-4">
+                  <div id = "filterOption_export" class = "">
                     <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-800">Filter Option *</label>
                     <div class="relative mt-2">
                       <button id="select-button_export" type="button" class="cursor-pointer grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label_export">
@@ -590,7 +590,7 @@
                   <button id="setFormula-export" class="w-full bg-white text-gray-500 border-gray-600 rounded-md px-4 py-2 flex items-center text-sm" style="border: 1px solid #dedede;">
                     <img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full mr-2">Set the formula
                   </button>                   -->
-                  <div id = "custom-formula-view_export" class = "mt-1 p-1 border border-gray-300 w-full bg-white hidden">
+                  <div id = "custom-formula-view_export" class = "p-1 border border-gray-300 w-full bg-white hidden">
                     <label id = "formulaHeading-export" class="block text-xs font-medium text-gray-600 pb-1 pt-1">Custom Formula: <span id="formula-text-export" class = "break-words w-64 text-xs text-gray-500" ></span></label>
                   </div>
                 </div>
@@ -694,7 +694,7 @@
           <div class="flex flex-col md:flex-row md:space-x-4">
               <div class="w-full md:w-1/2 mb-4 md:mb-0">
                   <label class="block text-sm font-medium text-gray-700">Band 1</label>
-                  <select id="band1" style="border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                  <select id="band1" style="border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md max-h-[52px] overflow-y-auto custom-scrollbar">
                     <option value="">Select Band 1</option>
                     <optgroup label="Bands">
                       <option value="RED">RED</option>
@@ -2389,6 +2389,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
             console.log('formula:', tile_params.formula);
             document.getElementById("formulaHeading").classList.remove('hidden'); 
+            document.getElementById("formulaHeading-export").classList.remove('hidden'); 
             document.getElementById("custom-formula-view_export").classList.remove('hidden');
             document.getElementById("formulaText").innerHTML = tile_params.formula;
             document.getElementById("formula-text-export").innerHTML = export_params.formula; 
