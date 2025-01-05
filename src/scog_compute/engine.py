@@ -158,16 +158,14 @@ def save_aggregated_result_with_colormap(
 ):
     result_aggregate = np.ma.masked_invalid(result_aggregate)
 
-    colormap = plt.get_cmap(cmap)
     if result_aggregate.shape[0] == 1:
         # Single-band image
         result_aggregate_m = result_aggregate[0]
-        # result_aggregate_m = np.ma.masked_invalid(result_aggregate_m)
-
+        result_aggregate_m = np.ma.masked_invalid(result_aggregate_m)
         result_normalized = (result_aggregate_m - result_aggregate_m.min()) / (
             result_aggregate_m.max() - result_aggregate_m.min()
         )
-        colormap = plt.get_cmap("RdYlGn")
+        colormap = plt.get_cmap(cmap)
         result_colored = colormap(result_normalized)
 
         # Convert to image
@@ -175,15 +173,8 @@ def save_aggregated_result_with_colormap(
         image = Image.fromarray(result_image)
     else:
         # Multi-band image
-        # result_normalized = (
-        #     result_aggregate - result_aggregate.min(axis=(0, 1), keepdims=True)
-        # ) / (
-        #     result_aggregate.max(axis=(0, 1), keepdims=True)
-        #     - result_aggregate.min(axis=(0, 1), keepdims=True)
-        # )
         result_image = np.transpose(result_aggregate, (1, 2, 0))
-        result_image = (result_image * 255).astype(np.uint8)
-        image = Image.fromarray(result_image)
+        image = (result_image * 255).astype(np.uint8)
 
     plt.figure(figsize=(10, 10))
     plt.imshow(image)
