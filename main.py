@@ -166,7 +166,7 @@ async def compute_aoi_over_time(
             },
             status_code=400,
         )
-    print("Received request for formula : ", formula)
+    # print("Received request for formula : ", formula)
     bbox = list(map(float, bbox.split(",")))
 
     output_dir = "static/export"

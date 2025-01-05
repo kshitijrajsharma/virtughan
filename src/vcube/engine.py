@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import rasterio
 import requests
-from matplotlib.colors import Normalize
 from PIL import Image
 from pyproj import Transformer
 from rasterio.windows import from_bounds
@@ -74,6 +73,7 @@ class VCubeProcessor:
 
                 if band2_url:
                     with rasterio.open(band2_url) as band2_cog:
+                        min_x, min_y, max_x, max_y = self._transform_bbox(band2_cog.crs)
                         band2_window = self._calculate_window(
                             band2_cog, min_x, min_y, max_x, max_y
                         )
@@ -267,7 +267,7 @@ class VCubeProcessor:
         plt.imshow(image)
         plt.title(f"Aggregated {self.operation} Calculation")
         plt.xlabel(
-            f"From {self.start_date} to {self.end_date}\nCloud Cover < {self.cloud_cover}%\nBBox: {self.bbox}\nTotal Images: {len(self.result_list)}"
+            f"From {self.start_date} to {self.end_date}\nCloud Cover < {self.cloud_cover}%\nBBox: {self.bbox}\nTotal Scene Processed: {len(self.result_list)}"
         )
         plt.colorbar(
             plt.cm.ScalarMappable(
