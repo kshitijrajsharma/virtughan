@@ -4,7 +4,10 @@ version = "0.0.1"
 description = "Virtual Computation Cube"
 authors = ["kshitijrajsharma <skshitizraj@gmail.com>"]
 readme = "README.md"
-package-mode = false
+packages = [
+    { include = "vcube", from = "src" }
+]
+license = "GPL-3.0-or-later"
 
 [tool.poetry.dependencies]
 python = "^3.10"
