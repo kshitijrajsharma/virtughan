@@ -2,7 +2,19 @@
 
 <img src="./static/img/virtughan-logo.png" alt="VirtuGhan Logo" width="100" height="100"> 
 
+![Tests Passing](https://img.shields.io/badge/tests-passing-brightgreen)
+![Build Status](https://img.shields.io/github/actions/workflow/status/kshitijrajsharma/VirtuGhan/test.yml?branch=master)
+![Website Status](https://img.shields.io/website-up-down-green-red/https/virtughan.live)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)
+![PyPI Version](https://img.shields.io/pypi/v/virtughan)
+![Python Version](https://img.shields.io/pypi/pyversions/virtughan)
+![License](https://img.shields.io/github/license/kshitijrajsharma/VirtuGhan)
+![Dependencies](https://img.shields.io/librariesio/release/pypi/virtughan)
+![Last Commit](https://img.shields.io/github/last-commit/kshitijrajsharma/VirtuGhan)
+
  Name is combination of two words `virtual` & `cube` , where `cube` translated to Nepali word `घन`,  also known as virtual computation cube. You can test demo of this project for Sentinel2 data at : https://virtughan.live/ 
+
+
 
 ### Background
 
