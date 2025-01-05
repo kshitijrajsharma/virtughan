@@ -395,31 +395,7 @@
                         <label for="transparency_computeLayer" class="text-sm mr-2 text-gray-500">Transparency:</label>
                         <input id="transparency_computeLayer" type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
                       </div>
-                      <!-- <div id="colorPalettes" class="mb-2 w-full">
-                        <div class="text-sm text-gray-500">Color Palette:</div>
-                        <select id="paletteSelect" class="form-select mt-1 w-full text-gray-500 text-sm p-1">
-                          <option value="Viridis" style="background: linear-gradient(to right, #440154, #FDE724);">Viridis</option>
-                          <option value="Rgb" style="background: linear-gradient(to right, #440154, #FDE724);">RGB</option>
-                          <option value="Grayscale" style="background: linear-gradient(to right, #440154, #FDE724);">Grayscale</option>
-                          <option value="Plasma" style="background: linear-gradient(to right, #0D0887, #FCA636);">Plasma</option>
-                          <option value="Magma" style="background: linear-gradient(to right, #000004, #FE9F6D);">Magma</option>
-                          <option value="Inferno" style="background: linear-gradient(to right, #000004, #FEA97D);">Inferno</option>
-                          <option value="Cividis" style="background: linear-gradient(to right, #00204C, #FFFFD8);">Cividis</option>
-                          <option value="Spectral" style="background: linear-gradient(to right, #9E0142, #66C2A5);">Spectral</option>
-                          <option value="Jet" style="background: linear-gradient(to right, #000083, #FF0000);">Jet</option>
-                          <option value="HSV" style="background: linear-gradient(to right, #FF0000, #CC00FF);">HSV</option>
-                          <option value="Cool" style="background: linear-gradient(to right, #00FFFF, #FFCC88);">Cool</option>
-                          <option value="Spring" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Spring</option>
-                          <option value="Sequential" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Sequential</option>
-                          <option value="SequentialMultiHue" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">SequentialMultiHue</option>
-                          <option value="Diverging" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Diverging</option>
-                          <option value="Categorical" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Categorical</option>
-                          <option value="Spectral1" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Spectral1</option>
-                          <option value="HeatMap" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">HeatMap</option>
-                          <option value="Terrain" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Terrain</option>
-                        </select>
-                      </div> -->
-                      <div id="colorPalettes" class="relative inline-block w-64">
+                      <div id="colorPalettes" class="relative inline-block w-full">
                         <button id="PaletteSelectButton" class="block w-full px-4 py-2 mt-1 bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" onclick="toggleDropdown()">
                             <!-- Default selected color will be displayed here -->
                         </button>
@@ -1065,10 +1041,10 @@ document.addEventListener('DOMContentLoaded', function() {
           export_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
           document.getElementById("map-window-content").innerHTML = export_params.bbox;
         } else if (selectedItemId === 'draw-aoi-on-map') {
-          console.log("fired");
+          // console.log("fired");
           // coords.classList.add('hidden');
           drawBBoxOption.classList.remove('hidden');
-          console.log(Object.keys(highlightedLayer._layers).length > 0);
+          // console.log(Object.keys(highlightedLayer._layers).length > 0);
           if(Object.keys(drawnItems._layers).length > 0){
             // console.log(drawnItems);
             updateDrawnItemBbox(drawnItems);
@@ -1094,15 +1070,15 @@ document.addEventListener('DOMContentLoaded', function() {
 document.querySelectorAll('.template-filters').forEach(function(item) {
     item.addEventListener('click', function() {
         const templateText = item.querySelector('.template-filters-value').getAttribute('value');
-        console.log(templateText); 
+        // console.log(templateText); 
         var param;
         //check if dropwn inside export is clicked or search is clicked
         if (this.closest('#select-list_export')) {
-          console.log("yes this is export");
+          // console.log("yes this is export");
           param = export_params;
         }
         else{
-          console.log("no this is search");
+          // console.log("no this is search");
           param = tile_params;
         }
 
@@ -1208,7 +1184,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
       var geojsonLayer;
       var liveLayer;
-      var computeLayer = null;
+      var computeLayer;
       var highlightedLayer = L.layerGroup();
       var clickedResultList = false;
       var previousListMouseIn;
@@ -1389,7 +1365,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
               featureList.innerHTML = "";
               
               //add count of images
-              console.log("count "+data.features.length);
+              // console.log("count "+data.features.length);
               document.getElementById("display-image-count").innerHTML = `Images: <span class="text-xs">${data.features.length}<span>`;
 
               data.features.forEach(function (feature, index) {
@@ -1413,15 +1389,15 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
                               </li>            
                         `;
                 featureItem.addEventListener("mouseleave", function (e) {
-                  console.log(previousListMouseIn);
-                  console.log(e.target.querySelector('.result-list-items').id);
-                  console.log(clickedResultList);
+                  // console.log(previousListMouseIn);
+                  // console.log(e.target.querySelector('.result-list-items').id);
+                  // console.log(clickedResultList);
                   if (Object.keys(highlightedLayer._layers).length > 0) {
                     // map.removeLayer(highlightedLayer);
                     if(clickedResultList == false && previousListMouseIn != e.target.querySelector('.result-list-items').id){
                       map.closePopup();
                       highlightedLayer.clearLayers();
-                      console.log("entered")
+                      // console.log("entered")
                     }
                     else if(previousListMouseIn == e.target.querySelector('.result-list-items').id){
                       map.removeLayer(highlightedLayer);
@@ -1678,20 +1654,20 @@ function metersToDegrees(meters) {
 
 function updateDrawnItemBbox(layer){
     if (!(layer instanceof L.Marker)) { //for polygons and rectangles
-        console.log("entered if");
+        // console.log("entered if");
         var bd = layer.getBounds();
         export_params_bbox_changed = true;
         export_params.bbox = `${bd.getWest()},${bd.getSouth()},${bd.getEast()},${bd.getNorth()}`;
-        console.log(export_params.bbox);
+        // console.log(export_params.bbox);
         document.getElementById("map-window-content").innerHTML = export_params.bbox;
-        console.log(document.getElementById("map-window-content").innerHTML);
+        // console.log(document.getElementById("map-window-content").innerHTML);
 
         if (drawToolbar) {
           drawToolbar.style.display = 'none';
         }
 
     } else { //for markers
-        console.log("entered else");
+        // console.log("entered else");
         var radiusInMeters = 1000; // Example radius in meters
         var radiusInDegrees = metersToDegrees(radiusInMeters);
 
@@ -1701,7 +1677,7 @@ function updateDrawnItemBbox(layer){
 
         export_params_bbox_changed = true;
         export_params.bbox = `${lng - radiusInDegrees},${lat - radiusInDegrees},${lng + radiusInDegrees},${lat + radiusInDegrees}`;
-        console.log("export-params-bbox: "+ export_params_bbox);
+        // console.log("export-params-bbox: "+ export_params_bbox);
         document.getElementById("map-window-content").innerHTML = export_params.bbox;
         if (drawToolbar) {
           drawToolbar.style.display = 'none';
@@ -1723,7 +1699,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
 
     var layer = event.layer;
     drawnItems.addLayer(layer);
-    console.log("entered here - created");
+    // console.log("entered here - created");
     updateDrawnItemBbox(layer);
 });
 
@@ -1757,16 +1733,16 @@ map.on(L.Draw.Event.CREATED, function (event) {
                 }
             }
             else if(layerId == "compute_layer"){
-              console.log("entered compute_layer");
-              console.log("compute checked status: "+checkedStatus);
-              console.log(computeLayer);
+              // console.log("entered compute_layer");
+              // console.log("compute checked status: "+checkedStatus);
+              // console.log(computeLayer);
               
               if(checkedStatus){
-                console.log("addRasterLayer");
-                map.addLayer(computeLayer);
+                // console.log("addRasterLayer");
+                map.addLayer(computeLayer); //remove comment
               }
               else{
-                console.log("removeRasterLayer");
+                // console.log("removeRasterLayer");
                 map.removeLayer(computeLayer);
                 
               }
@@ -1807,7 +1783,7 @@ function zoomToLayer(layerName) {
         } else {
             console.error(`Layer ${layerName} does not support bounding box`);
         }
-        console.log(`Zooming to ${layerName}`);
+        // console.log(`Zooming to ${layerName}`);
     } else {
         console.error(`Layer ${layerName} not found`);
     }
@@ -1827,7 +1803,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
 
 <!-- color palette options start -->
-<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://d3js.org/d3.v6.min.js"></script>
 <script>
     const colorScales = { 
         'RdYlGn': d3.interpolateRdYlGn,
@@ -1902,6 +1878,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
           button.value = scaleName; // Add value to button
           toggleDropdown();
 
+          // console.log("onchange");
           // Call updateRasterColor function with the selected palette
           updateRasterColor(scaleName);
           // Call updateLegend with the appropriate palette
@@ -1928,20 +1905,60 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
     window.onload = createColorOptions; // Populate dropdown options on page load
 
-    // Update color function with selected palette
-    function updateColor(value, scaleName) {
-        const colorScale = colorScales[scaleName]; // Get the color scale function
-        const scale = d3.scaleSequential(colorScale)
-            .domain([min, max]); 
+    // Function to update the color for multi-band rasters
+    // Function to update the color for single-band and multi-band rasters
+function updateColor(values, scaleName) {
+    const colorScale = colorScales[scaleName]; // Get the color scale function
+    const scale = d3.scaleSequential(colorScale)
+        .domain([min, max]);
 
-        return scale(value);
+    // console.log(values.length);
+    if (values.length === 1) {
+        // Single-band raster
+        return scale(values[0]);
+    } else {
+        // Multi-band raster (e.g., RGB)
+        const r = Math.round((values[0] - min) / (max - min) * 255);
+        const g = Math.round((values[1] - min) / (max - min) * 255);
+        const b = Math.round((values[2] - min) / (max - min) * 255);
+        // console.log(r);
+
+        // Ensure the values are within [0, 255] range
+        const clamp = value => Math.max(0, Math.min(255, value));
+        // console.log(clamp(r));
+
+        document.getElementById("colorPalettes").classList.add("hidden");
+
+        return `rgb(${clamp(r)}, ${clamp(g)}, ${clamp(b)})`;
+    }
+}
+
+
+    // Function to process raster data and discard NaN values
+    function processRasterData(rasterData) {
+        const noDataValue = -9999; // NaN value in data
+        let validValues = [];
+
+        rasterData.values.forEach(val => {
+          val.forEach(row => {
+            row.forEach(value => {
+                if (value !== noDataValue) {
+                    validValues.push(value);
+                }
+            });
+        });
+      });
+
+        return validValues;
     }
 </script>
  <!-- color palette options end -->
 
     <!-- /export api start -->
     <script>
+      var completed_log = false;
       document.getElementById("export-map-view-button").addEventListener('click', function() {
+        completed_log = false;
         export_params.startDdate = document.getElementById("start-date-export").value;
         export_params.endDate = document.getElementById("end-date-export").value;
         export_params.cloudCover = document.getElementById("cloud-cover-export").value;
@@ -1954,6 +1971,8 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
         document.getElementById('operationImageView').src ="";
         document.getElementById('timeSeriesImageContainer').innerHTML = "";
+
+        document.getElementById("colorPalettes").classList.remove("hidden");
 
         if(document.getElementById("operation").checked){
           document.getElementById("compute_layer").classList.remove("hidden");
@@ -2011,14 +2030,18 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
               if (data.includes('Processing completed.') || data.includes('100%')) {
                 clearInterval(intervalId);
                 console.log('Processing completed. Stopped checking.');
-                if(data.includes('Filtered 0 items')){}
+                if(completed_log){}
                 else{
-                  document.getElementById("layerSwitcherBox").classList.remove("hidden");
-                  if(document.getElementById("operation").checked){
-                    plotGeoTIFF('static/export/custom_band_output_aggregate.tif');
-                }
+                  if(data.includes('Filtered 0 items')){}
+                  else{
+                    document.getElementById("layerSwitcherBox").classList.remove("hidden");
+                    if(document.getElementById("operation").checked){
+                      plotGeoTIFF('static/export/custom_band_output_aggregate.tif');
+                      completed_log = true;
+                  }
                 
-                }    
+                  }  
+                }  
               }
             })
             .catch((error) => {
@@ -2116,7 +2139,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
       // console.log(interpolatedColorScales);
 
       var selectedPalette = getSelectedPalette();
-      console.log(selectedPalette);
+      // console.log(selectedPalette);
 
       function plotGeoTIFF(tifUrl) {
         if (computeLayer) {
@@ -2142,10 +2165,19 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
                   https://leafletjs.com/reference.html#gridlayer
               */
               
-              min = georaster.mins[0];
-              max = georaster.maxs[0];
-              console.log(`Min pixel value: ${min}`);
-              console.log(`Max pixel value: ${max}`);
+              //uncomment this if the raster contains min and max and handled nodata values. eg. min and max doesnot have values like 100000000000000.
+              // min = georaster.mins[0];
+              // max = georaster.maxs[0];
+
+              const validValues = processRasterData(georaster); //uncomment this if raster min, max has values like 1000000000000.
+
+              // Calculate min and max values
+              // console.log(validValues);
+              min = Math.min(...validValues);
+              max = Math.max(...validValues);
+
+              console.log('Min Value:', min);
+              console.log('Max Value:', max);
 
               computeLayer = new GeoRasterLayer({
                   georaster: georaster,
@@ -2153,8 +2185,15 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
                   resolution: 256,
                   // updateWhenZooming:true,
                   pixelValuesToColorFn: values => {
-                      const normalizedValue = (values[0] - min) / (max - min); // Normalize the value
-                      return updateColor(normalizedValue, selectedPalette); // Get continuous color
+                      // var normalizedValue = (values[0] - min) / (max - min);
+                        // console.log(values);
+                        if(values[0] == -9999){
+                          return 'rgba(0, 0, 0, 0)';
+                        }
+                        else{
+                          return updateColor(values, selectedPalette);
+                        }
+                       // Get continuous color
                   }
               });
               map.addLayer(computeLayer);
@@ -2178,30 +2217,16 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
       
 
       function updateRasterColor(scaleName) {
+        // console.log("entered updaterastercolor");
         if (computeLayer) {
-          
-
-          // Remove the existing layer from the map
-          if (map.hasLayer(computeLayer)) {
-            map.removeLayer(computeLayer);
+          computeLayer.updateColors(pixelValuesToColorFn = values => {
+              if (values[0] == -9999) {
+                  return 'rgba(0, 0, 0, 0)'; // Transparent color for NaN values
+              } else {
+                  return updateColor(values, scaleName); // Handle single-band and multi-band rasters
+              }
+            });
           }
-
-          computeLayer =null;
-
-          // Update the color palette and create a new layer
-          computeLayer = new GeoRasterLayer({
-            georaster: geoRaster,
-            opacity: 0.8,
-            resolution: 256,
-            pixelValuesToColorFn: values => {
-                      const normalizedValue = (values[0] - min) / (max - min); // Normalize the value
-                      return updateColor(normalizedValue, scaleName); // Get continuous color
-                  }
-          });
-
-          // Add the new layer to the map
-          map.addLayer(computeLayer);
-        }
       }
 
 
@@ -2245,7 +2270,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
             "computeLayer": computeLayer
           };
           const layer = layers[layerName];
-          console.log(layer);
+          // console.log(layer);
           if (layer) {
               if (layer.setOpacity) {
                   // For raster layers (e.g., imageOverlay)
@@ -2254,7 +2279,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
                   // For vector layers (e.g., geoJSON)
                   layer.setStyle({ opacity: value / 100/*, fillOpacity: value / 100*/ });
               }
-              console.log(`Setting transparency of ${layerName} to ${value}%`);
+              // console.log(`Setting transparency of ${layerName} to ${value}%`);
           } else {
               console.error(`Layer ${layerName} not found`);
           }
@@ -2456,7 +2481,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
             tile_params.formula = queryTextarea.value.toLowerCase(); 
             export_params.formula = queryTextarea.value.toLowerCase(); //setting the same formula for now (for search and export)
 
-            console.log('formula:', tile_params.formula);
+            // console.log('formula:', tile_params.formula);
             document.getElementById("formulaHeading").classList.remove('hidden'); 
             document.getElementById("formulaHeading-export").classList.remove('hidden'); 
             document.getElementById("custom-formula-view_export").classList.remove('hidden');
