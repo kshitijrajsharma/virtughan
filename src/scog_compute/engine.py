@@ -173,8 +173,14 @@ def save_aggregated_result_with_colormap(
         image = Image.fromarray(result_image)
     else:
         # Multi-band image
-        result_image = np.transpose(result_aggregate, (1, 2, 0))
-        image = (result_image * 255).astype(np.uint8)
+        image_array = np.transpose(result_aggregate, (1, 2, 0))
+        image_array = (
+            (image_array - image_array.min())
+            / (image_array.max() - image_array.min())
+            * 255
+        )
+        image_array = image_array.astype(np.uint8)
+        image = Image.fromarray(image_array)
 
     plt.figure(figsize=(10, 10))
     plt.imshow(image)
