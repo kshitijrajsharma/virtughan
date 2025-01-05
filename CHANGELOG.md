@@ -1,3 +1,9 @@
+## 0.1.2 (2025-01-05)
+
+### Fix
+
+- **nodata**: fix bug on nodata pixels for the output
+
 ## 0.1.1 (2025-01-05)
 
 ### Fix
