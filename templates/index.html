@@ -1467,6 +1467,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
                   {
                     tileSize: 256,
                     opacity: 0.8,
+                    zIndex: 5,
                     attribution:
                       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
                   }
@@ -1956,6 +1957,24 @@ function updateColor(values, scaleName) {
     }
 </script>
  <!-- color palette options end -->
+
+ <!-- timeseries definition and clear -->
+ <script>
+  let isPlaying = false;
+      let playInterval;
+      let pngImages = [];
+      let dates = [];
+      const loadedImages = [];
+
+      function clearPreviousTimeSeriesData() { 
+        pngImages = []; 
+        dates = []; 
+        loadedImages = []; 
+        // Clear loaded images 
+        document.getElementById('timeSeriesImageContainer').innerHTML = ''; 
+        document.getElementById('dateDisplay').textContent = ''; 
+      }
+  </script>
 
     <!-- /export api start -->
     <script>
@@ -2605,20 +2624,6 @@ function updateColor(values, scaleName) {
   <!-- result modal script for result and timeslider start -->
   <script>
     document.addEventListener('DOMContentLoaded', (event) => {
-      let isPlaying = false;
-      let playInterval;
-      let pngImages = [];
-      let dates = [];
-      const loadedImages = [];
-
-      function clearPreviousTimeSeriesData() { 
-        pngImages = []; 
-        dates = []; 
-        loadedImages = []; 
-        // Clear loaded images 
-        document.getElementById('timeSeriesImageContainer').innerHTML = ''; 
-        document.getElementById('dateDisplay').textContent = ''; 
-      }
 
       // Preload images
       function preloadImages(images, callback) {
