@@ -65,7 +65,7 @@
         background: #494949;
       }
       /* Custom styles for the icon hover effect */ 
-      #clear-sidebar-button:hover { 
+      #sidebar-clear-button:hover { 
         color: #1f2937; 
         /* Tailwind's gray-900 */ 
         cursor: pointer;
@@ -439,7 +439,7 @@
                 </div>              
                 <div class="flex items-center justify-between pt-2">
                   <label id = "display-image-count" class="block  font-medium text-gray-900 pb-4">Images: <span class="text-xs"><span></label>
-                  <span id="clear-sidebar-button" class="clear-visualize-filter text-gray-500 text-xs"><i class="fa-solid fa-rotate-right"></i> Clear</span>
+                  <span id="sidebar-clear-button" class="clear-visualize-filter text-gray-500 text-xs"><i class="fa-solid fa-rotate-right"></i> Clear</span>
                 </div>
                 <div id="feature-list" style = "max-height: 450px;" class = "overflow-auto custom-scrollbar">
                   <label class="block text-sm font-medium text-gray-400 pt-4">Apply the Filter First!!!</label>
@@ -1038,14 +1038,19 @@ document.addEventListener('DOMContentLoaded', function() {
           if(Object.keys(drawnItems._layers).length > 0){
             // console.log(drawnItems);
             map.removeLayer(drawnItems);
+            export_params_bbox_changed = false;
           }
+          //reset bbox html
+          export_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+          document.getElementById("map-window-content").innerHTML = export_params.bbox;
         } else if (selectedItemId === 'draw-aoi-on-map') {
           console.log("fired");
-          coords.classList.add('hidden');
+          // coords.classList.add('hidden');
           drawBBoxOption.classList.remove('hidden');
           console.log(Object.keys(highlightedLayer._layers).length > 0);
           if(Object.keys(drawnItems._layers).length > 0){
             // console.log(drawnItems);
+            updateDrawnItemBbox(drawnItems);
             map.addLayer(drawnItems);
           }
         } else if (selectedItemId === 'upload-file-bbox') {
@@ -1176,6 +1181,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
       var highlightedLayer = L.layerGroup();
       var clickedResultList = false;
       var previousListMouseIn;
+      var export_params_bbox_changed = false;
 
       var tile_params = {
           "bbox": "",                  
@@ -1205,16 +1211,16 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
       var bounds = map.getBounds();
       tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
-      export_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+      if(export_params_bbox_changed){}else{export_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;}
       document.getElementById("coords").textContent = tile_params.bbox;
       document.getElementById("zoom-level").textContent = map.getZoom();
 
       map.on("moveend", function () {
         bounds = map.getBounds();
         tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
-        export_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+        if(export_params_bbox_changed){}else{export_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;}
         document.getElementById("coords").textContent = tile_params.bbox;
-        document.getElementById("map-window-content").innerHTML = export_params.bbox;
+        if(export_params_bbox_changed){}else{document.getElementById("map-window-content").innerHTML = export_params.bbox;}
         document.getElementById("zoom-level").textContent = map.getZoom();
       });
 
@@ -1462,7 +1468,17 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         });
 
       document
-        .getElementById("clear-sidebar-button")
+        .getElementById("sidebar-clear-button")
+        .addEventListener("click", function () {
+          document.getElementById("feature-list").innerHTML = '<label class="block text-sm font-medium text-gray-400 pt-4">Apply the Filter First!!!</label>';
+          document.getElementById("display-image-count").innerHTML = `Images: `;
+
+          document.getElementById("search-clear-button").click();   
+          document.getElementById("export-clear-button").click();
+        });
+
+        document
+        .getElementById("search-clear-button")
         .addEventListener("click", function () {
           if (geojsonLayer) {
             map.removeLayer(geojsonLayer);
@@ -1473,17 +1489,9 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           if (liveLayer) {
             map.removeLayer(liveLayer);
           }
-          document.getElementById("feature-list").innerHTML = '<label class="block text-sm font-medium text-gray-400 pt-4">Apply the Filter First!!!</label>';
           setDefaultFilters();
-          setDefaultFiltersExport();
-
-          document.getElementById("display-image-count").innerHTML = `Images: `;
-        });
-
-        document
-        .getElementById("search-clear-button")
-        .addEventListener("click", function () {
-          document.getElementById("clear-sidebar-button").click();
+          
+          document.getElementById("sidebar-clear-button").click(); 
           document.getElementById("searchLayerSwitcher").classList.add("hidden");
           document.getElementById("searchBboxLayerSwitcher").classList.add("hidden");
         })
@@ -1491,10 +1499,29 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         document
         .getElementById("export-clear-button")
         .addEventListener("click", function () {
-          document.getElementById("clear-sidebar-button").click();
+          if (geojsonLayer) {
+            map.removeLayer(geojsonLayer);
+          }
+          if (highlightedLayer) {
+            map.removeLayer(highlightedLayer);
+          }
+          if (liveLayer) {
+            map.removeLayer(liveLayer);
+          }
+          setDefaultFiltersExport();
+          document.getElementById("sidebar-clear-button").click();
           document.getElementById("custom-formula-view_export").classList.add('hidden'); 
 
           document.getElementById("computeLayerSwitcher").classList.add("hidden");
+
+          export_params_bbox_changed = false;
+
+          //clear drawn items and bbox
+          if(drawnItems){
+            drawnItems.clearLayers();
+          }
+          export_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+          document.getElementById("map-window-content").innerHTML = export_params.bbox;
 
         })
 
@@ -1534,6 +1561,10 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
         document.getElementById("start-date-export").value = lastMonthDate;
         document.getElementById("end-date-export").value = today;
+        document.getElementById("select-button_export").innerHTML = `<span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
+                      <img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full">
+                      <span id = "selected-filter-value_search" class="block truncate">Select Option</span>
+                    </span>`;
 
         document.getElementById("cloud-cover-export").value = "30";
 
@@ -1602,6 +1633,39 @@ function metersToDegrees(meters) {
     return deltaDeg * radToDeg; 
 }
 
+function updateDrawnItemBbox(layer){
+    if (!(layer instanceof L.Marker)) { //for polygons and rectangles
+        console.log("entered if");
+        var bd = layer.getBounds();
+        export_params_bbox_changed = true;
+        export_params.bbox = `${bd.getWest()},${bd.getSouth()},${bd.getEast()},${bd.getNorth()}`;
+        console.log(export_params.bbox);
+        document.getElementById("map-window-content").innerHTML = export_params.bbox;
+        console.log(document.getElementById("map-window-content").innerHTML);
+
+        if (drawToolbar) {
+          drawToolbar.style.display = 'none';
+        }
+
+    } else { //for markers
+        console.log("entered else");
+        var radiusInMeters = 1000; // Example radius in meters
+        var radiusInDegrees = metersToDegrees(radiusInMeters);
+
+        var latlng = layer.getLatLng();
+        var lat = latlng.lat;
+        var lng = latlng.lng;
+
+        export_params_bbox_changed = true;
+        export_params.bbox = `${lng - radiusInDegrees},${lat - radiusInDegrees},${lng + radiusInDegrees},${lat + radiusInDegrees}`;
+        console.log("export-params-bbox: "+ export_params_bbox);
+        document.getElementById("map-window-content").innerHTML = export_params.bbox;
+        if (drawToolbar) {
+          drawToolbar.style.display = 'none';
+        }
+    }
+  }
+
 // Event listener for the drawstart event 
 map.on(L.Draw.Event.DRAWSTART, function (e) {
   if (drawToolbar) {
@@ -1616,25 +1680,8 @@ map.on(L.Draw.Event.CREATED, function (event) {
 
     var layer = event.layer;
     drawnItems.addLayer(layer);
-
-    if (!(layer instanceof L.Marker)) {
-        var bd = layer.getBounds();
-        export_params.bbox = `${bd.getWest()},${bd.getSouth()},${bd.getEast()},${bd.getNorth()}`;
-
-    } else {
-        var radiusInMeters = 1000; // Example radius in meters
-        var radiusInDegrees = metersToDegrees(radiusInMeters);
-
-        var latlng = layer.getLatLng();
-        var lat = latlng.lat;
-        var lng = latlng.lng;
-
-        export_params.bbox = `${lng - radiusInDegrees},${lat - radiusInDegrees},${lng + radiusInDegrees},${lat + radiusInDegrees}`;
-        document.getElementById("map-window-content").innerHTML = export_params.bbox;
-        if (drawToolbar) {
-          drawToolbar.style.display = 'none';
-        }
-    }
+    console.log("entered here - created");
+    updateDrawnItemBbox(layer);
 });
 
       
@@ -1924,7 +1971,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
                       const current = matches[2];
                       const total = matches[3];
                       const elapsed = matches[4];
-                      const remaining = matches[5].slice(0, -3); // Remove the last 3 characters
+                      const remaining = matches[5].split(",")[0]; // remove miliseconds after comma
 
                       const logMessages = [
                           '-', //one space added
