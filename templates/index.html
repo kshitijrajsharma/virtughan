@@ -1973,12 +1973,9 @@ function updateColor(values, scaleName) {
         document.getElementById('ProgressTextsBefore').innerHTML = `<li style = "font-size: 10px;">Please Wait Computing...</li>`;
 
         document.getElementById('operationImageView').src ="";
-        document.getElementById('timeSeriesImageContainer').innerHTML = "";
+        clearPreviousTimeSeriesData();
 
         document.getElementById("colorPalettes").classList.remove("hidden");
-
-        document.getElementById('timeSeriesImageContainer').innerHTML = ''; 
-        document.getElementById('dateDisplay').textContent ='';
 
         if(document.getElementById("operation").checked){
           document.getElementById("compute_layer").classList.remove("hidden");
@@ -2613,8 +2610,18 @@ function updateColor(values, scaleName) {
       let dates = [];
       const loadedImages = [];
 
+      function clearPreviousTimeSeriesData() { 
+        pngImages = []; 
+        dates = []; 
+        loadedImages = []; 
+        // Clear loaded images 
+        document.getElementById('timeSeriesImageContainer').innerHTML = ''; 
+        document.getElementById('dateDisplay').textContent = ''; 
+      }
+
       // Preload images
       function preloadImages(images, callback) {
+          
           let loadedCount = 0;
           images.forEach((src, index) => {
               const img = new Image();
