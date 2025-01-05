@@ -112,5 +112,5 @@ Inorder to setup project , follow [here](./docs/install.md)
 - https://registry.opendata.aws/sentinel-2-l2a-cogs/ COGS Stac API for sentinel-2
 
 
-#### Copyright © 2024 – Concept by Kshitij and Upen
+#### Copyright © 2024 – Concept by Kshitij and Upen , Distributed under GNU General Public License v3.0 
 
