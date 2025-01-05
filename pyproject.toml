@@ -30,6 +30,7 @@ requests = "^2.32.3"
 [tool.poetry.group.dev.dependencies]
 commitizen = "^4.1.0"
 pytest = "^8.3.4"
+pytest-asyncio = "^0.25.1"
 
 
 [tool.commitizen]
