@@ -1,3 +1,9 @@
+## 0.1.1 (2025-01-05)
+
+### Fix
+
+- **version**: increase limit of stac api search prevent 100
+
 ## 0.1.0 (2025-01-05)
 
 ### Feat
