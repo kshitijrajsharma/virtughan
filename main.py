@@ -25,7 +25,7 @@ from shapely.geometry import box, mapping
 from starlette.requests import Request
 from starlette.status import HTTP_504_GATEWAY_TIMEOUT
 
-from src.scog_compute.engine import compute as compute_engine
+from src.vcube.engine import VCubeProcessor
 
 app = FastAPI()
 
@@ -224,7 +224,7 @@ async def run_computation(
 
         print("Starting processing...")
         try:
-            compute_engine(
+            processor = VCubeProcessor(
                 bbox=bbox,
                 start_date=start_date,
                 end_date=end_date,
@@ -237,6 +237,7 @@ async def run_computation(
                 output_dir=output_dir,
                 log_file=f,
             )
+            processor.compute()
             print(f"Processing completed. Results saved in {output_dir}")
 
         except Exception as e:
