@@ -12,7 +12,8 @@ from matplotlib.colors import Normalize
 from PIL import Image
 from pyproj import Transformer
 from rasterio.windows import from_bounds
-from scipy.stats import mode
+
+# from scipy.stats import mode
 from shapely.geometry import box, shape
 from tqdm import tqdm
 
@@ -199,7 +200,7 @@ class VCubeProcessor:
             "std": np.ma.std,
             "sum": np.ma.sum,
             "var": np.ma.var,
-            "mode": lambda arr: mode(arr, axis=0, nan_policy="omit")[0].squeeze(),
+            # "mode": lambda arr: mode(arr, axis=0, nan_policy="omit")[0].squeeze(),
         }
 
         return operations[self.operation](result_stack, axis=0)
