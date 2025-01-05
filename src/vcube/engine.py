@@ -265,21 +265,22 @@ class VCubeProcessor:
     def _plot_result(self, image, output_file):
         plt.figure(figsize=(10, 10))
         plt.imshow(image)
-        plt.title(f"Aggregated {self.operation} Custom Band Calculation")
-        plt.ylabel(
-            f"From {self.start_date} to {self.end_date}\nCloud Cover < {self.cloud_cover}%\nBounding Box: {self.bbox}\nTotal Images: {len(self.result_list)}"
+        plt.title(f"Aggregated {self.operation} Calculation")
+        plt.xlabel(
+            f"From {self.start_date} to {self.end_date}\nCloud Cover < {self.cloud_cover}%\nBBox: {self.bbox}\nTotal Images: {len(self.result_list)}"
         )
-        if image.ndim == 2:
-            plt.xlabel(f"Normalized Range: {image.min():.2f} to {image.max():.2f}")
-            cbar = plt.colorbar(
-                plt.cm.ScalarMappable(
-                    norm=Normalize(vmin=image.min(), vmax=image.max()),
-                    cmap=plt.get_cmap(self.cmap),
-                ),
-                ax=plt.gca(),
-            )
-            cbar.set_label("Normalized Value")
-        plt.savefig(output_file.replace(".tif", "_colormap.png"))
+        plt.colorbar(
+            plt.cm.ScalarMappable(
+                cmap=plt.get_cmap(self.cmap),
+            ),
+            ax=plt.gca(),
+            shrink=0.5,
+        )
+        plt.savefig(
+            output_file.replace(".tif", "_colormap.png"),
+            bbox_inches="tight",
+            pad_inches=0.1,
+        )
         plt.close()
 
     def _pad_array(self, array, target_shape, fill_value=np.nan):
@@ -306,9 +307,9 @@ class VCubeProcessor:
         plt.figure(figsize=(10, 10))
         plt.imshow(image, cmap=self.cmap if src.count == 1 else None)
         plt.axis("off")
-        plt.text(10, 10, text, color="white", fontsize=12, backgroundcolor="black")
+        plt.title(text)
         temp_image_path = os.path.splitext(image_path)[0] + "_text.png"
-        plt.savefig(temp_image_path, bbox_inches="tight", pad_inches=0)
+        plt.savefig(temp_image_path, bbox_inches="tight", pad_inches=0.1)
         plt.close()
         return temp_image_path
 
@@ -321,14 +322,14 @@ class VCubeProcessor:
             image.resize((max_width, max_height), Image.LANCZOS) for image in images
         ]
         iio.imwrite(output_path, resized_images, duration=duration, loop=0)
-        print(f"Saved GIF to {output_path}")
+        print(f"Saved timeseries GIF to {output_path}")
 
     @staticmethod
     def zip_files(file_list, zip_path):
         with zipfile.ZipFile(zip_path, "w") as zipf:
             for file in file_list:
                 zipf.write(file, os.path.basename(file))
-        print(f"Saved ZIP to {zip_path}")
+        print(f"Saved intermediate images ZIP to {zip_path}")
         for file in file_list:
             os.remove(file)
 
