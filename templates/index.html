@@ -1998,12 +1998,14 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
                       const total = matches[3];
                       const elapsed = matches[4];
                       const remaining = matches[5].split(",")[0]; // remove miliseconds after comma
+                      const perImageTime = matches[5].split(",")[1];
 
                       const logMessages = [
                           '-', //one space added
                           `Images Processed: ${current}/${total}`,
                           `Time Elapsed: ${elapsed}`,
-                          `Time Remaining: ${remaining}`
+                          `Time Remaining: ${remaining}`,
+                          `Time Per Image: ${perImageTime}`
                       ];
 
                       // Add/update the log messages
