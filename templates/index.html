@@ -1089,8 +1089,8 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
       }
       else if(templateText == "NDWI"){
         param.formula = "(band2 - band1) / (band2 + band1)";
-        param.band1 = 'swir22';
-        param.band2 = 'nir';
+        param.band1 = 'nir';
+        param.band2 = 'green';
       }
       else if(templateText == "visual"){
         param.formula = "band1";
