@@ -1,3 +1,10 @@
+## 0.1.5 (2025-01-06)
+
+### Fix
+
+- **api**: fixes api bug on multiple request async
+- previous images cleared from timeseries
+
 ## 0.1.4 (2025-01-05)
 
 ### Fix
