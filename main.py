@@ -158,11 +158,11 @@ async def compute_aoi_over_time(
             status_code=400,
         )
 
-    valid_operations = ["mean", "median", "max", "min", "std", "sum", "var", "mode"]
+    valid_operations = ["mean", "median", "max", "min", "std", "sum", "var"]
     if operation and operation not in valid_operations:
         return JSONResponse(
             content={
-                "error": f"Invalid operation {operation}. Choose from 'mean', 'median', 'max', 'min', 'std', 'sum', 'var', 'mode'."
+                "error": f"Invalid operation {operation}. Choose from 'mean', 'median', 'max', 'min', 'std', 'sum', 'var'"
             },
             status_code=400,
         )
