@@ -173,6 +173,17 @@
 
   </style>
 
+<style>
+  .color-option {
+      width: 100%;
+      height: 20px;
+      display: block;
+  }
+  .dropdown-color-select option {
+      height: 20px;
+  }
+</style>
+
   </head>
   <body>
     <header class="bg-white shadow-md py-4 border-b border-gray-300">
@@ -384,7 +395,7 @@
                         <label for="transparency_computeLayer" class="text-sm mr-2 text-gray-500">Transparency:</label>
                         <input id="transparency_computeLayer" type="range" class="transparency-slider h-1 w-full" style="accent-color: gray;" min="0" max="100" value="100">
                       </div>
-                      <div id="colorPalettes" class="mb-2 w-full">
+                      <!-- <div id="colorPalettes" class="mb-2 w-full">
                         <div class="text-sm text-gray-500">Color Palette:</div>
                         <select id="paletteSelect" class="form-select mt-1 w-full text-gray-500 text-sm p-1">
                           <option value="Viridis" style="background: linear-gradient(to right, #440154, #FDE724);">Viridis</option>
@@ -407,7 +418,17 @@
                           <option value="HeatMap" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">HeatMap</option>
                           <option value="Terrain" style="background: linear-gradient(to right, #FF00FF, #FFECFF);">Terrain</option>
                         </select>
-                      </div>
+                      </div> -->
+                      <div id="colorPalettes" class="relative inline-block w-64">
+                        <button id="PaletteSelectButton" class="block w-full px-4 py-2 mt-1 bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" onclick="toggleDropdown()">
+                            <!-- Default selected color will be displayed here -->
+                        </button>
+                        <div id="PaletteSelect" class="absolute z-10 hidden w-full mt-1 bg-white rounded-md shadow-lg">
+                            <ul class="py-1 text-base text-gray-700 border border-gray-300 rounded-md max-h-56 overflow-y-auto focus:outline-none sm:text-sm">
+                                <!-- Options will be generated here -->
+                            </ul>
+                        </div>
+                    </div>
                       <div id="after-compute-buttons" class="flex items-center justify-end mt-2 space-x-4 hidden">
                         <button id="download-result-image" title="Download" class="p-2 border border-gray-400 text-white hover:bg-blue-600 bg-blue-500 rounded text-xs"> Download 
                           <i class="fas fa-download"></i>
@@ -1113,7 +1134,6 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
     <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
     <script src="https://unpkg.com/georaster"></script>
     <script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
     <script>
       var map = L.map("map").setView([28.202082, 83.987222], 10);
@@ -1806,67 +1826,115 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 </script>
 
 
+<!-- color palette options start -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
-  //to interpolate the colors to multiple colors
-        function interpolateColors(startColor, endColor, steps) {
-          const start = parseInt(startColor.slice(1), 16); // Convert hex to int
-          const end = parseInt(endColor.slice(1), 16); // Convert hex to int
-          const rStart = (start >> 16) & 0xff, gStart = (start >> 8) & 0xff, bStart = start & 0xff;
-          const rEnd = (end >> 16) & 0xff, gEnd = (end >> 8) & 0xff, bEnd = end & 0xff;
-          const colors = [];
+    const colorScales = {
+        'RdYlGn': d3.interpolateRdYlGn,
+        'BrBG': d3.interpolateBrBG,
+        'PrGn': d3.interpolatePRGn,
+        'PiYG': d3.interpolatePiYG,
+        'PuOr': d3.interpolatePuOr,
+        'RdBu': d3.interpolateRdBu,
+        'RdGy': d3.interpolateRdGy,
+        'RdYlBu': d3.interpolateRdYlBu,
+        'Spectral': d3.interpolateSpectral,
+        'Viridis': d3.interpolateViridis,
+        'Inferno': d3.interpolateInferno,
+        'Magma': d3.interpolateMagma,
+        'Plasma': d3.interpolatePlasma,
+        'Cividis': d3.interpolateCividis,
+        'Blues': d3.interpolateBlues,
+        'Greens': d3.interpolateGreens,
+        'Greys': d3.interpolateGreys,
+        'Oranges': d3.interpolateOranges,
+        'Purples': d3.interpolatePurples,
+        'Reds': d3.interpolateReds
+    };
 
-          for (let i = 0; i < steps; i++) {
-              const ratio = i / (steps - 1);
-              const r = Math.round(rStart + ratio * (rEnd - rStart));
-              const g = Math.round(gStart + ratio * (gEnd - gStart));
-              const b = Math.round(bStart + ratio * (bEnd - bStart));
-              colors.push(`#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`);
+    function createColorOptions() {
+        const ul = document.querySelector("#PaletteSelect ul");
+        ul.innerHTML = ''; // Clear existing options
+
+        Object.keys(colorScales).forEach((scaleName, index) => {
+            const colorScale = colorScales[scaleName];
+            const li = document.createElement('li');
+            li.className = "flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100";
+            li.dataset.scale = scaleName; // Add data attribute
+            li.value = scaleName; // Set value attribute
+            li.onclick = () => selectColor(colorScale, scaleName);
+            
+            for (let i = 0; i <= 1; i += 0.1) {
+                const colorBox = document.createElement('span');
+                colorBox.className = "color-option";
+                colorBox.style.backgroundColor = colorScale(i);
+                colorBox.style.width = "10%";
+                li.appendChild(colorBox);
+            }
+            ul.appendChild(li);
+
+            // Set the first option as default selected
+            if (index === 0) {
+                selectColor(colorScale, scaleName);
+            }
+        });
+    }
+
+    function toggleDropdown() {
+        const menu = document.getElementById("PaletteSelect");
+        menu.classList.toggle("hidden");
+    }
+
+    function selectColor(colorScale, scaleName) {
+          const button = document.getElementById("PaletteSelectButton");
+          button.innerHTML = ''; // Clear existing content
+          const container = document.createElement('div');
+          container.className = 'flex'; // Use Tailwind flex class to arrange items horizontally
+          for (let i = 0; i <= 1; i += 0.1) {
+              const colorBox = document.createElement('span');
+              colorBox.className = "color-option inline-block";
+              colorBox.style.backgroundColor = colorScale(i);
+              colorBox.style.width = "10%";
+              container.appendChild(colorBox);
           }
-          return colors;
+          button.appendChild(container);
+          button.dataset.selectedScale = scaleName; // Store selected scale name
+          button.value = scaleName; // Add value to button
+          toggleDropdown();
+
+          // Call updateRasterColor function with the selected palette
+          updateRasterColor(scaleName);
       }
 
-      function generateColorScales(colorScales, steps) {
-          const interpolatedScales = {};
-          for (const scale in colorScales) {
-              const colors = colorScales[scale];
-              const interpolated = [];
-              for (let i = 0; i < colors.length - 1; i++) {
-                  const segment = interpolateColors(colors[i], colors[i + 1], Math.ceil(steps / (colors.length - 1)));
-                  interpolated.push(...segment.slice(0, -1)); // Exclude last color to avoid duplication
-              }
-              interpolated.push(colors[colors.length - 1]); // Add the last color explicitly
-              interpolatedScales[scale] = interpolated.slice(0, steps); // Ensure exact number of steps
-          }
-          return interpolatedScales;
-      }
 
-      const colorScales = {
-        Viridis: ['#440154', '#482777', '#3E4989', '#31688E', '#26838F', '#1F9D8A', '#6DCD59', '#B6DE2B', '#FDE724'],
-        Rgb:['#0000FF', '#0033CC', '#006699', '#009966', '#00FF00', '#66CC00', '#CC9900', '#FF6600', '#FF0000'],
-        Grayscale: ['#000000', '#1C1C1C', '#383838', '#555555', '#717171', '#8D8D8D', '#AAAAAA', '#C6C6C6', '#E2E2E2', '#FFFFFF'],
-        Plasma: ['#0D0887', '#41049D', '#6A00A8', '#8F0DA4', '#B12A90', '#CC4678', '#E16462', '#F1824D', '#FCA636'],
-        Magma: ['#000004', '#140E36', '#3B0F70', '#641A80', '#8C2981', '#B63679', '#DA4453', '#F1605D', '#FE9F6D'],
-        Inferno: ['#000004', '#160B39', '#420A68', '#6A176E', '#932667', '#BC3754', '#DE4968', '#F66E5B', '#FEA97D'],
-        Cividis: ['#00204C', '#244B5A', '#467B65', '#68A56A', '#93BF72', '#C2CF80', '#EBE983', '#F2F252', '#FFFFD8'],
-        Spectral: ['#9E0142', '#D53E4F', '#F46D43', '#FDAE61', '#FEE08B', '#FFFFBF', '#E6F598', '#ABDDA4', '#66C2A5'],
-        Jet: ['#000083', '#001CE3', '#1CFFFE', '#83FF00', '#FFDD00', '#FF0000', '#B80000', '#7C0000', '#3A0000'],
-        HSV: ['#FF0000', '#FF9900', '#FFFF00', '#33FF00', '#00FF66', '#00FFFF', '#0066FF', '#3300FF', '#CC00FF'],
-        Cool: ['#00FFFF', '#61E3FF', '#9AD3FF', '#C5C6FF', '#ECBCFF', '#FFB7FB', '#FFB6D9', '#FFBCB3', '#FFCC88'],
-        Spring: ['#FF00FF', '#FF69FF', '#FF8FFF', '#FFA2FF', '#FFB1FF', '#FFBFFF', '#FFCFFF', '#FFDEFF', '#FFECFF'],
+    function getSelectedPalette() {
+        const button = document.getElementById("PaletteSelectButton");
+        if(button.value == ''){return 'RdYlGn'} else{
+          return button.value;
+        }
+         
+    }
 
-        Sequential: ['#f7fbff', '#deebf7', '#c6dbef', '#9ecae1', '#6baed6', '#4292c6', '#2171b5', '#08519c', '#08306b'],
-        SequentialMultiHue: ['#f7fcf5', '#e5f5e0', '#c7e9c0', '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#006d2c', '#00441b'],
-        Diverging: ['#d73027', '#fc8d59', '#fee090', '#ffffbf', '#e0f3f8', '#91bfdb', '#4575b4'],
-        Categorical: ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf'],
-        Spectral1: ['#9e0142', '#d53e4f', '#f46d43', '#fdae61', '#fee08b', '#e6f598', '#abdda4', '#66c2a5', '#3288bd', '#5e4fa2'],
-        HeatMap: ['#ffffcc', '#ffeda0', '#fed976', '#feb24c', '#fd8d3c', '#fc4e2a', '#e31a1c', '#bd0026', '#800026'],
-        Terrain: ['#a6611a', '#dfc27d', '#f5f5f5', '#80cdc1', '#018571']
-      };
+    document.addEventListener("click", function(event) {
+        const dropdown = document.getElementById("PaletteSelectButton");
+        const menu = document.getElementById("PaletteSelect");
+        if (!dropdown.contains(event.target)) {
+            menu.classList.add("hidden");
+        }
+    });
 
-      const steps = 100;
-      const interpolatedColorScales = generateColorScales(colorScales, steps);
-  
+    window.onload = createColorOptions; // Populate dropdown options on page load
+
+    // Update color function with selected palette
+    function updateColor(value, scaleName) {
+        const colorScale = colorScales[scaleName]; // Get the color scale function
+        const scale = d3.scaleSequential(colorScale)
+            .domain([min, max]); 
+
+        return scale(value);
+    }
 </script>
+ <!-- color palette options end -->
 
     <!-- /export api start -->
     <script>
@@ -1945,7 +2013,6 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
                   document.getElementById("layerSwitcherBox").classList.remove("hidden");
                   if(document.getElementById("operation").checked){
                     plotGeoTIFF('static/export/custom_band_output_aggregate.tif');
-                    console.log("palette select value: "+document.getElementById('paletteSelect').value);
                 }
                 
                 }    
@@ -2036,11 +2103,6 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
           }
         }
 
-
-
-
-
-
       });
 
 
@@ -2049,6 +2111,9 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
       var geoRaster;
 
       // console.log(interpolatedColorScales);
+
+      var selectedPalette = getSelectedPalette();
+      console.log(selectedPalette);
 
       function plotGeoTIFF(tifUrl) {
         if (computeLayer) {
@@ -2079,26 +2144,22 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
               console.log(`Min pixel value: ${min}`);
               console.log(`Max pixel value: ${max}`);
 
-              const paletteSelect = document.getElementById('paletteSelect');
-              const selectedPalette = paletteSelect.value;
-              const colorScale = interpolatedColorScales[selectedPalette];
-
               computeLayer = new GeoRasterLayer({
-                georaster: georaster,
-                opacity: 0.8,
-                resolution: 256,
-                // updateWhenZooming:true,
-                pixelValuesToColorFn: values => {
-                  const normalizedValue = (values[0] - min) / (max - min);
-                  return colorScale[Math.floor(normalizedValue * (colorScale.length - 1))];
-                }
+                  georaster: georaster,
+                  opacity: 0.8,
+                  resolution: 256,
+                  // updateWhenZooming:true,
+                  pixelValuesToColorFn: values => {
+                      const normalizedValue = (values[0] - min) / (max - min); // Normalize the value
+                      return updateColor(normalizedValue, selectedPalette); // Get continuous color
+                  }
               });
               map.addLayer(computeLayer);
+
 
               map.fitBounds(computeLayer.getBounds());
 
               //add legend after adding layer
-              updateLegend(document.getElementById('paletteSelect').value);
               document.getElementById("legend").classList.remove("hidden");
               
               initializeTransparency();
@@ -2106,15 +2167,15 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
         });
       }
 
-      document.getElementById('paletteSelect').addEventListener('change', (event) => {
-        updateRasterColor(event.target.value);
-        updateLegend(event.target.value);
-      });
+      // document.getElementById('paletteSelect').addEventListener('change', (event) => {
+      //   updateRasterColor(event.target.value);
+      //   updateLegend(event.target.value);
+      // });
       
 
-      function updateRasterColor(paletteName) {
+      function updateRasterColor(scaleName) {
         if (computeLayer) {
-          const colorScale = interpolatedColorScales[paletteName];
+          
 
           // Remove the existing layer from the map
           if (map.hasLayer(computeLayer)) {
@@ -2129,9 +2190,9 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
             opacity: 0.8,
             resolution: 256,
             pixelValuesToColorFn: values => {
-              const normalizedValue = (values[0] - min) / (max - min);
-              return colorScale[Math.floor(normalizedValue * (colorScale.length - 1))];
-            }
+                      const normalizedValue = (values[0] - min) / (max - min); // Normalize the value
+                      return updateColor(normalizedValue, scaleName); // Get continuous color
+                  }
           });
 
           // Add the new layer to the map
@@ -2766,6 +2827,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
   </script>
   <!-- download file script end -->
+
 
 
   </body>
