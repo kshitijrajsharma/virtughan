@@ -1,6 +1,6 @@
 # VirtuGhan
 
-Name is combination of virtual cube , where cube translated to nepali word “घन”
+Name is combination of virtual cube , where cube translated to nepali word “घन”  , You can test live of this computation cube for Sentinel2 data  at : https://virtughan.live/ 
 
 ### Background
 
