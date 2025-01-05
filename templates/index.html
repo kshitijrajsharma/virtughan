@@ -1904,6 +1904,9 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
           // Call updateRasterColor function with the selected palette
           updateRasterColor(scaleName);
+          // Call updateLegend with the appropriate palette
+          updateLegend(getSelectedPalette());
+
       }
 
 
@@ -2155,6 +2158,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
                   }
               });
               map.addLayer(computeLayer);
+              updateLegend(selectedPalette);
 
 
               map.fitBounds(computeLayer.getBounds());
@@ -2204,31 +2208,33 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
       function updateLegend(paletteName) {
         const legend = document.getElementById('legend');
         const colorScale = colorScales[paletteName];
-        const step = (max - min) / (colorScale.length - 1);
+        const steps = 10; // Number of steps in the legend
+        const stepValue = (max - min) / (steps - 1);
 
         // Clear existing legend items
         legend.innerHTML = '';
 
         // Create legend items based on color scale and pixel value range
-        colorScale.forEach((color, index) => {
-          const rangeMin = min + index * step;
-          const rangeMax = index === colorScale.length - 1 ? max : min + (index + 1) * step;
+        for (let i = 0; i < steps; i++) {
+            const value = min + i * stepValue;
+            const color = d3.scaleSequential(colorScale).domain([min, max])(value);
 
-          const legendItem = document.createElement('div');
-          legendItem.className = 'legend-item';
+            const legendItem = document.createElement('div');
+            legendItem.className = 'legend-item';
 
-          const colorBox = document.createElement('div');
-          colorBox.className = 'legend-color';
-          colorBox.style.backgroundColor = color;
+            const colorBox = document.createElement('div');
+            colorBox.className = 'legend-color';
+            colorBox.style.backgroundColor = color;
 
-          const labelText = document.createElement('span');
-          labelText.textContent = `${rangeMin.toFixed(2)} - ${rangeMax.toFixed(2)}`;
+            const labelText = document.createElement('span');
+            labelText.textContent = `${value.toFixed(2)}`;
 
-          legendItem.appendChild(colorBox);
-          legendItem.appendChild(labelText);
-          legend.appendChild(legendItem);
-        });
-      }
+            legendItem.appendChild(colorBox);
+            legendItem.appendChild(labelText);
+            legend.appendChild(legendItem);
+        }
+    }
+
 
       //for updating the transparency of layers
       
