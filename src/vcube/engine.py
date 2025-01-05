@@ -119,7 +119,7 @@ class VCubeProcessor:
             "datetime": f"{self.start_date}T00:00:00Z/{self.end_date}T23:59:59Z",
             "query": {"eo:cloud_cover": {"lt": self.cloud_cover}},
             "bbox": self.bbox,
-            "limit": 100,
+            "limit": 1000,
         }
 
         response = requests.post(self.STAC_API_URL, json=search_params)
