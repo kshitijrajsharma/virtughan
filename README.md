@@ -3,7 +3,7 @@
 <img src="./static/img/virtughan-logo.png" alt="VirtuGhan Logo" width="100" height="100"> 
 
 ![Tests Passing](https://img.shields.io/badge/tests-passing-brightgreen)
-![Build Status](https://img.shields.io/github/actions/workflow/status/kshitijrajsharma/VirtuGhan/test.yml?branch=master)
+![Build Status](https://img.shields.io/github/actions/workflow/status/kshitijrajsharma/VirtuGhan/tests.yml?branch=master)
 ![Website Status](https://img.shields.io/website-up-down-green-red/https/virtughan.live)
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)
 ![PyPI Version](https://img.shields.io/pypi/v/virtughan)
