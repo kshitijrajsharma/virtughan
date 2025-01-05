@@ -847,7 +847,7 @@
       </div>
       <div id="timeSeriesContainer" class="hidden">
         <div id="timeSeriesImageContainer" class="mb-4">
-          <img id="timeSeriesImageView" class="w-full rounded-md" src="images/image_2022-01-01.jpg" alt="Image">
+          
         </div>
         <div id="dateDisplay" class="text-center text-sm text-gray-700 mb-4">Start Date</div>
         <div class="flex items-center mb-4">
@@ -1882,7 +1882,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
         document.getElementById('ProgressTextsBefore').innerHTML = `<li style = "font-size: 10px;">Please Wait Computing...</li>`;
 
         document.getElementById('operationImageView').src ="";
-        document.getElementById('timeSeriesImageView').src = "";
+        document.getElementById('timeSeriesImageContainer').innerHTML = "";
 
         if(document.getElementById("operation").checked){
           document.getElementById("compute_layer").classList.remove("hidden");
@@ -2566,7 +2566,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
           initializeSlider();
           // Load the first image at start
           if (pngImages.length > 0 && dates.length > 0) {
-            document.getElementById('timeSeriesImageView').src = `static/export/${pngImages[0]}`;
+            document.getElementById('timeSeriesImageContainer').innerHTML = `<img class="w-full rounded-md" src= "static/export/${pngImages[0]}" alt="Image">`;
             document.getElementById('dateDisplay').textContent = new Date(dates[0]).toLocaleDateString();
           }
         })
@@ -2610,7 +2610,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
       document.getElementById('timeSeriesContainer').classList.remove('hidden');
       // Show the first time series image and date
       if (pngImages.length > 0 && dates.length > 0) {
-        document.getElementById('timeSeriesImageView').src = `static/export/${pngImages[0]}`;
+        document.getElementById('timeSeriesImageContainer').innerHTML = `<img class="w-full rounded-md" src= "static/export/${pngImages[0]}" alt="Image">`;
         document.getElementById('dateDisplay').textContent = new Date(dates[0]).toLocaleDateString();
       }
     }
@@ -2629,7 +2629,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
     const selectedDate = dates[index];
     const selectedImage = pngImages[index];
     
-    document.getElementById('timeSeriesImageView').src = `static/export/${selectedImage}`;
+    document.getElementById('timeSeriesImageContainer').innerHTML = `<img class="w-full rounded-md" src= "static/export/${selectedImage}" alt="Image">`;
     document.getElementById('dateDisplay').textContent = new Date(selectedDate).toLocaleDateString();
   }
 
@@ -2648,9 +2648,9 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
       } else {
         slider.value = parseInt(slider.value) + 1;
       }
-      document.getElementById('timeSeriesImageView').src = "";
+      document.getElementById('timeSeriesImageContainer').innerHTML = ""; //remove this if donot need blank before next image (there is another)
       changeImage();
-    }, 2000); // Adjust the interval
+    }, 1500); // Adjust the interval
   }
 
   // Function to stop the automatic play
@@ -2680,7 +2680,7 @@ document.querySelectorAll('i[id^="zoom_"]').forEach(icon => {
 
     // Event listeners for slider and play/pause button
     slider.addEventListener('input', function(){
-      document.getElementById('timeSeriesImageView').src = "";
+      document.getElementById('timeSeriesImageContainer').innerHTML = ""; //remove this if donot need blank before next image (there is another)
       changeImage();
     });
     document.getElementById('playPauseButton').addEventListener('click', togglePlayPause);
