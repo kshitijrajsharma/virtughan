@@ -119,12 +119,29 @@ class VCubeProcessor:
             "datetime": f"{self.start_date}T00:00:00Z/{self.end_date}T23:59:59Z",
             "query": {"eo:cloud_cover": {"lt": self.cloud_cover}},
             "bbox": self.bbox,
-            "limit": 1000,
+            "limit": 100,
         }
 
-        response = requests.post(self.STAC_API_URL, json=search_params)
-        response.raise_for_status()
-        return response.json()["features"]
+        all_features = []
+        next_link = None
+
+        while True:
+            response = requests.post(
+                self.STAC_API_URL,
+                json=search_params if not next_link else next_link["body"],
+            )
+            response.raise_for_status()
+            response_json = response.json()
+
+            all_features.extend(response_json["features"])
+
+            next_link = next(
+                (link for link in response_json["links"] if link["rel"] == "next"), None
+            )
+            if not next_link:
+                break
+
+        return all_features
 
     def _filter_features(self, features):
         bbox_polygon = box(self.bbox[0], self.bbox[1], self.bbox[2], self.bbox[3])
@@ -145,12 +162,12 @@ class VCubeProcessor:
 
     def _process_images(self):
         features = self._search_stac_api()
-        print(f"Found {len(features)} items")
+        print(f"Found {len(features)} scenes")
         filtered_features = self._filter_features(features)
         band1_urls, band2_urls = self._get_band_urls(filtered_features)
 
         print(
-            f"Filtered {len(filtered_features)} items that are completely within the input bounding box"
+            f"Filtered {len(filtered_features)} scenes that completely covers input area"
         )
 
         if self.workers > 1:
@@ -314,14 +331,25 @@ class VCubeProcessor:
         return temp_image_path
 
     @staticmethod
-    def create_gif(image_list, output_path, duration=10):
-        images = [Image.open(image_path) for image_path in image_list]
+    def create_gif(image_list, output_path, duration_per_image=0.5):
+        sorted_image_list = sorted(image_list)
+
+        images = [Image.open(image_path) for image_path in sorted_image_list]
         max_width = max(image.width for image in images)
         max_height = max(image.height for image in images)
         resized_images = [
             image.resize((max_width, max_height), Image.LANCZOS) for image in images
         ]
-        iio.imwrite(output_path, resized_images, duration=duration, loop=0)
+
+        frame_duration = duration_per_image * 1000
+
+        resized_images[0].save(
+            output_path,
+            save_all=True,
+            append_images=resized_images[1:],
+            duration=frame_duration,
+            loop=0,
+        )
         print(f"Saved timeseries GIF to {output_path}")
 
     @staticmethod
@@ -339,7 +367,7 @@ class VCubeProcessor:
         if not self.band1:
             raise Exception("Band1 is required")
 
-        print("Searching STAC API...")
+        print("Searching STAC .....")
         self._process_images()
 
         if self.result_list and self.operation:
