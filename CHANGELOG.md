@@ -1,3 +1,9 @@
+## 0.2.1 (2025-01-06)
+
+### Fix
+
+- **overlaps**: fixes bug on overlapping images occored due to two different satellite image capture
+
 ## 0.2.0 (2025-01-06)
 
 ### Feat
