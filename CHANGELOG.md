@@ -1,3 +1,14 @@
+## 0.2.0 (2025-01-06)
+
+### Feat
+
+- add favicon to the index page
+
+### Fix
+
+- **largeimage**: fixed bug on large image processing range
+- update start date for data processing in usage example
+
 ## 0.1.5 (2025-01-06)
 
 ### Fix
