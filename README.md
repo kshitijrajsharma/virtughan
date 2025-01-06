@@ -30,6 +30,8 @@ We wanted to build something to show that this approach actually works and is sc
 
 ### Install 
 
+https://pypi.org/project/VirtuGhan/ 
+
 ```bash
 pip install VirtuGhan
 ```
