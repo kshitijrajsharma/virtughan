@@ -96,6 +96,27 @@ class VCubeProcessor:
             print(f"Error fetching image: {e}")
             return None, None, None
 
+    def _remove_overlapping_sentinel2_tiles(self, features):
+        zone_counts = {}
+        # lets see how many zones we have in total images
+        for feature in features:
+            zone = feature["id"].split("_")[1][:2]
+            zone_counts[zone] = zone_counts.get(zone, 0) + 1
+        # lets get the maximum occorance zone so that when we remove duplicates later on we atleast will try to keep the same zone tiles
+        max_zone = max(zone_counts, key=zone_counts.get)
+
+        filtered_features = {}
+        for feature in features:
+            parts = feature["id"].split("_")
+            date = parts[2]
+            zone = parts[1][:2]
+
+            # if the zone is the most occuring zone then we will keep it but making sure that same date image is not present in the filtered list
+            if zone == max_zone and date not in filtered_features:
+                filtered_features[date] = feature
+
+        return list(filtered_features.values())
+
     def _transform_bbox(self, crs):
         transformer = Transformer.from_crs("epsg:4326", crs, always_xy=True)
         min_x, min_y = transformer.transform(self.bbox[0], self.bbox[1])
@@ -140,7 +161,6 @@ class VCubeProcessor:
             )
             if not next_link:
                 break
-
         return all_features
 
     def _filter_features(self, features):
@@ -162,13 +182,14 @@ class VCubeProcessor:
 
     def _process_images(self):
         features = self._search_stac_api()
-        print(f"Found {len(features)} scenes")
+        print(f"Total scenes found: {len(features)}")
         filtered_features = self._filter_features(features)
-        band1_urls, band2_urls = self._get_band_urls(filtered_features)
-
-        print(
-            f"Filtered {len(filtered_features)} scenes that completely covers input area"
+        print(f"Scenes covering input area: {len(filtered_features)}")
+        overlapping_features_removed = self._remove_overlapping_sentinel2_tiles(
+            filtered_features
         )
+        print(f"Scenes after removing overlaps: {len(overlapping_features_removed)}")
+        band1_urls, band2_urls = self._get_band_urls(overlapping_features_removed)
 
         if self.workers > 1:
             print("Using Parallel Processing...")
@@ -331,7 +352,7 @@ class VCubeProcessor:
         return temp_image_path
 
     @staticmethod
-    def create_gif(image_list, output_path, duration_per_image=0.5):
+    def create_gif(image_list, output_path, duration_per_image=1):
         sorted_image_list = sorted(image_list)
 
         images = [Image.open(image_path) for image_path in sorted_image_list]
