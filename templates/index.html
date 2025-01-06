@@ -1146,12 +1146,14 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
 
       var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
+            attribution: '&copy; OpenStreetMap contributors',
+            zIndex: 1
         });
 
         var satellite = L.tileLayer('https://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
             attribution: '&copy; Google',
-            maxZoom: 21
+            maxZoom: 21,
+            zIndex: 1
         });
 
 
@@ -1627,8 +1629,18 @@ map.addControl(drawControl);
 // Draw handlers
 var drawHandlers = {
     point: new L.Draw.Marker(map),
-    polygon: new L.Draw.Polygon(map),
-    rectangle: new L.Draw.Rectangle(map)
+    polygon: new L.Draw.Polygon(map, { 
+      shapeOptions: { 
+        // color: 'red',
+        fillOpacity: 0.1,  
+        // weight: 1 // Border weight 
+      } 
+    }),
+    rectangle: new L.Draw.Rectangle(map, { 
+      shapeOptions: { 
+        fillOpacity: 0.1,  
+      } 
+    })
 };
 
 // Draw buttons event listeners
