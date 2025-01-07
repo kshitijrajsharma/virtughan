@@ -1,3 +1,10 @@
+## 0.3.1 (2025-01-07)
+
+### Fix
+
+- **filter**: fixed bug on typo engine
+- **example**: update VirtuGhan version to 0.3.0 and adjust execution counts in usage example
+
 ## 0.3.0 (2025-01-07)
 
 ### Feat
