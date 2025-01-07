@@ -7,7 +7,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import rasterio
-import requests
 from PIL import Image
 from pyproj import Transformer
 from rasterio.windows import from_bounds
@@ -152,7 +151,7 @@ class VCubeProcessor:
             self.STAC_API_URL,
         )
         print(f"Total scenes found: {len(features)}")
-        filtered_features = filter_features(features)
+        filtered_features = filter_features(features, self.bbox)
         print(f"Scenes covering input area: {len(filtered_features)}")
         overlapping_features_removed = remove_overlapping_sentinel2_tiles(
             filtered_features
