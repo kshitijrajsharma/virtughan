@@ -3,7 +3,6 @@ import sys
 import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-import imageio.v3 as iio
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,8 +13,9 @@ from pyproj import Transformer
 from rasterio.windows import from_bounds
 
 # from scipy.stats import mode
-from shapely.geometry import box, shape
 from tqdm import tqdm
+
+from .utils import filter_features, remove_overlapping_sentinel2_tiles, search_stac_api
 
 matplotlib.use("Agg")
 
@@ -134,43 +134,6 @@ class VCubeProcessor:
             or window.height <= 0
         )
 
-    def _search_stac_api(self):
-        search_params = {
-            "collections": ["sentinel-2-l2a"],
-            "datetime": f"{self.start_date}T00:00:00Z/{self.end_date}T23:59:59Z",
-            "query": {"eo:cloud_cover": {"lt": self.cloud_cover}},
-            "bbox": self.bbox,
-            "limit": 100,
-        }
-
-        all_features = []
-        next_link = None
-
-        while True:
-            response = requests.post(
-                self.STAC_API_URL,
-                json=search_params if not next_link else next_link["body"],
-            )
-            response.raise_for_status()
-            response_json = response.json()
-
-            all_features.extend(response_json["features"])
-
-            next_link = next(
-                (link for link in response_json["links"] if link["rel"] == "next"), None
-            )
-            if not next_link:
-                break
-        return all_features
-
-    def _filter_features(self, features):
-        bbox_polygon = box(self.bbox[0], self.bbox[1], self.bbox[2], self.bbox[3])
-        return [
-            feature
-            for feature in features
-            if shape(feature["geometry"]).contains(bbox_polygon)
-        ]
-
     def _get_band_urls(self, features):
         band1_urls = [feature["assets"][self.band1]["href"] for feature in features]
         band2_urls = (
@@ -181,11 +144,17 @@ class VCubeProcessor:
         return band1_urls, band2_urls
 
     def _process_images(self):
-        features = self._search_stac_api()
+        features = search_stac_api(
+            self.bbox,
+            self.start_date,
+            self.end_date,
+            self.cloud_cover,
+            self.STAC_API_URL,
+        )
         print(f"Total scenes found: {len(features)}")
-        filtered_features = self._filter_features(features)
+        filtered_features = filter_features(features)
         print(f"Scenes covering input area: {len(filtered_features)}")
-        overlapping_features_removed = self._remove_overlapping_sentinel2_tiles(
+        overlapping_features_removed = remove_overlapping_sentinel2_tiles(
             filtered_features
         )
         print(f"Scenes after removing overlaps: {len(overlapping_features_removed)}")
