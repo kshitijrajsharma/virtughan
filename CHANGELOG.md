@@ -1,3 +1,9 @@
+## 0.3.0 (2025-01-07)
+
+### Feat
+
+- **extract**: added data extraction method on the package
+
 ## 0.2.1 (2025-01-06)
 
 ### Fix
