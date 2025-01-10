@@ -293,9 +293,9 @@ async def get_tile(
     ),
     colormap_str: str = Query("RdYlGn", description="Colormap for the output image"),
 ):
-    if z < 10 or z > 16:
+    if z < 10 or z > 23:
         return JSONResponse(
-            content={"error": "Zoom level must be between 8 and 17"},
+            content={"error": "Zoom level must be between 10 and 23"},
             status_code=400,
         )
     if band1 is None:
@@ -333,6 +333,7 @@ async def get_tile(
 
         return Response(content=image_bytes, media_type="image/png", headers=headers)
     except Exception as ex:
+        raise ex
         return JSONResponse(content={"error": "Computation Error"}, status_code=504)
 
 
