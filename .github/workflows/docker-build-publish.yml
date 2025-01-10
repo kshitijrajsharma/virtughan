@@ -38,30 +38,6 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}:latest
 
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Docker Build
-        uses: docker/setup-buildx-action@v2
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: false
-          tags: ghcr.io/${{ github.repository }}:latest
-
       - name: Run tests
         run: |
-          docker run --rm ghcr.io/${{ github.repository }}:test poetry run pytest
+          docker run --rm ghcr.io/${{ github.repository }}:latest poetry run pytest
