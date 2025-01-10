@@ -89,6 +89,7 @@ class ExtractProcessor:
     def _fetch_and_save_bands(self, band_urls, feature_id):
         try:
             bands = []
+            bands_meta = []
             for band_url in band_urls:
                 with rasterio.open(band_url) as band_cog:
                     min_x, min_y, max_x, max_y = self._transform_bbox(band_cog.crs)
@@ -102,18 +103,18 @@ class ExtractProcessor:
                     self.transform = band_cog.transform
                     band_data = band_cog.read(1, window=band_window).astype(float)
                     bands.append(band_data)
+                    bands_meta.append(band_url.split("/")[-1].split(".")[0])
             stacked_bands = np.stack(bands)
-            output_file = os.path.join(self.output_dir, f"{feature_id}_bands.tif")
-            self._save_geotiff(
-                stacked_bands,
-                output_file,
+            output_file = os.path.join(
+                self.output_dir, f"{feature_id}_bands_export.tif"
             )
+            self._save_geotiff(stacked_bands, output_file, bands_meta)
             return output_file
         except Exception as ex:
             print(f"Error fetching bands: {ex}")
             return None
 
-    def _save_geotiff(self, bands, output_file):
+    def _save_geotiff(self, bands, output_file, bands_meta=None):
 
         band_shape = bands.shape
         nodata_value = -9999
@@ -132,6 +133,8 @@ class ExtractProcessor:
         ) as dst:
             for band in range(1, band_shape[0] + 1):
                 dst.write(bands[band - 1], band)
+                if bands_meta:
+                    dst.set_band_description(band, bands_meta[band - 1])
 
     def extract(self):
         print("Extracting bands...")
