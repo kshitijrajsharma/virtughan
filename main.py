@@ -336,8 +336,8 @@ async def get_tile(
         return JSONResponse(content={"error": "Computation Error"}, status_code=504)
 
 
-@app.get("/extract-raw-bands")
-async def extract_raw_bands(
+@app.get("/image-download")
+async def extract_raw_bands_as_image(
     background_tasks: BackgroundTasks,
     bbox: str = Query(
         ..., description="Bounding box in the format 'west,south,east,north'"
@@ -367,7 +367,7 @@ async def extract_raw_bands(
     os.makedirs(output_dir, exist_ok=True)
 
     background_tasks.add_task(
-        run_raw_band_extraction,
+        run_image_download,
         bbox,
         start_date,
         end_date,
@@ -378,7 +378,7 @@ async def extract_raw_bands(
     return {"message": f"Raw band extraction started in background: {output_dir}"}
 
 
-async def run_raw_band_extraction(
+async def run_image_download(
     bbox,
     start_date,
     end_date,
