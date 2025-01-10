@@ -1,3 +1,9 @@
+## 0.3.4 (2025-01-10)
+
+### Fix
+
+- **zip**: don't zip by default and add argument to control the behaviour
+
 ## 0.3.3 (2025-01-10)
 
 ### Fix
