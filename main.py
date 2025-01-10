@@ -356,11 +356,8 @@ async def extract_raw_bands_as_image(
         "red,green,blue",
         description="Comma-separated list of bands to extract (default: red,green,blue)",
     ),
-    output_dir: str = Query(
-        "static/export",
-        description="Directory to save the extracted data (default: static/export)",
-    ),
 ):
+    output_dir = "static/export"
     bbox = list(map(float, bbox.split(",")))
 
     if os.path.exists(output_dir):
