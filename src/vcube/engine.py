@@ -1,6 +1,5 @@
 import os
 import sys
-import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import matplotlib
@@ -14,7 +13,12 @@ from rasterio.windows import from_bounds
 # from scipy.stats import mode
 from tqdm import tqdm
 
-from .utils import filter_features, remove_overlapping_sentinel2_tiles, search_stac_api
+from .utils import (
+    filter_features,
+    remove_overlapping_sentinel2_tiles,
+    search_stac_api,
+    zip_files,
+)
 
 matplotlib.use("Agg")
 
@@ -341,15 +345,6 @@ class VCubeProcessor:
         )
         print(f"Saved timeseries GIF to {output_path}")
 
-    @staticmethod
-    def zip_files(file_list, zip_path):
-        with zipfile.ZipFile(zip_path, "w") as zipf:
-            for file in file_list:
-                zipf.write(file, os.path.basename(file))
-        print(f"Saved intermediate images ZIP to {zip_path}")
-        for file in file_list:
-            os.remove(file)
-
     def compute(self):
         print("Engine starting...")
         os.makedirs(self.output_dir, exist_ok=True)
@@ -375,7 +370,7 @@ class VCubeProcessor:
                     self.intermediate_images_with_text,
                     os.path.join(self.output_dir, "output.gif"),
                 )
-                self.zip_files(
+                zip_files(
                     self.intermediate_images,
                     os.path.join(self.output_dir, "tiff_files.zip"),
                 )

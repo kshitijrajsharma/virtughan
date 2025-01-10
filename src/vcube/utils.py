@@ -1,3 +1,6 @@
+import os
+import zipfile
+
 import requests
 from shapely.geometry import box, shape
 
@@ -58,3 +61,12 @@ def remove_overlapping_sentinel2_tiles(features):
             filtered_features[date] = feature
 
     return list(filtered_features.values())
+
+
+def zip_files(file_list, zip_path):
+    with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as zipf:
+        for file in file_list:
+            zipf.write(file, os.path.basename(file))
+    print(f"Saved intermediate images ZIP to {zip_path}")
+    for file in file_list:
+        os.remove(file)

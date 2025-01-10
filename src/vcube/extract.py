@@ -8,7 +8,12 @@ from pyproj import Transformer
 from rasterio.windows import from_bounds
 from tqdm import tqdm
 
-from .utils import filter_features, remove_overlapping_sentinel2_tiles, search_stac_api
+from .utils import (
+    filter_features,
+    remove_overlapping_sentinel2_tiles,
+    search_stac_api,
+    zip_files,
+)
 
 VALID_BANDS = {
     "red": "Red - 10m",
@@ -155,7 +160,7 @@ class ExtractProcessor:
         )
         print(f"Scenes after removing overlaps: {len(overlapping_features_removed)}")
         band_urls_list = self._get_band_urls(overlapping_features_removed)
-
+        result_lists = []
         if self.workers > 1:
             print("Using Parallel Processing...")
             with ThreadPoolExecutor(max_workers=self.workers) as executor:
@@ -173,7 +178,8 @@ class ExtractProcessor:
                     desc="Extracting Bands",
                     file=self.log_file,
                 ):
-                    future.result()
+                    result = future.result()
+                    result_lists.append(result)
         else:
             for band_urls, feature in tqdm(
                 zip(band_urls_list, overlapping_features_removed),
@@ -181,7 +187,13 @@ class ExtractProcessor:
                 desc="Extracting Bands",
                 file=self.log_file,
             ):
-                self._fetch_and_save_bands(band_urls, feature["id"])
+                result = self._fetch_and_save_bands(band_urls, feature["id"])
+                result_lists.append(result)
+
+        zip_files(
+            result_lists,
+            os.path.join(self.output_dir, "tiff_files.zip"),
+        )
 
 
 if __name__ == "__main__":

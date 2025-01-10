@@ -343,7 +343,7 @@ async def extract_raw_bands_as_image(
         ..., description="Bounding box in the format 'west,south,east,north'"
     ),
     start_date: str = Query(
-        (datetime.now() - timedelta(days=365 * 1)).strftime("%Y-%m-%d"),
+        (datetime.now() - timedelta(days=30 * 1)).strftime("%Y-%m-%d"),
         description="Start date in YYYY-MM-DD format (default: 1 year ago)",
     ),
     end_date: str = Query(
