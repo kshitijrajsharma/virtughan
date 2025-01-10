@@ -402,6 +402,7 @@ async def run_image_download(
                 bands_list=bands_list,
                 output_dir=output_dir,
                 log_file=f,
+                zip_output=True,
             )
             processor.extract()
             print(f"Raw band extraction completed. Results saved in {output_dir}")

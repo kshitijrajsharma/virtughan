@@ -44,6 +44,7 @@ class ExtractProcessor:
         output_dir,
         log_file=sys.stdout,
         workers=1,
+        zip_output=False,
     ):
         self.bbox = bbox
         self.start_date = start_date
@@ -53,6 +54,7 @@ class ExtractProcessor:
         self.output_dir = output_dir
         self.log_file = log_file
         self.workers = workers
+        self.zip_output = zip_output
         self.STAC_API_URL = "https://earth-search.aws.element84.com/v1/search"
         self.crs = None
         self.transform = None
@@ -189,11 +191,11 @@ class ExtractProcessor:
             ):
                 result = self._fetch_and_save_bands(band_urls, feature["id"])
                 result_lists.append(result)
-
-        zip_files(
-            result_lists,
-            os.path.join(self.output_dir, "tiff_files.zip"),
-        )
+        if self.zip_output:
+            zip_files(
+                result_lists,
+                os.path.join(self.output_dir, "tiff_files.zip"),
+            )
 
 
 if __name__ == "__main__":
