@@ -1,3 +1,13 @@
+## 0.3.3 (2025-01-10)
+
+### Fix
+
+- **zip**: storage issue , added zip compression
+
+### Refactor
+
+- **api**: rename extract_raw_bands endpoint to image-download and update related functions
+
 ## 0.3.2 (2025-01-10)
 
 ### Fix
