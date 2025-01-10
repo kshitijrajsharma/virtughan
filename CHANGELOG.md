@@ -1,3 +1,10 @@
+## 0.3.2 (2025-01-10)
+
+### Fix
+
+- **extractband**: added extraction feature on the api and extract
+- **example**: update execution time in usage example output
+
 ## 0.3.1 (2025-01-07)
 
 ### Fix
