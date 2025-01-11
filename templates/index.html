@@ -8,6 +8,7 @@
     <link rel="icon" href="static/img/virtughan-logo.png" type="image/png">
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
@@ -183,6 +184,40 @@
   .dropdown-color-select option {
       height: 20px;
   }
+</style>
+
+<style>
+  #geocodeError {
+    position: absolute;
+    display: none;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    padding: 25px;
+    width: 250px;
+    height: 150px;
+    background: #fff;
+    border: 2px solid #000;   
+    font-weight: bold;
+    font-size: 1.1em;
+    text-align: center;
+    z-index: 2000;
+}
+
+#errorCloseBtn {
+    position: absolute;
+    padding: 8px;    
+    top: 2px;
+    right: 4px;
+    font-weight: bold;
+    font-size: 0.96em;
+}
+
+#errorText {
+    margin-top: 30px;
+}
 </style>
 
   </head>
@@ -1108,6 +1143,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
     <script src="https://unpkg.com/georaster"></script>
     <script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
@@ -1177,6 +1213,41 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
         // Add the layers control to the map
         L.control.layers(baseLayers).addTo(map);
+
+
+      //add osm search control
+      // container for address search results
+      const addressSearchResults = new L.LayerGroup().addTo(map);
+
+      /*** Geocoder ***/
+      // OSM Geocoder
+      const osmGeocoder = new L.Control.geocoder({
+          collapsed: true,
+          position: 'topleft',
+          text: 'Address Search',
+          placeholder: 'Enter street address',
+        defaultMarkGeocode: false
+      }).addTo(map);    
+
+      // handle geocoding result event
+      osmGeocoder.on('markgeocode', e => {
+        // to review result object
+        console.log(e);
+        // const coords = [e.geocode.center.lat, e.geocode.center.lng];
+        // map.setView(coords, 16);
+        // const resultMarker = L.marker(coords).addTo(map);
+        // resultMarker.bindPopup(e.geocode.name).openPopup();
+
+        var bbox = e.geocode.bbox;
+          var poly = L.polygon([
+            bbox.getSouthEast(),
+            bbox.getNorthEast(),
+            bbox.getNorthWest(),
+            bbox.getSouthWest()
+          ]);//.addTo(map);
+          map.fitBounds(poly.getBounds());
+      });
+
 
 
       var geojsonLayer;
