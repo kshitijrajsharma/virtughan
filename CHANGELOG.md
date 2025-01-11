@@ -1,3 +1,25 @@
+## 0.4.0 (2025-01-11)
+
+### Feat
+
+- add operation and timeseries parameters to get_tile function
+
+### Fix
+
+- **graph**: fixes trend on graph with order of the images
+- **vcube**: change default operation to median and implement result aggregation with trend visualization
+- **tile**: enhance image filtering logic in smart_filter_images function
+- **tile**: handle empty results and improve error handling in TileProcessor
+- **workflow**: remove 'main' branch from Docker build and publish triggers
+- **get_tile**: update default operation to 'mean' and set timeseries default to False
+- **latest**: added latest tile fetch for the on the fly computation
+- **tile**: operation accross the time dimention
+- update zoom level validation and enhance tile layer configurations
+
+### Refactor
+
+- simplify output directory assignment in extract_raw_bands_as_image function
+
 ## 0.3.4 (2025-01-10)
 
 ### Fix
