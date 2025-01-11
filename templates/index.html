@@ -343,6 +343,28 @@
                 </div>
               </div>
 
+              <div class="mb-4 mt-2">
+                <label class="block text-sm font-medium text-gray-800 pb-4">Select Output Type</label>
+                <div class="flex items-center">
+                  <input id="timeSeries_search" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600">
+                  <label for="timeSeries_search" class="ml-2 text-sm text-gray-600">Analyze data over time</label>
+                </div>
+              </div>
+              <div id="operation-container_search" class="w-full hidden">
+                <label class="block text-sm font-medium text-gray-700">Operation</label>
+                <select id="operation_menu_search" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <!-- <option value="min" class="text-gray-600">Select Option</option> -->
+                    <option value="median" class="text-gray-600">Median</option>
+                    <option value="mean" class="text-gray-600">Mean</option>
+                    <option value="min" class="text-gray-600">Min</option>
+                    <option value="max" class="text-gray-600">Max</option>
+                    <option value="std" class="text-gray-600">Std</option>
+                    <option value="sum" class="text-gray-600">Sum</option>
+                    <option value="var" class="text-gray-600">Variance</option>
+                    <option value="mode" class="text-gray-600">Mode</option>
+                </select>
+            </div>
+
               <div class="mt-4">
                 <label class="block text-sm/6 font-medium text-gray-900 pb-1">BBOX: <span id="coords" class = "break-words w-64 text-xs text-gray-500" ></span></label>
                 
@@ -1265,7 +1287,9 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           "cloudCover": 30,        
           "band1": "visual",        
           "band2": "nir",           
-          "formula": "band1"
+          "formula": "band1",
+          "timeseries": "false",
+          "operation": "median"
       }
 
       var export_params = {
@@ -1525,8 +1549,13 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
                 if (liveLayer) {
                   map.removeLayer(liveLayer);
                 }
+
+                var checkedTimeseriesSearch = document.getElementById("timeSeries_search").checked;
                 
-                const encodedUrl_tiles = `/tile/{z}/{x}/{y}?start_date=${encodeURIComponent(tile_params.startDate)}&end_date=${encodeURIComponent(tile_params.endDate)}&cloud_cover=${encodeURIComponent(tile_params.cloudCover)}&formula=${encodeURIComponent(tile_params.formula)}&band1=${encodeURIComponent(tile_params.band1)}&band2=${encodeURIComponent(tile_params.band2)}`;
+                var encodedUrl_tiles = `/tile/{z}/{x}/{y}?start_date=${encodeURIComponent(tile_params.startDate)}&end_date=${encodeURIComponent(tile_params.endDate)}&cloud_cover=${encodeURIComponent(tile_params.cloudCover)}&formula=${encodeURIComponent(tile_params.formula)}&band1=${encodeURIComponent(tile_params.band1)}&band2=${encodeURIComponent(tile_params.band2)}&timeseries=${encodeURIComponent(tile_params.timeseries)}`;
+                if(checkedTimeseriesSearch){
+                  encodedUrl_tiles += `&operation=${encodeURIComponent(tile_params.operation)}`;
+                }
                 liveLayer = L.tileLayer(
                   encodedUrl_tiles,
                   {
@@ -1572,6 +1601,9 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           document.getElementById("sidebar-clear-button").click(); 
           document.getElementById("searchLayerSwitcher").classList.add("hidden");
           document.getElementById("searchBboxLayerSwitcher").classList.add("hidden");
+
+          document.getElementById("operation_search").checked = true;
+          document.getElementById("timeSeries_search").checked = false;
         })
 
         document
@@ -2436,6 +2468,7 @@ function updateColor(values, scaleName) {
       document.querySelectorAll('.output_type').forEach((checkbox) => {
         checkbox.addEventListener('change', function(event){
           // const radioId = event.target.id;
+          // for export time series checkbox
           var checkedStatusOperation = document.getElementById("operation").checked;
           var checkedStatustimeSeries = document.getElementById("timeSeries").checked;
 
@@ -2454,6 +2487,19 @@ function updateColor(values, scaleName) {
           else{
             export_params.timeseries = "false";
           }
+
+          //for search timeseries checkbox
+          var checkedStatustimeSeries_search = document.getElementById("timeSeries_search").checked;
+
+          if(checkedStatustimeSeries_search){
+            document.getElementById("operation-container_search").classList.remove("hidden");
+            tile_params.timeseries = "true";
+          }
+          else{
+            tile_params.operation = "none";
+            tile_params.timeseries = "false";
+            document.getElementById("operation-container_search").classList.add("hidden");
+          }
       
         });
       });
@@ -2463,6 +2509,9 @@ function updateColor(values, scaleName) {
         export_params.operation = this.value;
       });
 
+      document.getElementById("operation_menu_search").addEventListener('change', function() {
+        tile_params.operation = this.value;
+      });
     </script>
     <!-- operation script end -->
 
