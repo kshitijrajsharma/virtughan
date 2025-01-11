@@ -9,7 +9,7 @@ from rasterio.windows import from_bounds
 from tqdm import tqdm
 
 from .utils import (
-    filter_features,
+    filter_intersected_features,
     remove_overlapping_sentinel2_tiles,
     search_stac_api,
     zip_files,
@@ -155,7 +155,7 @@ class ExtractProcessor:
             self.STAC_API_URL,
         )
         print(f"Total scenes found: {len(features)}")
-        filtered_features = filter_features(features, self.bbox)
+        filtered_features = filter_intersected_features(features, self.bbox)
         print(f"Scenes covering input area: {len(filtered_features)}")
         overlapping_features_removed = remove_overlapping_sentinel2_tiles(
             filtered_features

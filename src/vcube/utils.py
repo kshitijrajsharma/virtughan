@@ -1,6 +1,8 @@
 import os
 import zipfile
+from datetime import datetime, timedelta
 
+import numpy as np
 import requests
 from shapely.geometry import box, shape
 
@@ -35,7 +37,29 @@ def search_stac_api(bbox, start_date, end_date, cloud_cover, stac_api_url):
     return all_features
 
 
-def filter_features(features, bbox):
+def zip_files(file_list, zip_path):
+    with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as zipf:
+        for file in file_list:
+            zipf.write(file, os.path.basename(file))
+    print(f"Saved intermediate images ZIP to {zip_path}")
+    for file in file_list:
+        os.remove(file)
+
+
+def filter_latest_image_per_grid(features):
+    grid_latest = {}
+    for feature in features:
+        grid = feature["id"].split("_")[1]
+        date = feature["properties"]["datetime"]
+        if (
+            grid not in grid_latest
+            or date > grid_latest[grid]["properties"]["datetime"]
+        ):
+            grid_latest[grid] = feature
+    return list(grid_latest.values())
+
+
+def filter_intersected_features(features, bbox):
     bbox_polygon = box(bbox[0], bbox[1], bbox[2], bbox[3])
     return [
         feature
@@ -45,10 +69,17 @@ def filter_features(features, bbox):
 
 
 def remove_overlapping_sentinel2_tiles(features):
+    if not features:
+        return []
+
     zone_counts = {}
     for feature in features:
         zone = feature["id"].split("_")[1][:2]
         zone_counts[zone] = zone_counts.get(zone, 0) + 1
+
+    if not zone_counts:
+        return []
+
     max_zone = max(zone_counts, key=zone_counts.get)
 
     filtered_features = {}
@@ -63,10 +94,41 @@ def remove_overlapping_sentinel2_tiles(features):
     return list(filtered_features.values())
 
 
-def zip_files(file_list, zip_path):
-    with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as zipf:
-        for file in file_list:
-            zipf.write(file, os.path.basename(file))
-    print(f"Saved intermediate images ZIP to {zip_path}")
-    for file in file_list:
-        os.remove(file)
+def aggregate_time_series(data, operation):
+    result_stack = np.ma.stack(data)
+
+    operations = {
+        "mean": np.ma.mean,
+        "median": np.ma.median,
+        "max": np.ma.max,
+        "min": np.ma.min,
+        "std": np.ma.std,
+        "sum": np.ma.sum,
+        "var": np.ma.var,
+    }
+
+    return operations[operation](result_stack, axis=0)
+
+
+def smart_filter_images(features, start_date: str, end_date: str):
+    start = datetime.fromisoformat(start_date)
+    end = datetime.fromisoformat(end_date)
+    total_days = (end - start).days
+
+    if total_days <= 60:
+        # For a time range of up to 2 month, select 1 image per week
+        frequency = timedelta(weeks=1)
+    else:
+        # For a time range more than 2 month, select 1 image per month
+        frequency = timedelta(days=30)
+
+    filtered_features = []
+    last_selected_date = None
+
+    for feature in sorted(features, key=lambda x: x["properties"]["datetime"]):
+        date = datetime.fromisoformat(feature["properties"]["datetime"].split("T")[0])
+        if last_selected_date is None or date >= last_selected_date + frequency:
+            filtered_features.append(feature)
+            last_selected_date = date
+
+    return filtered_features

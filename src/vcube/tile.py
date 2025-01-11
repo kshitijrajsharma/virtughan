@@ -12,6 +12,14 @@ from PIL import Image
 from rio_tiler.io import COGReader
 from shapely.geometry import box, mapping
 
+from .utils import (
+    aggregate_time_series,
+    filter_intersected_features,
+    filter_latest_image_per_grid,
+    remove_overlapping_sentinel2_tiles,
+    smart_filter_images,
+)
+
 matplotlib.use("Agg")
 
 
@@ -49,18 +57,19 @@ class TileProcessor:
         band2: str,
         formula: str,
         colormap_str: str = "RdYlGn",
+        latest: bool = False,
+        operation: str = "mean",
     ) -> bytes:
         tile = mercantile.Tile(x, y, z)
         bbox = mercantile.bounds(tile)
-        bbox_polygon = box(bbox.west, bbox.south, bbox.east, bbox.north)
-        bbox_geojson = mapping(bbox_polygon)
+        bbox_geojson = mapping(box(bbox.west, bbox.south, bbox.east, bbox.north))
         STAC_API_URL = "https://earth-search.aws.element84.com/v1/search"
         search_params = {
             "collections": ["sentinel-2-l2a"],
             "datetime": f"{start_date}T00:00:00Z/{end_date}T23:59:59Z",
             "query": {"eo:cloud_cover": {"lt": cloud_cover}},
             "intersects": bbox_geojson,
-            "limit": 1,
+            "limit": 100,
         }
 
         async with httpx.AsyncClient() as client:
@@ -74,35 +83,82 @@ class TileProcessor:
                 status_code=404, detail="No images found for the given parameters"
             )
 
-        feature = results["features"][0]
-        band1_url = feature["assets"][band1]["href"]
-        band2_url = feature["assets"][band2]["href"] if band2 else None
+        results["features"] = filter_intersected_features(
+            results["features"], [bbox.west, bbox.south, bbox.east, bbox.north]
+        )
 
-        try:
-            tasks = [self.fetch_tile(band1_url, x, y, z)]
-            if band2_url:
-                tasks.append(self.fetch_tile(band2_url, x, y, z))
+        if latest:
+            results["features"] = filter_latest_image_per_grid(results["features"])
+            feature = results["features"][0]
+            band1_url = feature["assets"][band1]["href"]
+            band2_url = feature["assets"][band2]["href"] if band2 else None
 
-            tiles = await asyncio.gather(*tasks)
-            band1 = tiles[0]
-            band2 = tiles[1] if band2_url else None
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            try:
+                tasks = [self.fetch_tile(band1_url, x, y, z)]
+                if band2_url:
+                    tasks.append(self.fetch_tile(band2_url, x, y, z))
 
-        if band2 is not None:
-            band1 = band1[0].astype(float)
-            band2 = band2[0].astype(float)
-            result = eval(formula)
-            image = self.apply_colormap(result, colormap_str)
-        else:
-            inner_bands = band1.shape[0]
-            if inner_bands == 1:
+                tiles = await asyncio.gather(*tasks)
+                band1 = tiles[0]
+                band2 = tiles[1] if band2_url else None
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=str(e))
+
+            if band2 is not None:
                 band1 = band1[0].astype(float)
+                band2 = band2[0].astype(float)
                 result = eval(formula)
                 image = self.apply_colormap(result, colormap_str)
             else:
-                band1 = band1.transpose(1, 2, 0)
-                image = Image.fromarray(band1)
+                inner_bands = band1.shape[0]
+                if inner_bands == 1:
+                    band1 = band1[0].astype(float)
+                    result = eval(formula)
+                    image = self.apply_colormap(result, colormap_str)
+                else:
+                    band1 = band1.transpose(1, 2, 0)
+                    image = Image.fromarray(band1)
+
+        else:
+            results["features"] = remove_overlapping_sentinel2_tiles(
+                results["features"]
+            )
+            results["features"] = smart_filter_images(
+                results["features"], start_date, end_date
+            )
+            print(f"Number of features: {len(results['features'])}")
+            band1_tiles = []
+            band2_tiles = []
+
+            tasks = []
+            for feature in results["features"]:
+                band1_url = feature["assets"][band1]["href"]
+                band2_url = feature["assets"][band2]["href"] if band2 else None
+                tasks.append(self.fetch_tile(band1_url, x, y, z))
+                if band2_url:
+                    tasks.append(self.fetch_tile(band2_url, x, y, z))
+
+            try:
+                tiles = await asyncio.gather(*tasks)
+                for i in range(0, len(tiles), 2 if band2 else 1):
+                    band1_tiles.append(tiles[i])
+                    if band2:
+                        band2_tiles.append(tiles[i + 1])
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=str(e))
+
+            band1 = aggregate_time_series(
+                [tile[0].astype(float) for tile in band1_tiles], operation
+            )
+            if band2_tiles:
+                band2 = aggregate_time_series(
+                    [tile[0].astype(float) for tile in band2_tiles], operation
+                )
+                result = eval(formula)
+            else:
+                result = eval(formula)
+
+            image = self.apply_colormap(result, colormap_str)
 
         buffered = BytesIO()
         image.save(buffered, format="PNG")
