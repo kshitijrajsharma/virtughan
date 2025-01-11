@@ -1549,12 +1549,18 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
       function setDefaultFilters(){
         // Set default dates
+
         var today = new Date().toISOString().split("T")[0];
         var lastYear = new Date();
         lastYear.setFullYear(lastYear.getFullYear() - 1);
         var lastYearDate = lastYear.toISOString().split("T")[0];
 
-        document.getElementById("start-date").value = lastYearDate;
+        var lastMonth = new Date(); 
+        lastMonth.setMonth(lastMonth.getMonth() - 1); 
+        lastMonthDate = lastMonth.toISOString().split("T")[0];
+
+
+        document.getElementById("start-date").value = lastMonthDate;
         document.getElementById("end-date").value = today;
 
         document.getElementById("cloud-cover").value = "30";
