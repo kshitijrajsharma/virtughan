@@ -3,7 +3,6 @@ name: Docker Build and Publish
 on:
   push:
     branches:
-      - main
       - master
   release:
     types: [published]
