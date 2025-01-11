@@ -2,6 +2,7 @@ import os
 import zipfile
 from datetime import datetime, timedelta
 
+import httpx
 import numpy as np
 import requests
 from shapely.geometry import box, shape
@@ -34,6 +35,40 @@ def search_stac_api(bbox, start_date, end_date, cloud_cover, stac_api_url):
         )
         if not next_link:
             break
+    return all_features
+
+
+async def search_stac_api_async(
+    bbox_geojson, start_date, end_date, cloud_cover, stac_api_url
+):
+    search_params = {
+        "collections": ["sentinel-2-l2a"],
+        "datetime": f"{start_date}T00:00:00Z/{end_date}T23:59:59Z",
+        "query": {"eo:cloud_cover": {"lt": cloud_cover}},
+        "intersects": bbox_geojson,
+        "limit": 100,
+    }
+
+    all_features = []
+    next_link = None
+
+    async with httpx.AsyncClient() as client:
+        while True:
+            response = await client.post(
+                stac_api_url,
+                json=search_params if not next_link else next_link["body"],
+            )
+            response.raise_for_status()
+            response_json = response.json()
+
+            all_features.extend(response_json["features"])
+
+            next_link = next(
+                (link for link in response_json["links"] if link["rel"] == "next"), None
+            )
+            if not next_link:
+                break
+
     return all_features
 
 

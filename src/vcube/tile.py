@@ -1,7 +1,6 @@
 import asyncio
 from io import BytesIO
 
-import httpx
 import matplotlib
 import mercantile
 import numpy as np
@@ -17,6 +16,7 @@ from .utils import (
     filter_intersected_features,
     filter_latest_image_per_grid,
     remove_overlapping_sentinel2_tiles,
+    search_stac_api_async,
     smart_filter_images,
 )
 
@@ -57,39 +57,30 @@ class TileProcessor:
         band2: str,
         formula: str,
         colormap_str: str = "RdYlGn",
-        latest: bool = False,
+        latest: bool = True,
         operation: str = "mean",
     ) -> bytes:
         tile = mercantile.Tile(x, y, z)
         bbox = mercantile.bounds(tile)
         bbox_geojson = mapping(box(bbox.west, bbox.south, bbox.east, bbox.north))
         STAC_API_URL = "https://earth-search.aws.element84.com/v1/search"
-        search_params = {
-            "collections": ["sentinel-2-l2a"],
-            "datetime": f"{start_date}T00:00:00Z/{end_date}T23:59:59Z",
-            "query": {"eo:cloud_cover": {"lt": cloud_cover}},
-            "intersects": bbox_geojson,
-            "limit": 100,
-        }
 
-        async with httpx.AsyncClient() as client:
-            response = await client.post(STAC_API_URL, json=search_params)
-        if response.status_code != 200:
-            raise HTTPException(status_code=404, detail="Error searching STAC API")
+        results = await search_stac_api_async(
+            bbox_geojson, start_date, end_date, cloud_cover, STAC_API_URL
+        )
 
-        results = response.json()
-        if not results["features"]:
+        if not results:
             raise HTTPException(
                 status_code=404, detail="No images found for the given parameters"
             )
 
-        results["features"] = filter_intersected_features(
-            results["features"], [bbox.west, bbox.south, bbox.east, bbox.north]
+        results = filter_intersected_features(
+            results, [bbox.west, bbox.south, bbox.east, bbox.north]
         )
 
         if latest:
-            results["features"] = filter_latest_image_per_grid(results["features"])
-            feature = results["features"][0]
+            results = filter_latest_image_per_grid(results)
+            feature = results[0]
             band1_url = feature["assets"][band1]["href"]
             band2_url = feature["assets"][band2]["href"] if band2 else None
 
@@ -120,18 +111,13 @@ class TileProcessor:
                     image = Image.fromarray(band1)
 
         else:
-            results["features"] = remove_overlapping_sentinel2_tiles(
-                results["features"]
-            )
-            results["features"] = smart_filter_images(
-                results["features"], start_date, end_date
-            )
-            print(f"Number of features: {len(results['features'])}")
+            results = remove_overlapping_sentinel2_tiles(results)
+            results = smart_filter_images(results, start_date, end_date)
             band1_tiles = []
             band2_tiles = []
 
             tasks = []
-            for feature in results["features"]:
+            for feature in results:
                 band1_url = feature["assets"][band1]["href"]
                 band2_url = feature["assets"][band2]["href"] if band2 else None
                 tasks.append(self.fetch_tile(band1_url, x, y, z))
