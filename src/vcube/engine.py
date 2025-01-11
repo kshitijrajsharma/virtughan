@@ -252,10 +252,14 @@ class VCubeProcessor:
         return operations[self.operation](result_stack, axis=0)
 
     def _aggregate_results(self):
-        max_shape = tuple(max(s) for s in zip(*[arr.shape for arr in self.result_list]))
-        padded_result_list = [
-            self._pad_array(arr, max_shape) for arr in self.result_list
-        ]
+
+        sorted_dates_and_results = sorted(
+            zip(self.dates, self.result_list), key=lambda x: x[0]
+        )
+        sorted_dates, sorted_results = zip(*sorted_dates_and_results)
+
+        max_shape = tuple(max(s) for s in zip(*[arr.shape for arr in sorted_results]))
+        padded_result_list = [self._pad_array(arr, max_shape) for arr in sorted_results]
         result_stack = np.ma.stack(padded_result_list)
 
         operations = {
@@ -270,8 +274,9 @@ class VCubeProcessor:
 
         aggregated_result = operations[self.operation](result_stack, axis=0)
 
-        dates = [name.split("_")[2] for name in self.dates]
+        dates = [name.split("_")[2] for name in sorted_dates]
         dates_numeric = np.arange(len(dates))
+
         values_per_date = operations[self.operation](result_stack, axis=(1, 2, 3))
 
         slope, intercept = np.polyfit(dates_numeric, values_per_date, 1)
