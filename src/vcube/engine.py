@@ -55,6 +55,7 @@ class VCubeProcessor:
         self.workers = workers
         self.STAC_API_URL = "https://earth-search.aws.element84.com/v1/search"
         self.result_list = []
+        self.dates = []
         self.crs = None
         self.transform = None
         self.intermediate_images = []
@@ -209,6 +210,7 @@ class VCubeProcessor:
         self.intermediate_images_with_text.append(
             self.add_text_to_image(output_file, image_name)
         )
+        self.dates.append(image_name)
 
     def _save_geotiff(self, data, output_file):
         nodata_value = -9999
@@ -248,6 +250,54 @@ class VCubeProcessor:
         }
 
         return operations[self.operation](result_stack, axis=0)
+
+    def _aggregate_results(self):
+        max_shape = tuple(max(s) for s in zip(*[arr.shape for arr in self.result_list]))
+        padded_result_list = [
+            self._pad_array(arr, max_shape) for arr in self.result_list
+        ]
+        result_stack = np.ma.stack(padded_result_list)
+
+        operations = {
+            "mean": np.ma.mean,
+            "median": np.ma.median,
+            "max": np.ma.max,
+            "min": np.ma.min,
+            "std": np.ma.std,
+            "sum": np.ma.sum,
+            "var": np.ma.var,
+        }
+
+        aggregated_result = operations[self.operation](result_stack, axis=0)
+
+        dates = [name.split("_")[2] for name in self.dates]
+        dates_numeric = np.arange(len(dates))
+        values_per_date = operations[self.operation](result_stack, axis=(1, 2, 3))
+
+        slope, intercept = np.polyfit(dates_numeric, values_per_date, 1)
+        trend_line = slope * dates_numeric + intercept
+
+        plt.figure(figsize=(10, 5))
+        plt.plot(
+            dates,
+            values_per_date,
+            marker="o",
+            linestyle="-",
+            label=f"{self.operation.capitalize()} Value",
+        )
+        plt.plot(dates, trend_line, color="red", linestyle="--", label="Trend Line")
+        plt.xlabel("Date")
+        plt.ylabel(f"{self.operation.capitalize()} Value")
+        plt.title(f"{self.operation.capitalize()} Value Over Time")
+        plt.grid(True)
+        plt.xticks(rotation=45)
+        plt.legend()
+        plt.tight_layout()
+
+        plt.savefig(os.path.join(self.output_dir, "values_over_time.png"))
+        plt.close()
+
+        return aggregated_result
 
     def save_aggregated_result_with_colormap(self, result_aggregate, output_file):
         result_aggregate = np.ma.masked_invalid(result_aggregate)

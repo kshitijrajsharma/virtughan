@@ -293,7 +293,7 @@ async def get_tile(
     ),
     colormap_str: str = Query("RdYlGn", description="Colormap for the output image"),
     operation: str = Query(
-        "mean",
+        "median",
         description="Operation for aggregating results (default: mean), Only applicable if timeseries is true",
     ),
     timeseries: bool = Query(

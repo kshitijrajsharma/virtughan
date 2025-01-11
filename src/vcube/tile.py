@@ -58,7 +58,7 @@ class TileProcessor:
         formula: str,
         colormap_str: str = "RdYlGn",
         latest: bool = True,
-        operation: str = "mean",
+        operation: str = "median",
     ) -> bytes:
         tile = mercantile.Tile(x, y, z)
         bbox = mercantile.bounds(tile)
