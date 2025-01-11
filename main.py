@@ -292,6 +292,12 @@ async def get_tile(
         description="Formula for custom band calculation (example: (band2 - band1) / (band2 + band1) for NDVI)",
     ),
     colormap_str: str = Query("RdYlGn", description="Colormap for the output image"),
+    operation: str = Query(
+        None, description="Operation for aggregating results (default: None)"
+    ),
+    timeseries: bool = Query(
+        True, description="Should timeseries be analyzed (default: False)"
+    ),
 ):
     if z < 10 or z > 23:
         return JSONResponse(
@@ -322,6 +328,8 @@ async def get_tile(
             band2,
             formula,
             colormap_str,
+            operation=operation,
+            latest=(timeseries is False),
         )
         computation_time = time.time() - start_time
 
