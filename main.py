@@ -293,10 +293,11 @@ async def get_tile(
     ),
     colormap_str: str = Query("RdYlGn", description="Colormap for the output image"),
     operation: str = Query(
-        None, description="Operation for aggregating results (default: None)"
+        "mean",
+        description="Operation for aggregating results (default: mean), Only applicable if timeseries is true",
     ),
     timeseries: bool = Query(
-        True, description="Should timeseries be analyzed (default: False)"
+        False, description="Should timeseries be analyzed (default: False)"
     ),
 ):
     if z < 10 or z > 23:
