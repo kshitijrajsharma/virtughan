@@ -115,6 +115,7 @@ class TileProcessor:
                     status_code=404, detail="No images found for the given parameters"
                 )
         else:
+
             results = remove_overlapping_sentinel2_tiles(results)
             results = smart_filter_images(results, start_date, end_date)
             band1_tiles = []
