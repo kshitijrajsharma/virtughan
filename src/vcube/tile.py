@@ -77,39 +77,43 @@ class TileProcessor:
         results = filter_intersected_features(
             results, [bbox.west, bbox.south, bbox.east, bbox.north]
         )
-
         if latest:
-            results = filter_latest_image_per_grid(results)
-            feature = results[0]
-            band1_url = feature["assets"][band1]["href"]
-            band2_url = feature["assets"][band2]["href"] if band2 else None
+            if len(results) > 0:
+                results = filter_latest_image_per_grid(results)
+                feature = results[0]
+                band1_url = feature["assets"][band1]["href"]
+                band2_url = feature["assets"][band2]["href"] if band2 else None
 
-            try:
-                tasks = [self.fetch_tile(band1_url, x, y, z)]
-                if band2_url:
-                    tasks.append(self.fetch_tile(band2_url, x, y, z))
+                try:
+                    tasks = [self.fetch_tile(band1_url, x, y, z)]
+                    if band2_url:
+                        tasks.append(self.fetch_tile(band2_url, x, y, z))
 
-                tiles = await asyncio.gather(*tasks)
-                band1 = tiles[0]
-                band2 = tiles[1] if band2_url else None
-            except Exception as e:
-                raise HTTPException(status_code=500, detail=str(e))
+                    tiles = await asyncio.gather(*tasks)
+                    band1 = tiles[0]
+                    band2 = tiles[1] if band2_url else None
+                except Exception as e:
+                    raise HTTPException(status_code=500, detail=str(e))
 
-            if band2 is not None:
-                band1 = band1[0].astype(float)
-                band2 = band2[0].astype(float)
-                result = eval(formula)
-                image = self.apply_colormap(result, colormap_str)
-            else:
-                inner_bands = band1.shape[0]
-                if inner_bands == 1:
+                if band2 is not None:
                     band1 = band1[0].astype(float)
+                    band2 = band2[0].astype(float)
                     result = eval(formula)
                     image = self.apply_colormap(result, colormap_str)
                 else:
-                    band1 = band1.transpose(1, 2, 0)
-                    image = Image.fromarray(band1)
+                    inner_bands = band1.shape[0]
+                    if inner_bands == 1:
+                        band1 = band1[0].astype(float)
+                        result = eval(formula)
+                        image = self.apply_colormap(result, colormap_str)
+                    else:
+                        band1 = band1.transpose(1, 2, 0)
+                        image = Image.fromarray(band1)
+            else:
 
+                raise HTTPException(
+                    status_code=404, detail="No images found for the given parameters"
+                )
         else:
             results = remove_overlapping_sentinel2_tiles(results)
             results = smart_filter_images(results, start_date, end_date)
