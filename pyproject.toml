@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "VirtuGhan"
-version = "0.2.0"
+version = "0.3.4"
 description = "Virtual Computation Cube"
 authors = ["kshitijrajsharma <skshitizraj@gmail.com>"]
 readme = "README.md"
@@ -23,7 +23,6 @@ httpx = "^0.28.1"
 aiocache = "^0.12.3"
 jinja2 = "^3.1.5"
 uvicorn = "^0.34.0"
-imageio = "^2.36.1"
 requests = "^2.32.3"
 
 

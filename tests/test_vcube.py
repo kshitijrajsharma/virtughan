@@ -7,6 +7,7 @@ import pytest
 from PIL import Image
 
 from vcube.engine import VCubeProcessor
+from vcube.extract import ExtractProcessor
 from vcube.tile import TileProcessor
 
 
@@ -70,7 +71,7 @@ async def test_generate_tile(setup_tile_processor):
         x=x,
         y=y,
         z=z,
-        start_date="2020-01-01",
+        start_date="2024-01-01",
         end_date="2025-01-01",
         cloud_cover=30,
         band1="red",
@@ -91,3 +92,40 @@ async def test_generate_tile(setup_tile_processor):
 
     # Cleanup
     os.remove(image_path)
+
+
+@pytest.fixture(scope="module")
+def setup_extract_processor():
+    bbox = [83.84765625, 28.22697003891833, 83.935546875, 28.304380682962773]
+    start_date = "2024-12-15"
+    end_date = "2024-12-31"
+    cloud_cover = 30
+    bands_list = ["red", "green", "blue"]
+    output_dir = "./sentinel_images"
+    workers = 1
+
+    # Cleanup before running tests
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    extractor = ExtractProcessor(
+        bbox,
+        start_date,
+        end_date,
+        cloud_cover,
+        bands_list,
+        output_dir,
+        workers=workers,
+    )
+    return extractor
+
+
+def test_extract(setup_extract_processor):
+    extractor = setup_extract_processor
+    extractor.extract()
+    # Check if output directory is created
+    assert os.path.exists(extractor.output_dir)
+    # Check if some output files are created
+    assert len(os.listdir(extractor.output_dir)) > 0

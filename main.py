@@ -19,6 +19,7 @@ from starlette.requests import Request
 from starlette.status import HTTP_504_GATEWAY_TIMEOUT
 
 from src.vcube.engine import VCubeProcessor
+from src.vcube.extract import ExtractProcessor
 from src.vcube.tile import TileProcessor
 
 app = FastAPI()
@@ -291,10 +292,17 @@ async def get_tile(
         description="Formula for custom band calculation (example: (band2 - band1) / (band2 + band1) for NDVI)",
     ),
     colormap_str: str = Query("RdYlGn", description="Colormap for the output image"),
+    operation: str = Query(
+        "mean",
+        description="Operation for aggregating results (default: mean), Only applicable if timeseries is true",
+    ),
+    timeseries: bool = Query(
+        False, description="Should timeseries be analyzed (default: False)"
+    ),
 ):
-    if z < 10 or z > 16:
+    if z < 10 or z > 23:
         return JSONResponse(
-            content={"error": "Zoom level must be between 8 and 17"},
+            content={"error": "Zoom level must be between 10 and 23"},
             status_code=400,
         )
     if band1 is None:
@@ -321,6 +329,8 @@ async def get_tile(
             band2,
             formula,
             colormap_str,
+            operation=operation,
+            latest=(timeseries is False),
         )
         computation_time = time.time() - start_time
 
@@ -332,4 +342,80 @@ async def get_tile(
 
         return Response(content=image_bytes, media_type="image/png", headers=headers)
     except Exception as ex:
+        raise ex
         return JSONResponse(content={"error": "Computation Error"}, status_code=504)
+
+
+@app.get("/image-download")
+async def extract_raw_bands_as_image(
+    background_tasks: BackgroundTasks,
+    bbox: str = Query(
+        ..., description="Bounding box in the format 'west,south,east,north'"
+    ),
+    start_date: str = Query(
+        (datetime.now() - timedelta(days=30 * 1)).strftime("%Y-%m-%d"),
+        description="Start date in YYYY-MM-DD format (default: 1 year ago)",
+    ),
+    end_date: str = Query(
+        datetime.now().strftime("%Y-%m-%d"),
+        description="End date in YYYY-MM-DD format (default: today)",
+    ),
+    cloud_cover: int = Query(30, description="Cloud cover percentage (default: 30)"),
+    bands_list: str = Query(
+        "red,green,blue",
+        description="Comma-separated list of bands to extract (default: red,green,blue)",
+    ),
+):
+    output_dir = "static/export"
+    bbox = list(map(float, bbox.split(",")))
+
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
+    os.makedirs(output_dir, exist_ok=True)
+
+    background_tasks.add_task(
+        run_image_download,
+        bbox,
+        start_date,
+        end_date,
+        cloud_cover,
+        bands_list.split(","),
+        output_dir,
+    )
+    return {"message": f"Raw band extraction started in background: {output_dir}"}
+
+
+async def run_image_download(
+    bbox,
+    start_date,
+    end_date,
+    cloud_cover,
+    bands_list,
+    output_dir,
+):
+    log_file = "static/runtime.log"
+    if os.path.exists(log_file):
+        os.remove(log_file)
+    with open(log_file, "a") as f:
+        sys.stdout = f
+
+        print("Starting raw band extraction...")
+        try:
+            processor = ExtractProcessor(
+                bbox=bbox,
+                start_date=start_date,
+                end_date=end_date,
+                cloud_cover=cloud_cover,
+                bands_list=bands_list,
+                output_dir=output_dir,
+                log_file=f,
+                zip_output=True,
+            )
+            processor.extract()
+            print(f"Raw band extraction completed. Results saved in {output_dir}")
+
+        except Exception as e:
+            print(f"Error during raw band extraction: {e}")
+
+        finally:
+            gc.collect()

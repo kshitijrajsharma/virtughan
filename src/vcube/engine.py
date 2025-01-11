@@ -1,21 +1,24 @@
 import os
 import sys
-import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-import imageio.v3 as iio
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import rasterio
-import requests
 from PIL import Image
 from pyproj import Transformer
 from rasterio.windows import from_bounds
 
 # from scipy.stats import mode
-from shapely.geometry import box, shape
 from tqdm import tqdm
+
+from .utils import (
+    filter_intersected_features,
+    remove_overlapping_sentinel2_tiles,
+    search_stac_api,
+    zip_files,
+)
 
 matplotlib.use("Agg")
 
@@ -96,6 +99,27 @@ class VCubeProcessor:
             print(f"Error fetching image: {e}")
             return None, None, None
 
+    def _remove_overlapping_sentinel2_tiles(self, features):
+        zone_counts = {}
+        # lets see how many zones we have in total images
+        for feature in features:
+            zone = feature["id"].split("_")[1][:2]
+            zone_counts[zone] = zone_counts.get(zone, 0) + 1
+        # lets get the maximum occorance zone so that when we remove duplicates later on we atleast will try to keep the same zone tiles
+        max_zone = max(zone_counts, key=zone_counts.get)
+
+        filtered_features = {}
+        for feature in features:
+            parts = feature["id"].split("_")
+            date = parts[2]
+            zone = parts[1][:2]
+
+            # if the zone is the most occuring zone then we will keep it but making sure that same date image is not present in the filtered list
+            if zone == max_zone and date not in filtered_features:
+                filtered_features[date] = feature
+
+        return list(filtered_features.values())
+
     def _transform_bbox(self, crs):
         transformer = Transformer.from_crs("epsg:4326", crs, always_xy=True)
         min_x, min_y = transformer.transform(self.bbox[0], self.bbox[1])
@@ -113,44 +137,6 @@ class VCubeProcessor:
             or window.height <= 0
         )
 
-    def _search_stac_api(self):
-        search_params = {
-            "collections": ["sentinel-2-l2a"],
-            "datetime": f"{self.start_date}T00:00:00Z/{self.end_date}T23:59:59Z",
-            "query": {"eo:cloud_cover": {"lt": self.cloud_cover}},
-            "bbox": self.bbox,
-            "limit": 100,
-        }
-
-        all_features = []
-        next_link = None
-
-        while True:
-            response = requests.post(
-                self.STAC_API_URL,
-                json=search_params if not next_link else next_link["body"],
-            )
-            response.raise_for_status()
-            response_json = response.json()
-
-            all_features.extend(response_json["features"])
-
-            next_link = next(
-                (link for link in response_json["links"] if link["rel"] == "next"), None
-            )
-            if not next_link:
-                break
-
-        return all_features
-
-    def _filter_features(self, features):
-        bbox_polygon = box(self.bbox[0], self.bbox[1], self.bbox[2], self.bbox[3])
-        return [
-            feature
-            for feature in features
-            if shape(feature["geometry"]).contains(bbox_polygon)
-        ]
-
     def _get_band_urls(self, features):
         band1_urls = [feature["assets"][self.band1]["href"] for feature in features]
         band2_urls = (
@@ -161,14 +147,21 @@ class VCubeProcessor:
         return band1_urls, band2_urls
 
     def _process_images(self):
-        features = self._search_stac_api()
-        print(f"Found {len(features)} scenes")
-        filtered_features = self._filter_features(features)
-        band1_urls, band2_urls = self._get_band_urls(filtered_features)
-
-        print(
-            f"Filtered {len(filtered_features)} scenes that completely covers input area"
+        features = search_stac_api(
+            self.bbox,
+            self.start_date,
+            self.end_date,
+            self.cloud_cover,
+            self.STAC_API_URL,
         )
+        print(f"Total scenes found: {len(features)}")
+        filtered_features = filter_intersected_features(features, self.bbox)
+        print(f"Scenes covering input area: {len(filtered_features)}")
+        overlapping_features_removed = remove_overlapping_sentinel2_tiles(
+            filtered_features
+        )
+        print(f"Scenes after removing overlaps: {len(overlapping_features_removed)}")
+        band1_urls, band2_urls = self._get_band_urls(overlapping_features_removed)
 
         if self.workers > 1:
             print("Using Parallel Processing...")
@@ -331,7 +324,7 @@ class VCubeProcessor:
         return temp_image_path
 
     @staticmethod
-    def create_gif(image_list, output_path, duration_per_image=0.5):
+    def create_gif(image_list, output_path, duration_per_image=1):
         sorted_image_list = sorted(image_list)
 
         images = [Image.open(image_path) for image_path in sorted_image_list]
@@ -351,15 +344,6 @@ class VCubeProcessor:
             loop=0,
         )
         print(f"Saved timeseries GIF to {output_path}")
-
-    @staticmethod
-    def zip_files(file_list, zip_path):
-        with zipfile.ZipFile(zip_path, "w") as zipf:
-            for file in file_list:
-                zipf.write(file, os.path.basename(file))
-        print(f"Saved intermediate images ZIP to {zip_path}")
-        for file in file_list:
-            os.remove(file)
 
     def compute(self):
         print("Engine starting...")
@@ -386,7 +370,7 @@ class VCubeProcessor:
                     self.intermediate_images_with_text,
                     os.path.join(self.output_dir, "output.gif"),
                 )
-                self.zip_files(
+                zip_files(
                     self.intermediate_images,
                     os.path.join(self.output_dir, "tiff_files.zip"),
                 )
