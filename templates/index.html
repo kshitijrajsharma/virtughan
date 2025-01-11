@@ -1147,12 +1147,15 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
       var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors',
-            zIndex: 1
+            zIndex: 1,
+            maxZoom: 22,
+            maxNativeZoom:19,
         });
 
         var satellite = L.tileLayer('https://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
             attribution: '&copy; Google',
-            maxZoom: 21,
+            maxZoom: 22,
+            maxNativeZoom:19,
             zIndex: 1
         });
 
@@ -1459,6 +1462,8 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
                     tileSize: 256,
                     opacity: 0.8,
                     zIndex: 5,
+                    maxZoom: 22,
+                    maxNativeZoom:22,
                     attribution:
                       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
                   }

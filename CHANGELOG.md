@@ -1,3 +1,45 @@
+## 0.3.4 (2025-01-10)
+
+### Fix
+
+- **zip**: don't zip by default and add argument to control the behaviour
+
+## 0.3.3 (2025-01-10)
+
+### Fix
+
+- **zip**: storage issue , added zip compression
+
+### Refactor
+
+- **api**: rename extract_raw_bands endpoint to image-download and update related functions
+
+## 0.3.2 (2025-01-10)
+
+### Fix
+
+- **extractband**: added extraction feature on the api and extract
+- **example**: update execution time in usage example output
+
+## 0.3.1 (2025-01-07)
+
+### Fix
+
+- **filter**: fixed bug on typo engine
+- **example**: update VirtuGhan version to 0.3.0 and adjust execution counts in usage example
+
+## 0.3.0 (2025-01-07)
+
+### Feat
+
+- **extract**: added data extraction method on the package
+
+## 0.2.1 (2025-01-06)
+
+### Fix
+
+- **overlaps**: fixes bug on overlapping images occored due to two different satellite image capture
+
 ## 0.2.0 (2025-01-06)
 
 ### Feat
