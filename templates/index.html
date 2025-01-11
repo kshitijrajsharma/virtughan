@@ -1165,16 +1165,6 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
             zIndex: 1
         });
 
-        var cartoDBPositron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap contributors & CartoDB.', 
-            zIndex: 1
-        });
-
-        var cartoDBDarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap contributors & CartoDB',
-            zIndex: 1
-        });
-
         // Add the default base layer to the map
         osm.addTo(map);
 
@@ -1183,8 +1173,6 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
             "OpenStreetMap": osm,
             "Satellite":satellite,
             "Open Topomap": opentopomap,
-            "CartoDB Positron": cartoDBPositron,
-            "CartoDB Dark Matter": cartoDBDarkMatter
         };
 
         // Add the layers control to the map
