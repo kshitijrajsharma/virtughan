@@ -3060,7 +3060,9 @@ function updateColor(values, scaleName) {
           const operationChecked = document.getElementById('operation').checked;
           const timeSeriesChecked = document.getElementById('timeSeries').checked;
           document.getElementById("operationTabButton").click();
+          
           if (operationChecked && !timeSeriesChecked) {
+              startLoader("operationContainer");
               // Display single image for operation
               document.getElementById('operationContainer').classList.remove('hidden');
               document.getElementById('timeSeriesContainer').classList.add('hidden');
@@ -3069,7 +3071,10 @@ function updateColor(values, scaleName) {
               document.getElementById('operationImageView').src = 'static/export/custom_band_output_aggregate_colormap.png';
               document.getElementById('operationDateDisplay').textContent = '';
               document.getElementById('timeSliderModal').classList.remove('hidden');
+              stopLoader("operationContainer");
           } else if (timeSeriesChecked && !operationChecked) {
+              startLoader("timeSeriesContainer");
+              startLoader("trendImageContainer");
               // Display time series
               document.getElementById('operationContainer').classList.add('hidden');
               document.getElementById('timeSeriesContainer').classList.remove('hidden');
@@ -3092,12 +3097,19 @@ function updateColor(values, scaleName) {
                               document.getElementById('timeSeriesImageContainer').appendChild(loadedImages[0]);
                               document.getElementById('dateDisplay').textContent = new Date(dates[0]).toLocaleDateString();
                           }
+                          stopLoader("timeSeriesContainer");
                       });
                   })
                   .catch((error) => {
                       console.error('Error:', error);
                   });
+
+              stoptLoader("trendImageContainer");
+
           } else if (operationChecked && timeSeriesChecked) {
+              startLoader("operationContainer");
+              startLoader("timeSeriesContainer");
+              startLoader("trendImageContainer");
               // Show tabs for both operation and time series
               document.getElementById('tabs').classList.remove('hidden');
               document.getElementById('operationContainer').classList.remove('hidden');
@@ -3118,12 +3130,17 @@ function updateColor(values, scaleName) {
                       processData(data);
                       preloadImages(pngImages, () => {
                           initializeSlider();
+                          stopLoader("timeSeriesContainer");
                       });
                   })
                   .catch((error) => {
                       console.error('Error:', error);
                   });
+            
+            stopLoader("operationContainer");      
+            stopLoader("trendImageContainer");
           }
+          
       }
 
       // Function to switch tabs
