@@ -63,10 +63,8 @@ class TileProcessor:
         tile = mercantile.Tile(x, y, z)
         bbox = mercantile.bounds(tile)
         bbox_geojson = mapping(box(bbox.west, bbox.south, bbox.east, bbox.north))
-        STAC_API_URL = "https://earth-search.aws.element84.com/v1/search"
-
         results = await search_stac_api_async(
-            bbox_geojson, start_date, end_date, cloud_cover, STAC_API_URL
+            bbox_geojson, start_date, end_date, cloud_cover
         )
 
         if not results:

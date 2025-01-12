@@ -53,7 +53,6 @@ class VCubeProcessor:
         self.log_file = log_file
         self.cmap = cmap
         self.workers = workers
-        self.STAC_API_URL = "https://earth-search.aws.element84.com/v1/search"
         self.result_list = []
         self.dates = []
         self.crs = None
@@ -153,7 +152,6 @@ class VCubeProcessor:
             self.start_date,
             self.end_date,
             self.cloud_cover,
-            self.STAC_API_URL,
         )
         print(f"Total scenes found: {len(features)}")
         filtered_features = filter_intersected_features(features, self.bbox)

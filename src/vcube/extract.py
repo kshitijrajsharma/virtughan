@@ -55,7 +55,6 @@ class ExtractProcessor:
         self.log_file = log_file
         self.workers = workers
         self.zip_output = zip_output
-        self.STAC_API_URL = "https://earth-search.aws.element84.com/v1/search"
         self.crs = None
         self.transform = None
 
@@ -152,7 +151,6 @@ class ExtractProcessor:
             self.start_date,
             self.end_date,
             self.cloud_cover,
-            self.STAC_API_URL,
         )
         print(f"Total scenes found: {len(features)}")
         filtered_features = filter_intersected_features(features, self.bbox)

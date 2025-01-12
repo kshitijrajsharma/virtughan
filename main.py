@@ -7,7 +7,6 @@ import sys
 import time
 from datetime import datetime, timedelta
 
-import httpx
 import matplotlib
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,6 +20,7 @@ from starlette.status import HTTP_504_GATEWAY_TIMEOUT
 from src.vcube.engine import VCubeProcessor
 from src.vcube.extract import ExtractProcessor
 from src.vcube.tile import TileProcessor
+from src.vcube.utils import search_stac_api_async
 
 app = FastAPI()
 
@@ -252,25 +252,12 @@ async def search_images(
     bbox_polygon = box(west, south, east, north)
     bbox_geojson = mapping(bbox_polygon)
 
-    STAC_API_URL = "https://earth-search.aws.element84.com/v1/search"
-    search_params = {
-        "collections": ["sentinel-2-l2a"],
-        "datetime": f"{start_date}T00:00:00Z/{end_date}T23:59:59Z",
-        "query": {"eo:cloud_cover": {"lt": cloud_cover}},
-        "intersects": bbox_geojson,
-        "limit": 100,
-    }
+    response = await search_stac_api_async(
+        bbox_geojson, start_date, end_date, cloud_cover
+    )
 
-    async with httpx.AsyncClient() as client:
-        response = await client.post(STAC_API_URL, json=search_params)
-    if response.status_code != 200:
-        return JSONResponse(
-            content={"error": "Error searching STAC API"},
-            status_code=500,
-        )
-
-    results = response.json()
-    return results
+    feature_collection = {"type": "FeatureCollection", "features": response}
+    return JSONResponse(content=feature_collection)
 
 
 @app.get("/tile/{z}/{x}/{y}")

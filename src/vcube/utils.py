@@ -7,14 +7,17 @@ import numpy as np
 import requests
 from shapely.geometry import box, shape
 
+STAC_API_URL = "https://earth-search.aws.element84.com/v1/search"
 
-def search_stac_api(bbox, start_date, end_date, cloud_cover, stac_api_url):
+
+def search_stac_api(bbox, start_date, end_date, cloud_cover):
     search_params = {
         "collections": ["sentinel-2-l2a"],
         "datetime": f"{start_date}T00:00:00Z/{end_date}T23:59:59Z",
         "query": {"eo:cloud_cover": {"lt": cloud_cover}},
         "bbox": bbox,
         "limit": 100,
+        "sortby": [{"field": "properties.datetime", "direction": "desc"}],
     }
 
     all_features = []
@@ -22,7 +25,7 @@ def search_stac_api(bbox, start_date, end_date, cloud_cover, stac_api_url):
 
     while True:
         response = requests.post(
-            stac_api_url,
+            STAC_API_URL,
             json=search_params if not next_link else next_link["body"],
         )
         response.raise_for_status()
@@ -38,15 +41,14 @@ def search_stac_api(bbox, start_date, end_date, cloud_cover, stac_api_url):
     return all_features
 
 
-async def search_stac_api_async(
-    bbox_geojson, start_date, end_date, cloud_cover, stac_api_url
-):
+async def search_stac_api_async(bbox_geojson, start_date, end_date, cloud_cover):
     search_params = {
         "collections": ["sentinel-2-l2a"],
         "datetime": f"{start_date}T00:00:00Z/{end_date}T23:59:59Z",
         "query": {"eo:cloud_cover": {"lt": cloud_cover}},
         "intersects": bbox_geojson,
         "limit": 100,
+        "sortby": [{"field": "properties.datetime", "direction": "desc"}],
     }
 
     all_features = []
@@ -55,7 +57,7 @@ async def search_stac_api_async(
     async with httpx.AsyncClient() as client:
         while True:
             response = await client.post(
-                stac_api_url,
+                STAC_API_URL,
                 json=search_params if not next_link else next_link["body"],
             )
             response.raise_for_status()
