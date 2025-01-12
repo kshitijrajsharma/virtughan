@@ -253,14 +253,13 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 40px;
-  height: 40px;
-  border: 6px solid #f3f3f3;
+  width: 30px;
+  height: 30px;
+  border: 4px solid #f3f3f3;
   border-radius: 50%;
-  border-top: 6px solid #ff5733; /* Different color */
-  animation: spin 1s linear infinite; /* Faster spin */
+  border-top: 4px solid #3498db ;
+  animation: spin 1s linear infinite; 
   display: none; /* Hide loader initially */
-  z-index: 5;
 }
 
 @keyframes spin {
@@ -555,7 +554,7 @@
                   <label id = "display-image-count" class="block  font-medium text-gray-900 pb-4">Images: <span class="text-xs"><span></label>
                   <span id="sidebar-clear-button" class="clear-visualize-filter text-gray-500 text-xs"><i class="fa-solid fa-rotate-right"></i> Clear</span>
                 </div>
-                <div id="feature-list" style = "max-height: 450px;" class = "overflow-auto custom-scrollbar">
+                <div id="feature-list" style = "min-height: 100px; max-height: 450px;" class = "overflow-auto custom-scrollbar">
                   <label class="block text-sm font-medium text-gray-400 pt-4">Apply the Filter First!!!</label>
                 </div>
               </div>
@@ -1521,7 +1520,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           document.getElementById("layerSwitcherContainer").classList.remove("hidden");
           document.getElementById("searchLayerSwitcher").classList.remove("hidden");
           document.getElementById("searchBboxLayerSwitcher").classList.remove("hidden");
-          document.getElementById("feature-list").innerHTML = "";
+          document.getElementById("feature-list").innerHTML = '';
           // startProgressComputation('search', null);
 
           startLoader('feature-list');
@@ -1844,6 +1843,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           setDefaultFiltersExport();
           document.getElementById("sidebar-clear-button").click();
           document.getElementById("custom-formula-view_export").classList.add('hidden'); 
+          document.getElementById("dropdownButtonBands").innerHTML = `<img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full mr-2">Select Bands`;
 
           document.getElementById("computeLayerSwitcher").classList.add("hidden");
 
@@ -3060,7 +3060,9 @@ function updateColor(values, scaleName) {
           const operationChecked = document.getElementById('operation').checked;
           const timeSeriesChecked = document.getElementById('timeSeries').checked;
           document.getElementById("operationTabButton").click();
+          
           if (operationChecked && !timeSeriesChecked) {
+              startLoader("operationContainer");
               // Display single image for operation
               document.getElementById('operationContainer').classList.remove('hidden');
               document.getElementById('timeSeriesContainer').classList.add('hidden');
@@ -3069,7 +3071,10 @@ function updateColor(values, scaleName) {
               document.getElementById('operationImageView').src = 'static/export/custom_band_output_aggregate_colormap.png';
               document.getElementById('operationDateDisplay').textContent = '';
               document.getElementById('timeSliderModal').classList.remove('hidden');
+              stopLoader("operationContainer");
           } else if (timeSeriesChecked && !operationChecked) {
+              startLoader("timeSeriesContainer");
+              startLoader("trendImageContainer");
               // Display time series
               document.getElementById('operationContainer').classList.add('hidden');
               document.getElementById('timeSeriesContainer').classList.remove('hidden');
@@ -3092,12 +3097,19 @@ function updateColor(values, scaleName) {
                               document.getElementById('timeSeriesImageContainer').appendChild(loadedImages[0]);
                               document.getElementById('dateDisplay').textContent = new Date(dates[0]).toLocaleDateString();
                           }
+                          stopLoader("timeSeriesContainer");
                       });
                   })
                   .catch((error) => {
                       console.error('Error:', error);
                   });
+
+              stoptLoader("trendImageContainer");
+
           } else if (operationChecked && timeSeriesChecked) {
+              startLoader("operationContainer");
+              startLoader("timeSeriesContainer");
+              startLoader("trendImageContainer");
               // Show tabs for both operation and time series
               document.getElementById('tabs').classList.remove('hidden');
               document.getElementById('operationContainer').classList.remove('hidden');
@@ -3118,12 +3130,17 @@ function updateColor(values, scaleName) {
                       processData(data);
                       preloadImages(pngImages, () => {
                           initializeSlider();
+                          stopLoader("timeSeriesContainer");
                       });
                   })
                   .catch((error) => {
                       console.error('Error:', error);
                   });
+            
+            stopLoader("operationContainer");      
+            stopLoader("trendImageContainer");
           }
+          
       }
 
       // Function to switch tabs
