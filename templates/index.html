@@ -305,7 +305,7 @@
                     <hr/>
                     <li id = "custom-filter_search" class="relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1_search" role="option">
                       <div class="flex items-center">
-                        <img src="static/img/plus.png" alt="" class="size-5 shrink-0 rounded-full">
+                        <img src="static/img/plus-blue.png" alt="" class="size-5 shrink-0 rounded-full">
                         <span class="ml-3 block truncate font-normal text-blue-500">Custom Filter</span>
                       </div>
                       <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
@@ -652,7 +652,7 @@
                         <hr/>
                         <li id = "custom-filter_export" class="relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1" role="option">
                           <div class="flex items-center">
-                            <img src="static/img/plus.png" alt="" class="size-5 shrink-0 rounded-full">
+                            <img src="static/img/plus-blue.png" alt="" class="size-5 shrink-0 rounded-full">
                             <span class="ml-3 block truncate font-normal text-blue-500">Custom Filter</span>
                           </div>
                           <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
@@ -677,11 +677,12 @@
 
                 <div id="band-list-container" class="w-full pb-4 hidden">
                   <label id="listbox-label_export" class="block text-sm font-medium text-gray-800">Select Bands to Download *</label>
-                  <div class="relative">
-                    <button id="dropdownButtonBands" class="mt-1 block w-full pl-3 pr-10 py-2 text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                      Select Bands
+                  <div class="relative bg-white">
+                    <button id="dropdownButtonBands" class="mt-2 block w-full pl-3 pr-10 py-2 text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm flex flex-auto">
+                      <img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full mr-2">
+                       Select Bands
                     </button>
-                    <div id="dropdownMenuBands" class="hidden absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
+                    <div id="dropdownMenuBands" class="hidden absolute mt-2 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
                       <div class="max-h-60 overflow-auto custom-scrollbar">
                         <label class="flex items-center px-3 py-2"><input type="checkbox" value="RED" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">RED</span></label>
                         <label class="flex items-center px-3 py-2"><input type="checkbox" value="GREEN" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">GREEN</span></label>
@@ -3195,7 +3196,7 @@ function updateColor(values, scaleName) {
     checkboxes.forEach(function(checkbox) {
         checkbox.addEventListener('change', function() {
             const selectedOptions = Array.from(checkboxes).filter(chk => chk.checked).map(chk => chk.value);
-            dropdownButton.textContent = selectedOptions.length > 0 ? selectedOptions.join(', ') : 'Select Bands';
+            dropdownButton.innerHTML = selectedOptions.length > 0 ? selectedOptions.join(', ') : `<img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full mr-2">Select Bands`;
             export_params.bands_list = selectedOptions.length > 0 ? selectedOptions.join(',').toLowerCase() : "";
 
             document.getElementById("export-map-view-button").classList.remove('bg-gray-500', 'pointer-events-none');
