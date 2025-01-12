@@ -847,6 +847,14 @@
                     <label for="timeSeries" class="ml-2 text-sm text-gray-600">Time Series</label>
                   </div>
                 </div>
+
+                <div class="mb-4 mt-2">
+                  <label class="block text-sm font-medium text-gray-800 pb-1">Smart Filters <i title = "if enabled chooses weekly image for frequency upto 2 months, monthly for up to 1 year , quarterly up to 3 years and semi-annually for more than 3 years. For each period it selects least cloud cover image" class="fa-solid fa-circle-info"></i></label>
+                  <div class="flex items-center">
+                    <input id="smart-filters" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600" checked>
+                    <label for="smart-filters" class="ml-2 text-sm text-gray-600">Enable Smart Filters</label>
+                  </div>
+                </div>
                 
 
                 <div id="operation-container" class="w-full">
@@ -2396,6 +2404,8 @@ function updateColor(values, scaleName) {
       document.getElementById("export-map-view-button").addEventListener('click', function() {
         completed_log = false;
         var analyzeChecked = document.getElementById("analyze-data").checked;
+        var smartFilters = document.getElementById("smart-filters").checked;
+
         export_params.startDdate = document.getElementById("start-date-export").value;
         export_params.endDate = document.getElementById("end-date-export").value;
         export_params.cloudCover = document.getElementById("cloud-cover-export").value;
@@ -2433,7 +2443,7 @@ function updateColor(values, scaleName) {
         
         
         
-        var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&timeseries=${encodeURIComponent(export_params.timeseries)}`;
+        var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&timeseries=${encodeURIComponent(export_params.timeseries)}&smart_filters=${smartFilters}`;
 
         //if operation and timeseries should not be sent in url. 
         // var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}`;
@@ -2450,7 +2460,7 @@ function updateColor(values, scaleName) {
         
         // console.log(url_compute);
 
-        var download_url = `/image-download?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&bands_list=${export_params.bands_list}`;
+        var download_url = `/image-download?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&bands_list=${export_params.bands_list}&smart_filters=${smartFilters}`;
         
         
         var url;
