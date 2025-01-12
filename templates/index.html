@@ -401,7 +401,7 @@
               </div>
               <div id="operation-container_search" class="w-full hidden">
                 <label class="block text-sm font-medium text-gray-700">Operation</label>
-                <select id="operation_menu_search" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <select id="operation_menu_search" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 bg-white text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                     <!-- <option value="min" class="text-gray-600">Select Option</option> -->
                     <option value="median" class="text-gray-600">Median</option>
                     <option value="mean" class="text-gray-600">Mean</option>
@@ -853,7 +853,7 @@
 
   <!-- filter modal start -->
   <div id="modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-40">
-    <div class="bg-white rounded-lg shadow-lg p-6 w-2/5 relative">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full sm:w-4/5 md:w-3/5 lg:w-2/5 max-h-screen relative overflow-y-auto custom-scrollbar">
       <button id="closeModal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
           <i class="fas fa-times"></i>
       </button>
@@ -977,8 +977,9 @@
   <!-- filter modal end -->
 
   <!-- upload modal start -->
-  <div id="uploadModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden z-40">
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
+  <!-- upload modal start -->
+  <div id="uploadModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-40">
+    <div class="bg-white rounded-lg shadow-md p-6 w-full sm:w-4/5 md:w-3/5 lg:w-2/5 max-h-screen relative overflow-y-auto custom-scrollbar">
         <h2 class="text-2xl font-semibold mb-4">Upload or Paste GeoJSON File</h2>
         
         <!-- Drag and Drop or Upload Section -->
@@ -1004,7 +1005,7 @@
 
    <!-- Result and timeslider modal start -->
    <div id="timeSliderModal" class="modal hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-40">
-    <div class="modal-content bg-white p-4 rounded-md w-full max-w-lg">
+    <div class="modal-content bg-white p-4 rounded-md w-full sm:w-4/5 md:w-3/5 lg:w-2/5 max-h-screen relative overflow-y-auto custom-scrollbar">
       <span class="close text-gray-500 hover:text-gray-700 float-right text-2xl cursor-pointer">&times;</span>
       <h2 class="text-lg font-semibold mb-4">View Result</h2>
       <div class="tabs mb-4" id="tabs">
@@ -1038,7 +1039,7 @@
         <div id="trendImageContainer" class="mb-4">
           <img id="trendImageView" class="w-full rounded-md" src="images/image_2022-01-01.jpg" alt="Image">
         </div>
-        <div id="trendDateDisplay" class="text-center text-sm text-gray-700 mb-4">Start Date</div>
+      
       </div>
     </div>
   </div>
@@ -3010,6 +3011,28 @@ function updateColor(values, scaleName) {
 
   <!-- result modal script for result and timeslider start -->
   <script>
+    // Function to check if the image is loaded
+    function checkImageLoaded(imageId, loaderContainer) {
+      const img = document.getElementById(imageId);
+
+      // Event listener for when the image loads successfully
+      img.addEventListener('load', () => {
+        console.log('Image has loaded.');
+        stopLoader(loaderContainer);
+      });
+
+      // Optional: Event listener for when there's an error loading the image
+      img.addEventListener('error', () => {
+        console.log('Failed to load the image.');
+       
+      });
+
+      // Check if the image is already loaded (e.g., from cache)
+      if (img.complete && img.naturalHeight !== 0) {
+        console.log('Image has already been loaded.');
+        
+      }
+    }
     document.addEventListener('DOMContentLoaded', (event) => {
 
       // Preload images
@@ -3071,7 +3094,9 @@ function updateColor(values, scaleName) {
               document.getElementById('operationImageView').src = 'static/export/custom_band_output_aggregate_colormap.png';
               document.getElementById('operationDateDisplay').textContent = '';
               document.getElementById('timeSliderModal').classList.remove('hidden');
-              stopLoader("operationContainer");
+              
+              checkImageLoaded("operationImageView", "operationContainer"); //remove loader after image is loaded.
+
           } else if (timeSeriesChecked && !operationChecked) {
               startLoader("timeSeriesContainer");
               startLoader("trendImageContainer");
@@ -3096,6 +3121,7 @@ function updateColor(values, scaleName) {
                               document.getElementById('timeSeriesImageContainer').innerHTML = '';
                               document.getElementById('timeSeriesImageContainer').appendChild(loadedImages[0]);
                               document.getElementById('dateDisplay').textContent = new Date(dates[0]).toLocaleDateString();
+                              // changeImage();
                           }
                           stopLoader("timeSeriesContainer");
                       });
@@ -3104,7 +3130,8 @@ function updateColor(values, scaleName) {
                       console.error('Error:', error);
                   });
 
-              stoptLoader("trendImageContainer");
+                  checkImageLoaded("trendImageView", "trendImageContainer");
+ 
 
           } else if (operationChecked && timeSeriesChecked) {
               startLoader("operationContainer");
@@ -3130,6 +3157,13 @@ function updateColor(values, scaleName) {
                       processData(data);
                       preloadImages(pngImages, () => {
                           initializeSlider();
+                          // Load the first image at start
+                          if (loadedImages.length > 0 && dates.length > 0) {
+                              document.getElementById('timeSeriesImageContainer').innerHTML = '';
+                              document.getElementById('timeSeriesImageContainer').appendChild(loadedImages[0]);
+                              document.getElementById('dateDisplay').textContent = new Date(dates[0]).toLocaleDateString();
+                              // changeImage();
+                          }
                           stopLoader("timeSeriesContainer");
                       });
                   })
@@ -3137,8 +3171,8 @@ function updateColor(values, scaleName) {
                       console.error('Error:', error);
                   });
             
-            stopLoader("operationContainer");      
-            stopLoader("trendImageContainer");
+              checkImageLoaded("operationImageView", "operationContainer");
+              checkImageLoaded("trendImageView", "trendImageContainer");  
           }
           
       }
