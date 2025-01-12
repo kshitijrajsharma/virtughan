@@ -253,14 +253,13 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 40px;
-  height: 40px;
-  border: 6px solid #f3f3f3;
+  width: 30px;
+  height: 30px;
+  border: 4px solid #f3f3f3;
   border-radius: 50%;
-  border-top: 6px solid #ff5733; /* Different color */
-  animation: spin 1s linear infinite; /* Faster spin */
+  border-top: 4px solid #3498db ;
+  animation: spin 1s linear infinite; 
   display: none; /* Hide loader initially */
-  z-index: 5;
 }
 
 @keyframes spin {
@@ -555,7 +554,7 @@
                   <label id = "display-image-count" class="block  font-medium text-gray-900 pb-4">Images: <span class="text-xs"><span></label>
                   <span id="sidebar-clear-button" class="clear-visualize-filter text-gray-500 text-xs"><i class="fa-solid fa-rotate-right"></i> Clear</span>
                 </div>
-                <div id="feature-list" style = "max-height: 450px;" class = "overflow-auto custom-scrollbar">
+                <div id="feature-list" style = "min-height: 100px; max-height: 450px;" class = "overflow-auto custom-scrollbar">
                   <label class="block text-sm font-medium text-gray-400 pt-4">Apply the Filter First!!!</label>
                 </div>
               </div>
@@ -1521,7 +1520,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           document.getElementById("layerSwitcherContainer").classList.remove("hidden");
           document.getElementById("searchLayerSwitcher").classList.remove("hidden");
           document.getElementById("searchBboxLayerSwitcher").classList.remove("hidden");
-          document.getElementById("feature-list").innerHTML = "";
+          document.getElementById("feature-list").innerHTML = '';
           // startProgressComputation('search', null);
 
           startLoader('feature-list');
