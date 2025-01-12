@@ -268,6 +268,27 @@
 }
 
 </style>
+<!-- Add custom CSS for the control button -->
+<style>
+  .leaflet-control-custom {
+    background: white;
+    background-size: 20px 20px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    background-image: url('static/img/hand-regular.png'); /* Replace with your hand icon URL */
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 2px;
+  }
+
+  /* Hide control button on larger screens */
+  @media (min-width: 768px) {
+    .leaflet-control-custom {
+      display: none;
+    }
+  }
+</style>
 
   </head>
   <body>
@@ -1378,6 +1399,42 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
       updateMapInteractions();
       // Update on window resize
       window.addEventListener('resize', updateMapInteractions);
+
+        // Add custom control button: for mobile screens enable zoom and drag by clicking on this button. 
+        var customControl = L.Control.extend({
+          options: {
+            position: 'topleft' // 'topleft', 'topright', 'bottomleft' or 'bottomright'
+          },
+          onAdd: function (map) {
+            var container = L.DomUtil.create('div', 'leaflet-control-custom');
+
+            container.onclick = function () {
+              if (map.scrollWheelZoom.enabled()) {
+                map.scrollWheelZoom.disable();
+                map.dragging.disable();
+                container.style.border = '1px solid red'; //disabled
+              } else {
+                map.scrollWheelZoom.enable();
+                map.dragging.enable();
+                container.style.border = '1px solid green'; // enabled
+              }
+            }
+            return container;
+          }
+        });
+
+        map.addControl(new customControl());
+
+        function updateControlButtonState() {
+          var container = document.querySelector('.leaflet-control-custom');
+          if (window.innerWidth < 768) { // This is for screen size less than tablet
+            container.style.border = map.scrollWheelZoom.enabled() ? '1px solid green' : '1px solid red';
+          }
+        }
+
+        // Call this function initially and on window resize to set the correct control button state
+        window.addEventListener('resize', updateControlButtonState);
+        updateControlButtonState();
 
 
       var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
