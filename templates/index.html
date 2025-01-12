@@ -471,10 +471,16 @@
                         </button>
                       </div>
                       </div>
+                      <div id="download-complete">
+                        <label class="block text-xs font-medium text-gray-900 pb-2">Layer Ready to Download!!!</label>
+                        <button id="download-band-image" title="Download" class="p-2 border border-gray-400 text-white hover:bg-blue-600 bg-blue-500 rounded text-xs"> Download 
+                          <i class="fas fa-download"></i>
+                        </button>
+                      </div>
                       
                       <div id="compute_progressbar" class="relative w-full">
                         <div class="mb-4">
-                          <label class="block text-xs font-medium text-gray-900 pb-2">Computation Progress</label>
+                          <label id = "computation_progress_text" class="block text-xs font-medium text-gray-900 pb-2">Computation Progress</label>
                           <ul id="ProgressTextsBefore" class="list-none list-inside text-xs text-gray-700 mb-2 max-h-40 overflow-y-auto custom-scrollbar">
                             <li style = "font-size: 10px;">Please Wait Computing...</li>
                           </ul>
@@ -504,7 +510,7 @@
               <!-- Content for Tab 3 -->
               <div id="sidebar1" class = "overflow-y-scroll custom-scrollbar  p-4 tab-scrollable-content" style = "max-height: 550px;">
                <div class = "pb-4">
-                <label class="block text-sm font-medium text-gray-800 pb-2">Select Area of Interest <i title = "Less than the input value in percentage" class="fa-solid fa-circle-info"></i></label>
+                <label class="block text-sm font-medium text-gray-800 pb-2">Select Area of Interest <i title = "Select the area within map window or draw" class="fa-solid fa-circle-info"></i></label>
                 <!-- dropdown start -->
                 <div class="relative mt-2">
                   <button id="select-button-bbox" type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label">
@@ -575,7 +581,22 @@
                 </div>
                 </div>
 
-                <div class = "pb-4">
+                <div class="rounded-md shadow-sm mb-6">
+                  <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-800">Select Action <i title = "Analyze will help to perform operations and download directly downloads the original image bands" class="fa-solid fa-circle-info"></i></label>
+                  <div class="flex items-center space-x-4">
+                    <div class="flex items-center p-2">
+                      <input type="radio" id="analyze-data" name="option" value="analyze" class="radio-action form-radio h-4 w-4 text-blue-600" checked>
+                      <label for="analyze" class="ml-2 text-sm text-gray-700">Analyze</label>
+                    </div>
+                    <div class="flex items-center">
+                      <input type="radio" id="download-data" name="option" value="download" class="radio-action form-radio h-4 w-4 text-blue-600">
+                      <label for="download" class="ml-2 text-sm text-gray-700">Download</label>
+                    </div>
+                  </div>
+                </div>
+                
+
+                <div id = "export-filter-option" class = "pb-4">
                   <div id = "filterOption_export" class = "">
                     <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-800">Filter Option *</label>
                     <div class="relative mt-2">
@@ -649,6 +670,43 @@
                   </div>
                 </div>
 
+
+                <div id="band-list-container" class="w-full pb-4 hidden">
+                  <label id="listbox-label_export" class="block text-sm font-medium text-gray-800">Select Bands to Download *</label>
+                  <div class="relative">
+                    <button id="dropdownButtonBands" class="mt-1 block w-full pl-3 pr-10 py-2 text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                      Select Bands
+                    </button>
+                    <div id="dropdownMenuBands" class="hidden absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
+                      <div class="max-h-60 overflow-auto custom-scrollbar">
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="RED" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">RED</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="GREEN" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">GREEN</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="BLUE" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">BLUE</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="VISUAL" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">VISUAL</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="NIR" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">NIR</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="SWIR22" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">SWIR22</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="REDEDGE2" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">REDEDGE2</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="REDEDGE3" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">REDEDGE3</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="REDEDGE1" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">REDEDGE1</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="SWIR16" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">SWIR16</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="WVP" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">WVP</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="NIR08" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">NIR08</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="SCL" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">SCL</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="AOT" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">AOT</span></label>
+        
+                        <!-- Add more options as needed -->
+                        <label class="block px-3 py-2 font-semibold text-gray-700 text-sm">Semantic Bands</label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="COASTAL" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">COASTAL</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="NIR09" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">NIR09</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="CLOUD" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">CLOUD</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="SNOW" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">SNOW</span></label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                
+
                 <!-- Collapsible List Container -->
                 <div class="w-full bg-white rounded-lg mb-4">
                   <div class="relative">
@@ -688,6 +746,7 @@
                   </div>
                 </div>
 
+                <div id="analyze-filters">
                 <div class="mb-4 mt-2">
                   <label class="block text-sm font-medium text-gray-800 pb-4">Select Output Type</label>
                   <div class="flex items-center mb-2">
@@ -715,11 +774,12 @@
                       <option value="mode" class="text-gray-600">Mode</option>
                   </select>
               </div>
+                </div>
               </div>
               <div class="bottom-sticky-buttons sticky bottom-0 bg-white p-2">
                 <button id="export-clear-button" class="clear-visualize-filter bg-transparent rounded-lg text-gray-500 text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-solid fa-rotate-right"></i> Clear</button>
                 <button id="export-map-view-button" title= "Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Visualize and Export</button>
-                <!-- <button id="export-file-button" title= "Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Export</button> -->
+                <!-- <button id="export-file-button" title= "Select Filter Above to Visualize" class="hidden bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Download</button> -->
               </div>
             </div>
           </div>
@@ -940,7 +1000,7 @@
           }
       });
 
-      var containerheight = header.offsetHeight + tabs.offsetHeight+maxHeight; //extra 100 added for bottom sticky contents
+      var containerheight = header.offsetHeight + tabs.offsetHeight+maxHeight +10; //extra 60 added for bottom sticky contents
       tabPanels.forEach(function(tabPanel) { tabPanel.style.height = `calc(100vh - ${containerheight}px)`; });
     }
 
@@ -1312,6 +1372,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         "band2": "nir",
         "operation": "median",
         "timeseries": "false",
+        "bands_list":""
       }
 
       // var formula = "(band2-band1)/(band2+band1)";
@@ -1583,6 +1644,31 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
               
             });
         });
+
+
+
+      document.addEventListener('DOMContentLoaded', (event) => {
+      document.querySelectorAll('.radio-action').forEach((radio) => {
+        radio.addEventListener('change', function(event){
+          analyze_checked = document.getElementById("analyze-data").checked;
+          download_checked = document.getElementById("download-data").checked;
+          console.log("changed");
+
+          if(analyze_checked){
+            document.getElementById("band-list-container").classList.add("hidden");
+            document.getElementById("export-filter-option").classList.remove("hidden");
+            document.getElementById("analyze-filters").classList.remove("hidden");
+            document.getElementById('export-map-view-button').innerHTML = `<i class="fa-regular fa-eye"></i> Visualize and Export`;
+          }
+          else{
+            document.getElementById("band-list-container").classList.remove("hidden");
+            document.getElementById("export-filter-option").classList.add("hidden");
+            document.getElementById("analyze-filters").classList.add("hidden");
+            document.getElementById('export-map-view-button').innerHTML = `<i class="fas fa-download"></i> Download`;
+          }
+        })
+      })
+    })
 
       document
         .getElementById("sidebar-clear-button")
@@ -2101,11 +2187,12 @@ function updateColor(values, scaleName) {
       }
   </script>
 
-    <!-- /export api start -->
+    <!-- /export and download api start -->
     <script>
       var completed_log = false;
       document.getElementById("export-map-view-button").addEventListener('click', function() {
         completed_log = false;
+        var analyzeChecked = document.getElementById("analyze-data").checked;
         export_params.startDdate = document.getElementById("start-date-export").value;
         export_params.endDate = document.getElementById("end-date-export").value;
         export_params.cloudCover = document.getElementById("cloud-cover-export").value;
@@ -2114,7 +2201,16 @@ function updateColor(values, scaleName) {
         document.getElementById('compute_progress_text').style.color = 'white';
 
         document.getElementById("layerSwitcherBox").classList.add("hidden");
-        document.getElementById('ProgressTextsBefore').innerHTML = `<li style = "font-size: 10px;">Please Wait Computing...</li>`;
+        var textCon =  "Please Wait Computing...";
+        var textTitl = "Computation Progress";
+        
+        if(!analyzeChecked){
+          textCon = "Please Wait Downloading...";
+          textTitl = "Download Progress";
+        }
+        document.getElementById('ProgressTextsBefore').innerHTML = `<li style = "font-size: 10px;">${textCon}</li>`;
+        document.getElementById('computation_progress_text').innerHTML = textTitl;
+        
 
         document.getElementById('operationImageView').src ="";
         clearPreviousTimeSeriesData();
@@ -2129,6 +2225,8 @@ function updateColor(values, scaleName) {
           document.getElementById("compute_layer").classList.add("hidden");
           document.getElementById("colorPalettes").classList.add("hidden");
         }
+
+        
         
         
         var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&timeseries=${encodeURIComponent(export_params.timeseries)}`;
@@ -2147,8 +2245,19 @@ function updateColor(values, scaleName) {
         // }
         
         // console.log(url_compute);
+
+        var download_url = `/image-download?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&bands_list=${export_params.bands_list}`;
         
-        fetch(url_compute, { 
+        
+        var url;
+        if(analyzeChecked){
+          url = url_compute;
+        }
+        else{
+          url = download_url;
+        }
+
+        fetch(url, { 
           method: 'GET' 
         }) 
         .then(response => response.json()) 
@@ -2163,6 +2272,8 @@ function updateColor(values, scaleName) {
         document.getElementById("resultTab").click();
         document.getElementById("layerSwitcherContainer").classList.remove("hidden");
         document.getElementById("computeLayerSwitcher").classList.remove("hidden");
+
+        document.getElementById("download-complete").classList.add("hidden");
 
         //show the progress to the user
         
@@ -2179,13 +2290,18 @@ function updateColor(values, scaleName) {
                 console.log('Processing completed. Stopped checking.');
                 if(completed_log){}
                 else{
-                  if(data.includes('Filtered 0 items')){}
+                  if(data.includes('Filtered 0 items') || data.includes('Scenes covering input area: 0')){}
                   else{
-                    document.getElementById("layerSwitcherBox").classList.remove("hidden");
-                    if(document.getElementById("operation").checked){
-                      plotGeoTIFF('static/export/custom_band_output_aggregate.tif');
-                      completed_log = true;
-                  }
+                    if(analyzeChecked){
+                      document.getElementById("layerSwitcherBox").classList.remove("hidden");
+                      if(document.getElementById("operation").checked){
+                        plotGeoTIFF('static/export/custom_band_output_aggregate.tif');
+                        completed_log = true;
+                      }
+                    }
+                    else{
+                      document.getElementById("download-complete").classList.remove("hidden");
+                    }
                 
                   }  
                 }  
@@ -2203,12 +2319,12 @@ function updateColor(values, scaleName) {
         const intervalId = setInterval(checkProcessingStatus, 5000);
 
         function updateProgress(logData) {
-          if (logData.includes('No images found') || logData.includes('Filtered 0 items')) {
+          if (logData.includes('No images found') || logData.includes('Filtered 0 items') || logData.includes('Scenes covering input area: 0')) {
               displayNoImageFoundMessage();
           } else {
               // Extract log lines
               const logLines = logData.split('\n');
-              const nonComputationLogs = logLines.filter(line => !line.includes('Computing Band Calculation'));
+              const nonComputationLogs = logLines.filter(line => !line.includes('Computing Band Calculation') && !line.includes('Extracting Bands'));
 
               document.getElementById('ProgressTextsBefore').innerHTML = "";
 
@@ -2228,7 +2344,7 @@ function updateColor(values, scaleName) {
               });
 
               // Handle "Computing Band Calculation" logs
-              const computationLogs = logLines.filter(line => line.includes('Computing Band Calculation'));
+              const computationLogs = logLines.filter(line => line.includes('Computing Band Calculation') || line.includes('Extracting Bands'));
               const latestLog = computationLogs[computationLogs.length - 1]; // Get the latest log
 
               if (latestLog) {
@@ -3001,22 +3117,35 @@ function updateColor(values, scaleName) {
       document.addEventListener('DOMContentLoaded', (event) => {
         // Add click event listener for the download icon
         document.getElementById('download-result-image').addEventListener('click', downloadResult);
+        document.getElementById('download-band-image').addEventListener('click', function(){
+          console.log("entered");
+          downloadFile('static/export/tiff_files.zip');
+        });
       });
 
       function downloadResult() {
-        const operationChecked = document.getElementById('operation').checked;
-        const timeSeriesChecked = document.getElementById('timeSeries').checked;
-        
-        if (operationChecked && !timeSeriesChecked) {
-          // Download .tif file for operation
-          window.location.href = 'static/export/custom_band_output_aggregate.tif';
-        } else if (timeSeriesChecked && !operationChecked) {
-          // Download .zip file for time series
-          window.location.href = 'static/export/tiff_files.zip';
-        } else if (operationChecked && timeSeriesChecked) {
-          // Download both files
-          downloadFile('static/export/custom_band_output_aggregate.tif');
+        const analyzeChecked = document.getElementById('analyze-data').checked;
+        if(!analyzeChecked){ //if download checked
           downloadFile('static/export/tiff_files.zip');
+        }
+        else{
+          const operationChecked = document.getElementById('operation').checked;
+          const timeSeriesChecked = document.getElementById('timeSeries').checked;
+          
+          if (operationChecked && !timeSeriesChecked) {
+            // Download .tif file for operation
+            // window.location.href = 'static/export/custom_band_output_aggregate.tif';
+            downloadFile('static/export/custom_band_output_aggregate.tif');
+          } else if (timeSeriesChecked && !operationChecked) {
+            // Download .zip file for time series
+            // window.location.href = 'static/export/tiff_files.zip';
+            downloadFile('static/export/tiff_files.zip');
+          } else if (operationChecked && timeSeriesChecked) {
+            // Download both files
+            downloadFile('static/export/custom_band_output_aggregate.tif');
+            downloadFile('static/export/tiff_files.zip');
+          }
+
         }
       }
 
@@ -3033,6 +3162,40 @@ function updateColor(values, scaleName) {
   </script>
   <!-- download file script end -->
 
+
+  <!-- multiselect checkbox start -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const dropdownButton = document.getElementById('dropdownButtonBands');
+    const dropdownMenu = document.getElementById('dropdownMenuBands');
+
+    dropdownButton.addEventListener('click', function() {
+        dropdownMenu.classList.toggle('hidden');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            dropdownMenu.classList.add('hidden');
+        }
+    });
+
+    // Update button text with selected options
+    const checkboxes = dropdownMenu.querySelectorAll('.band-checkbox');
+    checkboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            const selectedOptions = Array.from(checkboxes).filter(chk => chk.checked).map(chk => chk.value);
+            dropdownButton.textContent = selectedOptions.length > 0 ? selectedOptions.join(', ') : 'Select Bands';
+            export_params.bands_list = selectedOptions.length > 0 ? selectedOptions.join(',').toLowerCase() : "";
+
+            document.getElementById("export-map-view-button").classList.remove('bg-gray-500', 'pointer-events-none');
+            document.getElementById("export-map-view-button").classList.add('bg-blue-700');
+        });
+    });
+});
+
+
+  </script>
 
 
   </body>
