@@ -1412,10 +1412,14 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
               if (map.scrollWheelZoom.enabled()) {
                 map.scrollWheelZoom.disable();
                 map.dragging.disable();
+                map.touchZoom.disable();
+                map.doubleClickZoom.disable();
                 container.style.border = '1px solid red'; //disabled
               } else {
                 map.scrollWheelZoom.enable();
                 map.dragging.enable();
+                map.touchZoom.enable();
+                map.doubleClickZoom.enable();
                 container.style.border = '1px solid green'; // enabled
               }
             }
