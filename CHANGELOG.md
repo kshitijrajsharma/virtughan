@@ -1,3 +1,14 @@
+## 0.6.0 (2025-01-12)
+
+### Feat
+
+- smart filters option
+
+### Fix
+
+- **example**: enable timeseries in VirtuGhan usage example
+- **export**: fixes issue on export only
+
 ## 0.5.0 (2025-01-12)
 
 ### Feat
