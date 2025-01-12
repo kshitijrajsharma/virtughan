@@ -371,10 +371,14 @@
                 <label class="block text-sm/6 font-medium text-gray-900 pb-1">Zoom Level: <span class = "text-xs text-gray-500" id="zoom-level"></span></label>
               </div>
             </div>
-            <div class="bottom-sticky-buttons sticky bottom-0 bg-white p-2">
-              <button id="search-clear-button" class="clear-visualize-filter bg-transparent rounded-lg text-gray-500 text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-solid fa-rotate-right"></i> Clear</button>
-              <button id="search-button" title= "Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Visualize</button>
-            </div>
+            <div class="bottom-sticky-buttons sticky bottom-0 bg-white p-2 w-full flex justify-end">
+              <button id="search-clear-button" class="clear-visualize-filter bg-transparent rounded-lg text-gray-500 text-sm text-center self-center px-3 py-2 my-2 mx-2">
+                <i class="fa-solid fa-rotate-right"></i> Clear
+              </button>
+              <button id="search-button" title="Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2">
+                <i class="fa-regular fa-eye"></i> Visualize
+              </button>
+            </div>            
             </div>
             <div class="tab-panel hidden">
               <!-- Content for Tab 2 -->
@@ -776,11 +780,17 @@
               </div>
                 </div>
               </div>
-              <div class="bottom-sticky-buttons sticky bottom-0 bg-white p-2">
-                <button id="export-clear-button" class="clear-visualize-filter bg-transparent rounded-lg text-gray-500 text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-solid fa-rotate-right"></i> Clear</button>
-                <button id="export-map-view-button" title= "Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Visualize and Export</button>
-                <!-- <button id="export-file-button" title= "Select Filter Above to Visualize" class="hidden bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2"><i class="fa-regular fa-eye"></i> Download</button> -->
-              </div>
+              <div class="bottom-sticky-buttons sticky bottom-0 bg-white p-2 w-full flex justify-end">
+                <button id="export-clear-button" class="clear-visualize-filter bg-transparent rounded-lg text-gray-500 text-sm text-center self-center px-3 py-2 my-2 mx-2">
+                  <i class="fa-solid fa-rotate-right"></i> Clear
+                </button>
+                <button id="export-map-view-button" title="Select Filter Above to Visualize" class="bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2">
+                  <i class="fa-regular fa-eye"></i> Visualize and Export
+                </button>
+                <!-- <button id="export-file-button" title="Select Filter Above to Visualize" class="hidden bg-gray-500 pointer-events-none text-white rounded-lg text-sm text-center self-center px-3 py-2 my-2 mx-2">
+                  <i class="fa-regular fa-eye"></i> Download
+                </button> -->
+              </div>              
             </div>
           </div>
         </div>
