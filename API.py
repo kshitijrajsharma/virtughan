@@ -148,7 +148,7 @@ async def compute_aoi_over_time(
         True, description="Should timeseries be generated (default: True)"
     ),
     smart_filter: bool = Query(
-        True, description="Should smart filter be applied ? (default: True)"
+        False, description="Should smart filter be applied ? (default: False)"
     ),
 ):
     if timeseries is False and operation is None:
@@ -359,7 +359,7 @@ async def extract_raw_bands_as_image(
         description="Comma-separated list of bands to extract (default: red,green,blue)",
     ),
     smart_filter: bool = Query(
-        True, description="Should smart filter be applied ? (default: True)"
+        False, description="Should smart filter be applied ? (default: False)"
     ),
 ):
     output_dir = "static/export"
