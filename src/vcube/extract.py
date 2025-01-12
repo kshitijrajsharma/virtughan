@@ -12,6 +12,7 @@ from .utils import (
     filter_intersected_features,
     remove_overlapping_sentinel2_tiles,
     search_stac_api,
+    smart_filter_images,
     zip_files,
 )
 
@@ -45,6 +46,7 @@ class ExtractProcessor:
         log_file=sys.stdout,
         workers=1,
         zip_output=False,
+        smart_filter=True,
     ):
         self.bbox = bbox
         self.start_date = start_date
@@ -57,6 +59,7 @@ class ExtractProcessor:
         self.zip_output = zip_output
         self.crs = None
         self.transform = None
+        self.use_smart_filter = smart_filter
 
         self._validate_bands_list()
 
@@ -159,6 +162,14 @@ class ExtractProcessor:
             filtered_features
         )
         print(f"Scenes after removing overlaps: {len(overlapping_features_removed)}")
+        if self.use_smart_filter:
+            overlapping_features_removed = smart_filter_images(
+                overlapping_features_removed, self.start_date, self.end_date
+            )
+            print(
+                f"Scenes after applying smart filter: {len(overlapping_features_removed)}"
+            )
+
         band_urls_list = self._get_band_urls(overlapping_features_removed)
         result_lists = []
         if self.workers > 1:

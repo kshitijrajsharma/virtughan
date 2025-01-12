@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=linuxuser
 WorkingDirectory=/home/linuxuser/VirtuGhan
-ExecStart=/home/linuxuser/VirtuGhan/env/bin/python -m uvicorn main:app --host 0.0.0.0 --port 8080 --workers 2
+ExecStart=/home/linuxuser/VirtuGhan/env/bin/python -m uvicorn API:app --host 0.0.0.0 --port 8080 --workers 2
 Restart=always
 
 [Install]

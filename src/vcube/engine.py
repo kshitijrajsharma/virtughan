@@ -17,6 +17,7 @@ from .utils import (
     filter_intersected_features,
     remove_overlapping_sentinel2_tiles,
     search_stac_api,
+    smart_filter_images,
     zip_files,
 )
 
@@ -39,6 +40,7 @@ class VCubeProcessor:
         log_file=sys.stdout,
         cmap="RdYlGn",
         workers=1,
+        smart_filter=True,
     ):
         self.bbox = bbox
         self.start_date = start_date
@@ -59,6 +61,7 @@ class VCubeProcessor:
         self.transform = None
         self.intermediate_images = []
         self.intermediate_images_with_text = []
+        self.use_smart_filter = smart_filter
 
     def fetch_process_custom_band(self, band1_url, band2_url):
         """Fetch and process custom band data."""
@@ -160,6 +163,14 @@ class VCubeProcessor:
             filtered_features
         )
         print(f"Scenes after removing overlaps: {len(overlapping_features_removed)}")
+        if self.use_smart_filter:
+            overlapping_features_removed = smart_filter_images(
+                overlapping_features_removed, self.start_date, self.end_date
+            )
+            print(
+                f"Scenes after applying smart filter: {len(overlapping_features_removed)}"
+            )
+
         band1_urls, band2_urls = self._get_band_urls(overlapping_features_removed)
 
         if self.workers > 1:

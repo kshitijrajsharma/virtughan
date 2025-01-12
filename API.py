@@ -147,6 +147,9 @@ async def compute_aoi_over_time(
     timeseries: bool = Query(
         True, description="Should timeseries be generated (default: True)"
     ),
+    smart_filter: bool = Query(
+        True, description="Should smart filter be applied ? (default: True)"
+    ),
 ):
     if timeseries is False and operation is None:
         return JSONResponse(
@@ -185,6 +188,7 @@ async def compute_aoi_over_time(
         operation,
         timeseries,
         output_dir,
+        smart_filter,
     )
     return {"message": f"Processing started in background : {output_dir}"}
 
@@ -200,6 +204,7 @@ async def run_computation(
     operation,
     timeseries,
     output_dir,
+    smart_filter,
 ):
     log_file = "static/runtime.log"
     if os.path.exists(log_file):
@@ -222,6 +227,7 @@ async def run_computation(
                 timeseries=timeseries,
                 output_dir=output_dir,
                 log_file=f,
+                smart_filter=smart_filter,
             )
             processor.compute()
             print(f"Processing completed. Results saved in {output_dir}")
@@ -352,6 +358,9 @@ async def extract_raw_bands_as_image(
         "red,green,blue",
         description="Comma-separated list of bands to extract (default: red,green,blue)",
     ),
+    smart_filter: bool = Query(
+        True, description="Should smart filter be applied ? (default: True)"
+    ),
 ):
     output_dir = "static/export"
     bbox = list(map(float, bbox.split(",")))
@@ -368,17 +377,13 @@ async def extract_raw_bands_as_image(
         cloud_cover,
         bands_list.split(","),
         output_dir,
+        smart_filter,
     )
     return {"message": f"Raw band extraction started in background: {output_dir}"}
 
 
 async def run_image_download(
-    bbox,
-    start_date,
-    end_date,
-    cloud_cover,
-    bands_list,
-    output_dir,
+    bbox, start_date, end_date, cloud_cover, bands_list, output_dir, smart_filter
 ):
     log_file = "static/runtime.log"
     if os.path.exists(log_file):
@@ -397,6 +402,7 @@ async def run_image_download(
                 output_dir=output_dir,
                 log_file=f,
                 zip_output=True,
+                smart_filter=smart_filter,
             )
             processor.extract()
             print(f"Raw band extraction completed. Results saved in {output_dir}")

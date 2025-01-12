@@ -167,11 +167,24 @@ def smart_filter_images(features, start_date: str, end_date: str):
 
     filtered_features = []
     last_selected_date = None
+    best_feature = None
 
     for feature in sorted(features, key=lambda x: x["properties"]["datetime"]):
         date = datetime.fromisoformat(feature["properties"]["datetime"].split("T")[0])
         if last_selected_date is None or date >= last_selected_date + frequency:
-            filtered_features.append(feature)
+            if best_feature:
+                filtered_features.append(best_feature)
+            best_feature = feature
             last_selected_date = date
+        else:
+            if (
+                feature["properties"]["eo:cloud_cover"]
+                < best_feature["properties"]["eo:cloud_cover"]
+            ):
+                best_feature = feature
+
+    # Handle the last period
+    if best_feature:
+        filtered_features.append(best_feature)
 
     return filtered_features
