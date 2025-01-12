@@ -339,7 +339,7 @@
               <!-- <h2 class="text-base/7 font-semibold text-gray-900">Apply Filters</h2>
               <p class="mt-1 text-sm/6 text-gray-600">Select the filters you want to apply.</p> -->
               <div id = "filterOption_search" class = "pb-4">
-                <label id="listbox-label_search" class="block text-sm/6 font-medium text-gray-900">Filter Option *</label>
+                <label id="listbox-label_search" class="block text-sm/6 font-medium text-gray-900">Filter Option <span class="text-lg text-black-600">*</span></label>
                 <div class="relative mt-2">
                   <button id="select-button_search" type="button" class="cursor-pointer grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label_search">
                     <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
@@ -418,7 +418,7 @@
                 </div>
               </div>
               <div class="pb-4">
-                <label class="block text-sm/6 font-medium text-gray-900 pb-1" >Select Cloud Cover <i title = "Less than the input value in percentage" class="fa-solid fa-circle-info"></i></label>
+                <label class="block text-sm/6 font-medium text-gray-900 pb-1" >Select Cloud Cover <i title = "Less than the input value in percentage" class="fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
                 
                 <div class="bg-white mt-4">
                   <div class="relative bg-inherit">
@@ -428,7 +428,7 @@
               </div>
 
               <div class="mb-4 mt-2">
-                <label class="block text-sm font-medium text-gray-800 pb-1">Select Time Dimension <i title = "If not checked, latest image from time range will be processed by default." class="fa-solid fa-circle-info"></i></label>
+                <label class="block text-sm font-medium text-gray-800 pb-1">Select Time Dimension <i title = "If not checked, latest image from time range will be processed by default." class="fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
                 <div class="flex items-center">
                   <input id="timeSeries_search" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600">
                   <label for="timeSeries_search" class="ml-2 text-sm text-gray-600">Analyze data over time</label>
@@ -598,7 +598,7 @@
               <!-- Content for Tab 3 -->
               <div id="sidebar1" class = "overflow-y-scroll custom-scrollbar  p-4 tab-scrollable-content" style = "max-height: 550px;">
                <div class = "pb-4">
-                <label class="block text-sm font-medium text-gray-800 pb-2">Select Area of Interest <i title = "Select the area within map window or draw" class="fa-solid fa-circle-info"></i></label>
+                <label class="block text-sm font-medium text-gray-800 pb-2">Select Area of Interest <i title = "Select the area within map window or draw" class="fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
                 <!-- dropdown start -->
                 <div class="relative mt-2">
                   <button id="select-button-bbox" type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label">
@@ -670,7 +670,7 @@
                 </div>
 
                 <div class="rounded-md shadow-sm mb-6">
-                  <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-800">Select Action <i title = "Analyze will help to perform operations and download directly downloads the original image bands" class="fa-solid fa-circle-info"></i></label>
+                  <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-800">Select Action <i title = "Analyze will help to perform operations and download directly downloads the original image bands" class="fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
                   <div class="flex items-center space-x-4">
                     <div class="flex items-center p-2">
                       <input type="radio" id="analyze-data" name="option" value="analyze" class="radio-action form-radio h-4 w-4 text-blue-600" checked>
@@ -686,7 +686,7 @@
 
                 <div id = "export-filter-option" class = "pb-4">
                   <div id = "filterOption_export" class = "">
-                    <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-800">Filter Option *</label>
+                    <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-800">Filter Option <span class="text-lg text-black-600">*</span></label>
                     <div class="relative mt-2">
                       <button id="select-button_export" type="button" class="cursor-pointer grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label_export">
                         <span class="col-start-1 row-start-1 flex items-center gap-3 pr-6">
@@ -760,7 +760,7 @@
 
 
                 <div id="band-list-container" class="w-full pb-4 hidden">
-                  <label id="listbox-label_export" class="block text-sm font-medium text-gray-800">Select Bands to Download *</label>
+                  <label id="listbox-label_export" class="block text-sm font-medium text-gray-800">Select Bands to Download <span class="text-lg text-black-600">*</span></label>
                   <div class="relative bg-white">
                     <button id="dropdownButtonBands" class="mt-2 block w-full pl-3 pr-10 py-2 text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm flex flex-auto">
                       <img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full mr-2">
@@ -822,7 +822,7 @@
                               </div>
                           </li>
                           <li class="p-2 border-b border-gray-200">
-                              <label class="block text-sm/6 font-medium text-gray-700 pb-1">Select Cloud Cover <i title = "Less than the input value in percentage" class="fa-solid fa-circle-info"></i></label>
+                              <label class="block text-sm/6 font-medium text-gray-700 pb-1">Select Cloud Cover <i title = "Less than the input value in percentage" class="fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
                               <div class="bg-white mt-4">
                                   <div class="relative bg-inherit">
                                       <input type="number" style="font-size:14px;" id="cloud-cover-export" name="" value="50" class="peer bg-transparent h-10 w-full rounded-lg text-gray-600 placeholder-transparent ring-1 px-2 ring-gray-200 focus:ring-sky-600 focus:outline-none focus:border-rose-600" placeholder="Cloud Cover"/>
@@ -835,38 +835,38 @@
                   </div>
                 </div>
 
-                <div id="analyze-filters">
-                <div class="mb-4 mt-2">
-                  <label class="block text-sm font-medium text-gray-800 pb-4">Select Output Type</label>
-                  <div class="flex items-center mb-2">
-                    <input id="operation" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600" checked>
-                    <label for="operation" class="ml-2 text-sm text-gray-600">Compute</label>
+                <div id="analyze-filters" class="mb-4">
+                  <div class="mb-4 mt-2">
+                    <label class="block text-sm font-medium text-gray-800 pb-4">Select Output Type</label>
+                    <div class="flex items-center mb-2">
+                      <input id="operation" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600" checked>
+                      <label for="operation" class="ml-2 text-sm text-gray-600">Compute</label>
+                    </div>
+                    <div class="flex items-center">
+                      <input id="timeSeries" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600">
+                      <label for="timeSeries" class="ml-2 text-sm text-gray-600">Time Series</label>
+                    </div>
                   </div>
-                  <div class="flex items-center">
-                    <input id="timeSeries" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600">
-                    <label for="timeSeries" class="ml-2 text-sm text-gray-600">Time Series</label>
-                  </div>
-                </div>
 
-                <div id="operation-container" class="w-full">
-                  <label class="block text-sm font-medium text-gray-700">Operation</label>
-                  <select id="operation_menu" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                      <!-- <option value="min" class="text-gray-600">Select Option</option> -->
-                      <option value="median" class="text-gray-600">Median</option>
-                      <option value="mean" class="text-gray-600">Mean</option>
-                      <option value="min" class="text-gray-600">Min</option>
-                      <option value="max" class="text-gray-600">Max</option>
-                      <option value="std" class="text-gray-600">Std</option>
-                      <option value="sum" class="text-gray-600">Sum</option>
-                      <option value="var" class="text-gray-600">Variance</option>
-                      <option value="mode" class="text-gray-600">Mode</option>
-                  </select>
-              </div>
+                  <div id="operation-container" class="w-full">
+                    <label class="block text-sm font-medium text-gray-700">Operation</label>
+                    <select id="operation_menu" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <!-- <option value="min" class="text-gray-600">Select Option</option> -->
+                        <option value="median" class="text-gray-600">Median</option>
+                        <option value="mean" class="text-gray-600">Mean</option>
+                        <option value="min" class="text-gray-600">Min</option>
+                        <option value="max" class="text-gray-600">Max</option>
+                        <option value="std" class="text-gray-600">Std</option>
+                        <option value="sum" class="text-gray-600">Sum</option>
+                        <option value="var" class="text-gray-600">Variance</option>
+                        <option value="mode" class="text-gray-600">Mode</option>
+                    </select>
                 </div>
+              </div>
 
                 
                 <div id = "smartFiltersContainer" class="mb-4 mt-2">
-                  <label class="block text-sm font-medium text-gray-800 pb-1">Smart Filters <i title = "if enabled chooses weekly image for frequency upto 2 months, monthly for up to 1 year , quarterly up to 3 years and semi-annually for more than 3 years. For each period it selects least cloud cover image" class="fa-solid fa-circle-info"></i></label>
+                  <label class="block text-sm font-medium text-gray-800 pb-1">Smart Filters <i title = "if enabled chooses weekly image for frequency upto 2 months, monthly for up to 1 year , quarterly up to 3 years and semi-annually for more than 3 years. For each period it selects least cloud cover image" class="fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
                   <div class="flex items-center">
                     <input id="smart-filters" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600">
                     <label for="smart-filters" class="ml-2 text-sm text-gray-600">Enable Smart Filters</label>
@@ -1057,13 +1057,13 @@
         <button id="timeSeriesTabButton" class="tab-button bg-gray-200 text-blue-500 py-2 px-2 text-sm rounded-tr-lg">Time Series Result</button>
         <button id="timeSeriesTrendTabButton" class="tab-button bg-gray-200 text-blue-500 py-2 px-2 text-sm rounded-tr-lg">Time Series Trend</button>
       </div>
-      <div id="operationContainer" class="hidden">
+      <div id="operationContainer" class="hidden"  style="min-height: 500px;">
         <div id="imageContainer" class="mb-4">
           <img id="operationImageView" class="w-full rounded-md" src="images/image_2022-01-01.jpg" alt="Image">
         </div>
         <div id="operationDateDisplay" class="text-center text-sm text-gray-700 mb-4">Start Date</div>
       </div>
-      <div id="timeSeriesContainer" class="hidden">
+      <div id="timeSeriesContainer" class="hidden" style="min-height: 500px;">
         <div id="timeSeriesImageContainer" class="mb-4">
           
         </div>
@@ -1079,7 +1079,7 @@
           <!-- Markers will be generated dynamically -->
         </div>
       </div>
-      <div id="timeSeriesTrendContainer" class="hidden">
+      <div id="timeSeriesTrendContainer" class="hidden"  style="min-height: 500px;">
         <div id="trendImageContainer" class="mb-4">
           <img id="trendImageView" class="w-full rounded-md" src="images/image_2022-01-01.jpg" alt="Image">
         </div>
