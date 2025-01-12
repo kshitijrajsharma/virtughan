@@ -172,7 +172,7 @@ def smart_filter_images(features, start_date: str, end_date: str):
     last_selected_date = None
     best_feature = None
     print(
-        f"Filter from : {features[-1]["properties"]["datetime"].split("T")[0]} to : {features[0]["properties"]["datetime"].split("T")[0]}"
+        f"""Filter from : {features[-1]["properties"]["datetime"].split("T")[0]} to : {features[0]["properties"]["datetime"].split("T")[0]}"""
     )
     print(f"Selecting 1 image per {frequency.days} days")
 
