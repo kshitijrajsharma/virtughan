@@ -981,12 +981,13 @@
 
    <!-- Result and timeslider modal start -->
    <div id="timeSliderModal" class="modal hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-40">
-    <div class="modal-content bg-white p-4 rounded-md w-full max-w-md">
+    <div class="modal-content bg-white p-4 rounded-md w-full max-w-lg">
       <span class="close text-gray-500 hover:text-gray-700 float-right text-2xl cursor-pointer">&times;</span>
       <h2 class="text-lg font-semibold mb-4">View Result</h2>
       <div class="tabs mb-4" id="tabs">
-        <button id="operationTabButton" class="tab-button active bg-blue-500 text-white py-2 px-4 rounded-tl-lg">Operation Result</button>
-        <button id="timeSeriesTabButton" class="tab-button bg-gray-200 text-blue-500 py-2 px-4 rounded-tr-lg">Time Series Result</button>
+        <button id="operationTabButton" class="tab-button active bg-blue-500 text-white py-2 px-2 text-sm rounded-tl-lg">Operation Result</button>
+        <button id="timeSeriesTabButton" class="tab-button bg-gray-200 text-blue-500 py-2 px-2 text-sm rounded-tr-lg">Time Series Result</button>
+        <button id="timeSeriesTrendTabButton" class="tab-button bg-gray-200 text-blue-500 py-2 px-2 text-sm rounded-tr-lg">Time Series Trend</button>
       </div>
       <div id="operationContainer" class="hidden">
         <div id="imageContainer" class="mb-4">
@@ -1009,6 +1010,12 @@
         <div class="slider-markers flex justify-between text-sm text-gray-700">
           <!-- Markers will be generated dynamically -->
         </div>
+      </div>
+      <div id="timeSeriesTrendContainer" class="hidden">
+        <div id="trendImageContainer" class="mb-4">
+          <img id="trendImageView" class="w-full rounded-md" src="images/image_2022-01-01.jpg" alt="Image">
+        </div>
+        <div id="trendDateDisplay" class="text-center text-sm text-gray-700 mb-4">Start Date</div>
       </div>
     </div>
   </div>
@@ -2279,6 +2286,7 @@ function updateColor(values, scaleName) {
         
 
         document.getElementById('operationImageView').src ="";
+        document.getElementById('trendImageView').src ="";
         clearPreviousTimeSeriesData();
 
         document.getElementById("colorPalettes").classList.remove("hidden");
@@ -3001,6 +3009,7 @@ function updateColor(values, scaleName) {
               // Display single image for operation
               document.getElementById('operationContainer').classList.remove('hidden');
               document.getElementById('timeSeriesContainer').classList.add('hidden');
+              document.getElementById('timeSeriesTrendContainer').classList.add('hidden');
               document.getElementById('tabs').classList.add('hidden');
               document.getElementById('operationImageView').src = 'static/export/custom_band_output_aggregate_colormap.png';
               document.getElementById('operationDateDisplay').textContent = '';
@@ -3009,8 +3018,10 @@ function updateColor(values, scaleName) {
               // Display time series
               document.getElementById('operationContainer').classList.add('hidden');
               document.getElementById('timeSeriesContainer').classList.remove('hidden');
+              document.getElementById('timeSeriesTrendContainer').classList.remove('hidden');
               document.getElementById('tabs').classList.add('hidden');
               document.getElementById('timeSliderModal').classList.remove('hidden');
+              document.getElementById('trendImageView').src = 'static/export/values_over_time.png';
 
               // Fetch data
               const urlLists = '/list-files';
@@ -3036,10 +3047,13 @@ function updateColor(values, scaleName) {
               document.getElementById('tabs').classList.remove('hidden');
               document.getElementById('operationContainer').classList.remove('hidden');
               document.getElementById('timeSeriesContainer').classList.add('hidden');
+              document.getElementById('timeSeriesTrendContainer').classList.add('hidden');
               document.getElementById('timeSliderModal').classList.remove('hidden');
               // Load operation image initially
               document.getElementById('operationImageView').src = 'static/export/custom_band_output_aggregate_colormap.png';
               document.getElementById('operationDateDisplay').textContent = '';
+
+              document.getElementById('trendImageView').src = 'static/export/values_over_time.png';
 
               // Fetch data for time series
               const urlLists = '/list-files';
@@ -3062,17 +3076,24 @@ function updateColor(values, scaleName) {
           if (tab === 'operation') {
               document.getElementById('operationContainer').classList.remove('hidden');
               document.getElementById('timeSeriesContainer').classList.add('hidden');
-              document.getElementById('operationImageView').src = 'static/export/custom_band_output_aggregate_colormap.png';
+              document.getElementById('timeSeriesTrendContainer').classList.add('hidden');
+              // document.getElementById('operationImageView').src = 'static/export/custom_band_output_aggregate_colormap.png';
               document.getElementById('operationDateDisplay').textContent = '';
           } else if (tab === 'timeSeries') {
               document.getElementById('operationContainer').classList.add('hidden');
               document.getElementById('timeSeriesContainer').classList.remove('hidden');
+              document.getElementById('timeSeriesTrendContainer').classList.add('hidden');
               // Show the first time series image and date
               if (loadedImages.length > 0 && dates.length > 0) {
                   document.getElementById('timeSeriesImageContainer').innerHTML = '';
                   document.getElementById('timeSeriesImageContainer').appendChild(loadedImages[0]);
                   document.getElementById('dateDisplay').textContent = new Date(dates[0]).toLocaleDateString();
               }
+          }
+          else if (tab === 'timeSeriesTrend'){
+            document.getElementById('operationContainer').classList.add('hidden');
+            document.getElementById('timeSeriesContainer').classList.add('hidden');
+            document.getElementById('timeSeriesTrendContainer').classList.remove('hidden');
           }
       }
     
@@ -3155,6 +3176,7 @@ function updateColor(values, scaleName) {
       document.querySelector('.close').addEventListener('click', closeModal); 
       document.getElementById('operationTabButton').addEventListener('click', () => switchTab('operation')); 
       document.getElementById('timeSeriesTabButton').addEventListener('click', () => switchTab('timeSeries')); 
+      document.getElementById('timeSeriesTrendTabButton').addEventListener('click', () => switchTab('timeSeriesTrend')); 
       // Optional: Close the modal when clicking outside of it 
       window.addEventListener('click', (event) => { 
         if (event.target === document.getElementById('timeSliderModal')) { 
