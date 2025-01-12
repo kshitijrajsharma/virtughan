@@ -401,7 +401,7 @@
               </div>
               <div id="operation-container_search" class="w-full hidden">
                 <label class="block text-sm font-medium text-gray-700">Operation</label>
-                <select id="operation_menu_search" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <select id="operation_menu_search" style = "border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 bg-white text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                     <!-- <option value="min" class="text-gray-600">Select Option</option> -->
                     <option value="median" class="text-gray-600">Median</option>
                     <option value="mean" class="text-gray-600">Mean</option>
@@ -1039,7 +1039,7 @@
         <div id="trendImageContainer" class="mb-4">
           <img id="trendImageView" class="w-full rounded-md" src="images/image_2022-01-01.jpg" alt="Image">
         </div>
-        <div id="trendDateDisplay" class="text-center text-sm text-gray-700 mb-4">Start Date</div>
+      
       </div>
     </div>
   </div>
@@ -3097,6 +3097,7 @@ function updateColor(values, scaleName) {
                               document.getElementById('timeSeriesImageContainer').innerHTML = '';
                               document.getElementById('timeSeriesImageContainer').appendChild(loadedImages[0]);
                               document.getElementById('dateDisplay').textContent = new Date(dates[0]).toLocaleDateString();
+                              // changeImage();
                           }
                           stopLoader("timeSeriesContainer");
                       });
@@ -3131,6 +3132,13 @@ function updateColor(values, scaleName) {
                       processData(data);
                       preloadImages(pngImages, () => {
                           initializeSlider();
+                          // Load the first image at start
+                          if (loadedImages.length > 0 && dates.length > 0) {
+                              document.getElementById('timeSeriesImageContainer').innerHTML = '';
+                              document.getElementById('timeSeriesImageContainer').appendChild(loadedImages[0]);
+                              document.getElementById('dateDisplay').textContent = new Date(dates[0]).toLocaleDateString();
+                              // changeImage();
+                          }
                           stopLoader("timeSeriesContainer");
                       });
                   })
