@@ -1474,6 +1474,8 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           document.getElementById("searchBboxLayerSwitcher").classList.remove("hidden");
           // startProgressComputation('search', null);
 
+          document.getElementById("search_layer").checked = true;
+
           var bounds = map.getBounds();
           tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
           tile_params.startDate = document.getElementById("start-date").value;
