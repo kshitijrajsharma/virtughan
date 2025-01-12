@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://cloudconvert.com/
+HostUrl=https://cloudconvert-files.s3.eu-central-1.amazonaws.com/8a93bf13-2f29-4a38-bba8-ad8618a29533/hand-regular.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAI2WCZ54772T33JEQ%2F20250112%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20250112T155001Z&X-Amz-Expires=86400&X-Amz-Signature=f86be5ee6425ff37ee6756824a235495524426f36cb99aa69dfdeb7f47f3c906&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3D%22hand-regular.png%22&response-content-type=image%2Fpng&x-id=GetObject
