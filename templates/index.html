@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
+    
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <!-- tailwind start -->
@@ -220,6 +221,31 @@
 }
 </style>
 
+<style>
+ .leaflet-control-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.map-loader {
+  border: 4px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 4px solid #3498db;
+  width: 24px;
+  height: 24px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+
   </head>
   <body>
     <header class="bg-white shadow-md py-4 border-b border-gray-300">
@@ -305,7 +331,7 @@
                     <hr/>
                     <li id = "custom-filter_search" class="relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1_search" role="option">
                       <div class="flex items-center">
-                        <img src="static/img/plus.png" alt="" class="size-5 shrink-0 rounded-full">
+                        <img src="static/img/plus-blue.png" alt="" class="size-5 shrink-0 rounded-full">
                         <span class="ml-3 block truncate font-normal text-blue-500">Custom Filter</span>
                       </div>
                       <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
@@ -652,7 +678,7 @@
                         <hr/>
                         <li id = "custom-filter_export" class="relative select-none py-2 pl-3 pr-9 text-gray-900 cursor-pointer hover:bg-gray-100" id="listbox-option-1" role="option">
                           <div class="flex items-center">
-                            <img src="static/img/plus.png" alt="" class="size-5 shrink-0 rounded-full">
+                            <img src="static/img/plus-blue.png" alt="" class="size-5 shrink-0 rounded-full">
                             <span class="ml-3 block truncate font-normal text-blue-500">Custom Filter</span>
                           </div>
                           <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
@@ -677,11 +703,12 @@
 
                 <div id="band-list-container" class="w-full pb-4 hidden">
                   <label id="listbox-label_export" class="block text-sm font-medium text-gray-800">Select Bands to Download *</label>
-                  <div class="relative">
-                    <button id="dropdownButtonBands" class="mt-1 block w-full pl-3 pr-10 py-2 text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                      Select Bands
+                  <div class="relative bg-white">
+                    <button id="dropdownButtonBands" class="mt-2 block w-full pl-3 pr-10 py-2 text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm flex flex-auto">
+                      <img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full mr-2">
+                       Select Bands
                     </button>
-                    <div id="dropdownMenuBands" class="hidden absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
+                    <div id="dropdownMenuBands" class="hidden absolute mt-2 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
                       <div class="max-h-60 overflow-auto custom-scrollbar">
                         <label class="flex items-center px-3 py-2"><input type="checkbox" value="RED" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">RED</span></label>
                         <label class="flex items-center px-3 py-2"><input type="checkbox" value="GREEN" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">GREEN</span></label>
@@ -1316,6 +1343,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
         // Add the layers control to the map
         L.control.layers(baseLayers).addTo(map);
 
+        
 
       //add osm search control
       // container for address search results
@@ -1351,6 +1379,31 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
       });
 
 
+        // Custom loader control
+        const LoaderControl = L.Control.extend({
+          onAdd: function(map) {
+            const loaderDiv = L.DomUtil.create('div', 'leaflet-control-loader');
+            loaderDiv.innerHTML = '<div class="map-loader"></div>';
+            loaderDiv.style.display = 'none';
+            return loaderDiv;
+          },
+        });
+
+        const loaderControl = new LoaderControl({ position: 'topleft' });
+        loaderControl.addTo(map);
+
+      function showLoaderOnMap(layer){
+        console.log("entered");
+        // Show loader when tiles start loading
+        layer.on('loading', () => {
+          loaderControl.getContainer().style.display = 'block';
+        });
+
+        // Hide loader when tiles are fully loaded
+        layer.on('load', () => {
+          loaderControl.getContainer().style.display = 'none';
+        });
+      }
 
       var geojsonLayer;
       var liveLayer;
@@ -1648,7 +1701,10 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
                     attribution:
                       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
                   }
-                ).addTo(map);
+                );
+
+                showLoaderOnMap(liveLayer);
+                liveLayer.addTo(map);
 
                 initializeTransparency();
               
@@ -2470,6 +2526,7 @@ function updateColor(values, scaleName) {
                        // Get continuous color
                   }
               });
+              showLoaderOnMap(computeLayer);
               map.addLayer(computeLayer);
               updateLegend(selectedPalette);
 
@@ -3195,7 +3252,7 @@ function updateColor(values, scaleName) {
     checkboxes.forEach(function(checkbox) {
         checkbox.addEventListener('change', function() {
             const selectedOptions = Array.from(checkboxes).filter(chk => chk.checked).map(chk => chk.value);
-            dropdownButton.textContent = selectedOptions.length > 0 ? selectedOptions.join(', ') : 'Select Bands';
+            dropdownButton.innerHTML = selectedOptions.length > 0 ? selectedOptions.join(', ') : `<img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full mr-2">Select Bands`;
             export_params.bands_list = selectedOptions.length > 0 ? selectedOptions.join(',').toLowerCase() : "";
 
             document.getElementById("export-map-view-button").classList.remove('bg-gray-500', 'pointer-events-none');
