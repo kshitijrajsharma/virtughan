@@ -3011,6 +3011,28 @@ function updateColor(values, scaleName) {
 
   <!-- result modal script for result and timeslider start -->
   <script>
+    // Function to check if the image is loaded
+    function checkImageLoaded(imageId, loaderContainer) {
+      const img = document.getElementById(imageId);
+
+      // Event listener for when the image loads successfully
+      img.addEventListener('load', () => {
+        console.log('Image has loaded.');
+        stopLoader(loaderContainer);
+      });
+
+      // Optional: Event listener for when there's an error loading the image
+      img.addEventListener('error', () => {
+        console.log('Failed to load the image.');
+       
+      });
+
+      // Check if the image is already loaded (e.g., from cache)
+      if (img.complete && img.naturalHeight !== 0) {
+        console.log('Image has already been loaded.');
+        
+      }
+    }
     document.addEventListener('DOMContentLoaded', (event) => {
 
       // Preload images
@@ -3072,7 +3094,9 @@ function updateColor(values, scaleName) {
               document.getElementById('operationImageView').src = 'static/export/custom_band_output_aggregate_colormap.png';
               document.getElementById('operationDateDisplay').textContent = '';
               document.getElementById('timeSliderModal').classList.remove('hidden');
-              stopLoader("operationContainer");
+              
+              checkImageLoaded("operationImageView", "operationContainer"); //remove loader after image is loaded.
+
           } else if (timeSeriesChecked && !operationChecked) {
               startLoader("timeSeriesContainer");
               startLoader("trendImageContainer");
@@ -3106,7 +3130,8 @@ function updateColor(values, scaleName) {
                       console.error('Error:', error);
                   });
 
-              stoptLoader("trendImageContainer");
+                  checkImageLoaded("trendImageView", "trendImageContainer");
+ 
 
           } else if (operationChecked && timeSeriesChecked) {
               startLoader("operationContainer");
@@ -3146,8 +3171,8 @@ function updateColor(values, scaleName) {
                       console.error('Error:', error);
                   });
             
-            stopLoader("operationContainer");      
-            stopLoader("trendImageContainer");
+              checkImageLoaded("operationImageView", "operationContainer");
+              checkImageLoaded("trendImageView", "trendImageContainer");  
           }
           
       }
