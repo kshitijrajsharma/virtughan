@@ -152,22 +152,29 @@ def smart_filter_images(features, start_date: str, end_date: str):
     end = datetime.fromisoformat(end_date)
     total_days = (end - start).days
 
-    if total_days <= 60:
-        # For a time range of up to 2 months, select 1 image per week
-        frequency = timedelta(weeks=1)
+    if total_days <= 30 * 3:
+        # For a time range of up to 3 months, select 1 image per 4 days
+        frequency = timedelta(days=4)
+
     elif total_days <= 365:
-        # For a time range of up to 1 year, select 1 image per month
+        frequency = timedelta(days=15)
+
+    elif total_days <= 2 * 365:
         frequency = timedelta(days=30)
+
     elif total_days <= 3 * 365:
-        # For a time range of up to 3 years, select 1 image per 3 months
-        frequency = timedelta(days=90)
+        frequency = timedelta(days=45)
     else:
-        # rest, select 1 image per 6 months
-        frequency = timedelta(days=180)
+        # rest, select 1 image per 2 months
+        frequency = timedelta(days=60)
 
     filtered_features = []
     last_selected_date = None
     best_feature = None
+    print(
+        f"Filter from : {features[-1]["properties"]["datetime"].split("T")[0]} to : {features[0]["properties"]["datetime"].split("T")[0]}"
+    )
+    print(f"Selecting 1 image per {frequency.days} days")
 
     for feature in sorted(features, key=lambda x: x["properties"]["datetime"]):
         date = datetime.fromisoformat(feature["properties"]["datetime"].split("T")[0])

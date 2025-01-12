@@ -193,8 +193,13 @@ class VCubeProcessor:
                         self.result_list.append(result)
                         self.crs = crs
                         self.transform = transform
+                        parts = name_url.split("/")
+                        image_name = parts[
+                            -2
+                        ]  # fix this for other images than sentinel
+                        self.dates.append(image_name.split("_")[2])
                         if self.timeseries:
-                            self._save_intermediate_image(result, name_url)
+                            self._save_intermediate_image(result, image_name)
         else:
             for band1_url, band2_url in tqdm(
                 zip(band1_urls, band2_urls),
@@ -207,19 +212,21 @@ class VCubeProcessor:
                 )
                 if result is not None:
                     self.result_list.append(result)
-                    if self.timeseries:
-                        self._save_intermediate_image(result, name_url)
+                    parts = name_url.split("/")
+                    image_name = parts[-2]
+                    self.dates.append(image_name.split("_")[2])
 
-    def _save_intermediate_image(self, result, band1_url):
-        parts = band1_url.split("/")
-        image_name = parts[-2]
+                    if self.timeseries:
+                        self._save_intermediate_image(result, image_name)
+
+    def _save_intermediate_image(self, result, image_name):
+
         output_file = os.path.join(self.output_dir, f"{image_name}_result.tif")
         self._save_geotiff(result, output_file)
         self.intermediate_images.append(output_file)
         self.intermediate_images_with_text.append(
             self.add_text_to_image(output_file, image_name)
         )
-        self.dates.append(image_name)
 
     def _save_geotiff(self, data, output_file):
         nodata_value = -9999
@@ -239,26 +246,6 @@ class VCubeProcessor:
         ) as dst:
             for band in range(1, data.shape[0] + 1):
                 dst.write(data[band - 1], band)
-
-    def _aggregate_results(self):
-        max_shape = tuple(max(s) for s in zip(*[arr.shape for arr in self.result_list]))
-        padded_result_list = [
-            self._pad_array(arr, max_shape) for arr in self.result_list
-        ]
-        result_stack = np.ma.stack(padded_result_list)
-
-        operations = {
-            "mean": np.ma.mean,
-            "median": np.ma.median,
-            "max": np.ma.max,
-            "min": np.ma.min,
-            "std": np.ma.std,
-            "sum": np.ma.sum,
-            "var": np.ma.var,
-            # "mode": lambda arr: mode(arr, axis=0, nan_policy="omit")[0].squeeze(),
-        }
-
-        return operations[self.operation](result_stack, axis=0)
 
     def _aggregate_results(self):
 
@@ -283,7 +270,7 @@ class VCubeProcessor:
 
         aggregated_result = operations[self.operation](result_stack, axis=0)
 
-        dates = [name.split("_")[2] for name in sorted_dates]
+        dates = sorted_dates
         dates_numeric = np.arange(len(dates))
 
         values_per_date = operations[self.operation](result_stack, axis=(1, 2, 3))
