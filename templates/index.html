@@ -3005,6 +3005,7 @@ function updateColor(values, scaleName) {
       function openModal() {
           const operationChecked = document.getElementById('operation').checked;
           const timeSeriesChecked = document.getElementById('timeSeries').checked;
+          document.getElementById("operationTabButton").click();
           if (operationChecked && !timeSeriesChecked) {
               // Display single image for operation
               document.getElementById('operationContainer').classList.remove('hidden');
