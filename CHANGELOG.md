@@ -1,3 +1,19 @@
+## 0.5.0 (2025-01-12)
+
+### Feat
+
+- **smartfilter**: added smartfilter on the api requests
+- loader implemented in view modal of result
+- loader on image list - result tab
+- time series trend added to result view
+
+### Fix
+
+- export clear now clearing the band select button
+- search layer not checked after search button click in second attempt after unchecking result layer
+- view result active tab issue after close modal
+- **stac**: make stac api url single and avoid repeatition
+
 ## 0.4.0 (2025-01-11)
 
 ### Feat
