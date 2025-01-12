@@ -246,6 +246,30 @@
 }
 </style>
 
+<style>
+  /* New loader styles */
+.html-loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 6px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 6px solid #ff5733; /* Different color */
+  animation: spin 1s linear infinite; /* Faster spin */
+  display: none; /* Hide loader initially */
+  z-index: 5;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+</style>
+
   </head>
   <body>
     <header class="bg-white shadow-md py-4 border-b border-gray-300">
@@ -1275,6 +1299,31 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
 
     
   </script>
+
+  <script>
+    // document.addEventListener('DOMContentLoaded', () => {
+      // Function to start the new loader for a specific div
+      function startLoader(divId) {
+        const targetDiv = document.getElementById(divId);
+        targetDiv.style.position = 'relative';
+        if (!targetDiv.querySelector('.html-loader')) {
+          const loaderDiv = document.createElement('div');
+          loaderDiv.classList.add('html-loader');
+          targetDiv.appendChild(loaderDiv);
+        }
+        targetDiv.querySelector('.html-loader').style.display = 'block'; // Show loader
+      }
+
+      // Function to stop the new loader for a specific div
+      function stopLoader(divId) {
+        const targetDiv = document.getElementById(divId);
+        const loader = targetDiv.querySelector('.html-loader');
+        if (loader) {
+          loader.style.display = 'none'; // Hide loader
+        }
+      }
+    // });
+  </script>
   
 
 
@@ -1472,7 +1521,11 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
           document.getElementById("layerSwitcherContainer").classList.remove("hidden");
           document.getElementById("searchLayerSwitcher").classList.remove("hidden");
           document.getElementById("searchBboxLayerSwitcher").classList.remove("hidden");
+          document.getElementById("feature-list").innerHTML = "";
           // startProgressComputation('search', null);
+
+          startLoader('feature-list');
+          document.getElementById("search_layer").checked = true;
 
           var bounds = map.getBounds();
           tile_params.bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
@@ -1683,6 +1736,7 @@ document.querySelectorAll('.template-filters').forEach(function(item) {
                 })
                 featureList.appendChild(featureItem);
               });
+              stopLoader('feature-list');
 
               document.getElementById("sidebar").style.display = "block";
 
