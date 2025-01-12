@@ -73,14 +73,7 @@
         /* Tailwind's gray-900 */ 
         cursor: pointer;
       }
-
-      /* for responsive */
-      @media (max-height: 600px) {
-        .custom-scrollbar {
-          max-height: 90vh; /* Adjust this value as needed */
-        }
-      }
-
+      
     </style>
     <style>
       #map {
@@ -905,7 +898,7 @@
 
   <!-- filter modal start -->
   <div id="modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-40">
-    <div class="bg-white rounded-lg shadow-lg p-6 w-full sm:w-4/5 md:w-3/5 lg:w-2/5 max-h-screen relative overflow-y-auto custom-scrollbar">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full sm:w-4/5 md:w-3/5 lg:w-2/5 max-h-[80vh] relative overflow-y-auto custom-scrollbar">
       <button id="closeModal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
           <i class="fas fa-times"></i>
       </button>
@@ -1029,9 +1022,8 @@
   <!-- filter modal end -->
 
   <!-- upload modal start -->
-  <!-- upload modal start -->
   <div id="uploadModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden z-40">
-    <div class="bg-white rounded-lg shadow-md p-6 w-full sm:w-4/5 md:w-3/5 lg:w-2/5 max-h-screen relative overflow-y-auto custom-scrollbar">
+    <div class="bg-white rounded-lg shadow-md p-6 w-full sm:w-4/5 md:w-3/5 lg:w-2/5 max-h-[80vh] relative overflow-y-auto custom-scrollbar">
         <h2 class="text-2xl font-semibold mb-4">Upload or Paste GeoJSON File</h2>
         
         <!-- Drag and Drop or Upload Section -->
@@ -1057,7 +1049,7 @@
 
    <!-- Result and timeslider modal start -->
    <div id="timeSliderModal" class="modal hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-40">
-    <div class="modal-content bg-white p-4 rounded-md w-full sm:w-4/5 md:w-3/5 lg:w-2/5 max-h-screen relative overflow-y-auto custom-scrollbar">
+    <div class="modal-content bg-white p-4 rounded-md w-full sm:w-4/5 md:w-3/5 lg:w-2/5 max-h-[80vh] relative overflow-y-auto custom-scrollbar">
       <span class="close text-gray-500 hover:text-gray-700 float-right text-2xl cursor-pointer">&times;</span>
       <h2 class="text-lg font-semibold mb-4">View Result</h2>
       <div class="tabs mb-4" id="tabs">
@@ -1102,26 +1094,36 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     function adjustMainHeight() {
-      const header = document.querySelector('header');
-      const tabs = document.getElementById('filterTab');
-      const info = document.getElementById('info');
-      const tabPanels = document.querySelectorAll('.tab-scrollable-content');
-      
-      //get whichever has the maximum height between the buttons at the bottom live and export tabs
-      var buttons = document.querySelectorAll('.bottom-sticky-buttons');
+        const header = document.querySelector('header');
+        const tabs = document.getElementById('filterTab');
+        const info = document.getElementById('info');
+        const tabPanels = document.querySelectorAll('.tab-scrollable-content');
 
-      var maxHeight = 0;
+        // Get whichever has the maximum height between the buttons at the bottom live and export tabs
+        var buttons = document.querySelectorAll('.bottom-sticky-buttons');
 
-      // Loop through the buttons to find the one with the highest height
-      buttons.forEach(function(button) {
-          var buttonHeight = button.offsetHeight;
-          if (buttonHeight > maxHeight) {
-              maxHeight = buttonHeight;
-          }
-      });
+        var maxHeight = 0;
 
-      var containerheight = header.offsetHeight + tabs.offsetHeight+maxHeight +70; //extra 60 added for bottom sticky contents
-      tabPanels.forEach(function(tabPanel) { tabPanel.style.height = `calc(100vh - ${containerheight}px)`; });
+        // Loop through the buttons to find the one with the highest height
+        buttons.forEach(function(button) {
+            var buttonHeight = button.offsetHeight;
+            if (buttonHeight > maxHeight) {
+                maxHeight = buttonHeight;
+            }
+        });
+
+        var containerHeight = header.offsetHeight + tabs.offsetHeight + maxHeight + 70; // extra 70 added for bottom sticky contents
+
+        // Check if the viewport is a tablet or mobile
+        var isTabletOrMobile = window.innerWidth <= 1024;
+
+        // Calculate the height based on the condition
+        var percentageHeight = isTabletOrMobile ? 90 : 100; // Use 90% for tablets and mobile, 100% otherwise
+        var heightCalculation = `calc(${percentageHeight}vh - ${containerHeight}px)`;
+
+        tabPanels.forEach(function(tabPanel) {
+            tabPanel.style.height = heightCalculation;
+        });
     }
 
     // Initial check on page load
@@ -1129,7 +1131,8 @@
 
     // Update on window resize
     window.addEventListener('resize', adjustMainHeight);
-  });
+});
+
 </script>
 
   <script>
