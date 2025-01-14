@@ -2619,6 +2619,10 @@ function updateColor(values, scaleName) {
           }
         }
 
+        if (computeLayer) {
+            map.removeLayer(computeLayer);
+        }
+
       });
 
 
@@ -2631,11 +2635,12 @@ function updateColor(values, scaleName) {
       var selectedPalette = getSelectedPalette();
       // console.log(selectedPalette);
 
+      
+
       function plotGeoTIFF(tifUrl) {
         if (computeLayer) {
-          map.removeLayer(computeLayer);
+            map.removeLayer(computeLayer);
         }
-
         fetch(tifUrl)
           .then(response => response.arrayBuffer())
           .then(arrayBuffer => {
@@ -2820,7 +2825,7 @@ function updateColor(values, scaleName) {
     <script>
       document.addEventListener('DOMContentLoaded', (event) => {
       document.querySelectorAll('.output_type').forEach((checkbox) => {
-        checkbox.addEventListener('change', function(event){
+        checkbox.addEventListener('click', function(event){
           // const radioId = event.target.id;
           // for export time series checkbox
           var checkedStatusOperation = document.getElementById("operation").checked;
@@ -2828,7 +2833,7 @@ function updateColor(values, scaleName) {
 
           if(checkedStatusOperation){
             document.getElementById("operation-container").classList.remove("hidden");
-            
+            export_params.operation = document.getElementById("operation_menu").value;
           }
           else{
             export_params.operation = "none";
@@ -3219,7 +3224,8 @@ function updateColor(values, scaleName) {
               document.getElementById('operationContainer').classList.add('hidden');
               document.getElementById('timeSeriesContainer').classList.remove('hidden');
               document.getElementById('timeSeriesTrendContainer').classList.remove('hidden');
-              document.getElementById('tabs').classList.add('hidden');
+              document.getElementById('tabs').classList.remove('hidden');
+              document.getElementById('operationTabButton').classList.add('hidden');
               document.getElementById('timeSliderModal').classList.remove('hidden');
               document.getElementById('trendImageView').src = 'static/export/values_over_time.png';
 
