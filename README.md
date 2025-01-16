@@ -17,6 +17,8 @@
 
 ### Install 
 
+As a python package : 
+
 https://pypi.org/project/VirtuGhan/ 
 
 ```bash
