@@ -124,7 +124,7 @@ Learn about COG and how to generate one for this project [Here](./docs/cog.md)
 
 
 ### Sample case study : 
-[Download Video](https://krschap.nyc3.cdn.digitaloceanspaces.com/virtughan.MP4)
+[Watch Video](https://krschap.nyc3.cdn.digitaloceanspaces.com/virtughan.MP4)
  
 
 ## Local Setup 
