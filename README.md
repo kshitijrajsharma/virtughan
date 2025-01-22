@@ -149,7 +149,7 @@ This project was undertaken as part of the project work for our master's program
   <img src="https://github.com/user-attachments/assets/e553c675-f8e5-440a-b50f-625d0ce4f0c9" alt="EU_POS_transparent" style="width:200px;"/>
 </p>
 
-### Copyright 
+## Copyright 
 
 © 2024 – Concept by Kshitij and Upen , Distributed under GNU General Public License v3.0 
 
