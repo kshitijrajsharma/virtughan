@@ -31,7 +31,7 @@ pip install VirtuGhan
 
 This research explores how to perform real-time calculations on satellite images at different zoom levels, similar to Google Earth Engine, but using open-source tools. By using Cloud Optimized GeoTIFFs (COGs) with Sentinel-2 imagery, large images can be analyzed without needing to pre-process or store them. The study highlights how this method can scale well and work efficiently, even with limited hardware. Our main focus is on how to scale the computation on different zoom-levels without introducing server overhead 
 
-![On the Fly Demo](https://krschap.nyc3.cdn.digitaloceanspaces.com/ontheflydemo.gif)
+[Watch](https://krschap.nyc3.cdn.digitaloceanspaces.com/ontheflydemo.gif)
 
 #### Example python usage
 
