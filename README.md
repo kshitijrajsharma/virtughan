@@ -142,3 +142,8 @@ Inorder to setup project , follow [here](./docs/install.md)
 
 #### Copyright © 2024 – Concept by Kshitij and Upen , Distributed under GNU General Public License v3.0 
 
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/2f0555f8-67c3-49da-a0e8-037bdfd4ce10" alt="CMIDE-InLine-logoCMYK" style="width:200px;"/>
+  <img src="https://github.com/user-attachments/assets/e553c675-f8e5-440a-b50f-625d0ce4f0c9" alt="EU_POS_transparent" style="width:200px;"/>
+</p>
+
