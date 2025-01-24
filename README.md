@@ -135,6 +135,13 @@ This project has FASTAPI and Plain JS Frontend.
 
 Inorder to setup project , follow [here](./docs/install.md)
 
+## Tech Stack 
+<p align="left">
+ <img src="https://github.com/user-attachments/assets/86e41e87-5269-48e4-a462-8b355cbe552f" style="width:200px;"/>
+ <img src="https://github.com/user-attachments/assets/5805b809-28f7-4574-a0f2-9a41af63d20b" style="width:200px;"/>
+ <img src="https://github.com/user-attachments/assets/00ea7127-6954-4003-9ed5-a8840373ea2a" style="width:200px;"/>
+</p>
+
 ## Resources and Credits 
 
 - https://registry.opendata.aws/sentinel-2-l2a-cogs/ COGS Stac API for sentinel-2
