@@ -5,6 +5,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import numpy as np
 import rasterio
 from pyproj import Transformer
+from rasterio.enums import Resampling
+from rasterio.warp import reproject
 from rasterio.windows import from_bounds
 from tqdm import tqdm
 
@@ -99,6 +101,14 @@ class ExtractProcessor:
         try:
             bands = []
             bands_meta = []
+            resolutions = []
+
+            for band_url in band_urls:
+                with rasterio.open(band_url) as band_cog:
+                    resolutions.append(band_cog.res)
+
+            lowest_resolution = max(resolutions, key=lambda res: res[0] * res[1])
+
             for band_url in band_urls:
                 with rasterio.open(band_url) as band_cog:
                     min_x, min_y, max_x, max_y = self._transform_bbox(band_cog.crs)
@@ -110,9 +120,34 @@ class ExtractProcessor:
                         return None
                     self.crs = band_cog.crs
                     self.transform = band_cog.transform
+
                     band_data = band_cog.read(1, window=band_window).astype(float)
+
+                    # Resample if necessary
+                    if band_cog.res != lowest_resolution:
+                        scale_factor_x = band_cog.res[0] / lowest_resolution[0]
+                        scale_factor_y = band_cog.res[1] / lowest_resolution[1]
+                        band_data = reproject(
+                            source=band_data,
+                            destination=np.empty(
+                                (
+                                    int(band_data.shape[0] * scale_factor_y),
+                                    int(band_data.shape[1] * scale_factor_x),
+                                ),
+                                dtype=band_data.dtype,
+                            ),
+                            src_transform=band_cog.transform,
+                            src_crs=band_cog.crs,
+                            dst_transform=band_cog.transform
+                            * band_cog.transform.scale(scale_factor_x, scale_factor_y),
+                            dst_crs=band_cog.crs,
+                            resampling=Resampling.average,
+                        )[0]
+
                     bands.append(band_data)
                     bands_meta.append(band_url.split("/")[-1].split(".")[0])
+
+            print("Stacking Bands...")
             stacked_bands = np.stack(bands)
             output_file = os.path.join(
                 self.output_dir, f"{feature_id}_bands_export.tif"
@@ -121,6 +156,7 @@ class ExtractProcessor:
             return output_file
         except Exception as ex:
             print(f"Error fetching bands: {ex}")
+            raise ex
             return None
 
     def _save_geotiff(self, bands, output_file, bands_meta=None):
