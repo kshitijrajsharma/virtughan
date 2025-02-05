@@ -1,3 +1,12 @@
+## 0.6.1 (2025-02-05)
+
+### Fix
+
+- **band**: fixes bug on inconsistent band value stack
+- result view section tab issues fixed
+- **utils**: update print statement formatting in smart_filter_images function
+- **example**: update VirtuGhan version in usage example to 0.6.0
+
 ## 0.6.0 (2025-01-12)
 
 ### Feat
