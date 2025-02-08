@@ -1,4 +1,4 @@
-# **VirtuGhan: A Virtual Data Cube for On-the-Fly Geospatial Computations and Tiling**
+# **VirtuGhan: A Virtual Computation Cube for On-the-Fly Geospatial Computations and Tiling**
 
 ## **Authors**
 
