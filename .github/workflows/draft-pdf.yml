@@ -1,6 +1,13 @@
 name: Draft PDF
-on: [push]
-
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+  
 jobs:
   paper:
     runs-on: ubuntu-latest
