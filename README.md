@@ -71,8 +71,7 @@ image.save(f'tile_{x}_{y}_{z}.png')
 
 
 ### 2. Virtual Computation Cubes: Focusing on Computation 
-
-We believe that instead of focusing on storing large images, data cube systems should prioritize efficient computation. COGs make it possible to analyze images directly without storing the entire dataset. This introduces the idea of virtual computation cubes, where images are stacked and processed over time, allowing for analysis across different layers ( including semantic layers ) without needing to download or save everything. So original data is never replicated. In this setup, a data provider can store and convert images to COGs, while users or service providers focus on calculations. This approach reduces the need for terra-bytes of storage and makes it easier to process large datasets quickly.
+While storing large images can offer some benefits, we believe that placing emphasis on efficient computation yields far greater advantages and effectively removes the need to worry about large-scale image storage. COGs make it possible to analyze images directly without storing the entire dataset. This introduces the idea of virtual computation cubes, where images are stacked and processed over time, allowing for analysis across different layers ( including semantic layers ) without needing to download or save everything. So original data is never replicated. In this setup, a data provider can store and convert images to COGs, while users or service providers focus on calculations. This approach reduces the need for terra-bytes of storage and makes it easier to process large datasets quickly.
 
 #### Example python usage
 
