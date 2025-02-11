@@ -18,11 +18,11 @@ date: "2025-02-08"
 bibliography: paper.bib
 ---
 
-## Summary
+# Summary
 
 We introduce **VirtuGhan**, a Python-based geospatial data pipeline designed for on-the-fly computations on raster tiles. By leveraging Cloud-Optimized GeoTIFFs (COGs) and SpatioTemporal Asset Catalog (STAC) endpoints [@stacspec], VirtuGhan enables real-time data processing at multiple zoom levels and time dimensions. VirtuGhan focses on on-demand tile computation, computes results on demand, minimizing data transfers and infrastructure overhead [@rio-tiler; @mercantile] for entire scene. This approach is cost-effective because only the necessary tiles (i.e., bounding boxes of interest) are read & computation is applied on tiles when fetching from source imagery [@sentinel2cogs]. The framework supports user-defined band math, multi-temporal analyses, partial reads from Cloud Optimized Sentinel-2 data, and a caching mechanism for repeat requests [@fastapi]. Ultimately, **VirtuGhan** provides a scalable, open-source platform for modern geospatial data analytics, running efficiently even on minimal hardware.
 
-## Statement of Need
+# Statement of Need
 
 Large-scale Earth Observation (EO) analytics often demand substantial storage and processing power, especially when frequently querying large satellite datasets at varied resolutions. Traditional pipelines that store entire scenes or “data cubes” comes with disadvantage of  cost it takes to maintain. **VirtuGhan** addresses this gap by:
 
@@ -57,8 +57,8 @@ The processed tiles (e.g., PNG or JPEG) can be cached. If an identical tile requ
 - **Plugins and ML Integration**: Allowing advanced user-defined band math or machine-learning inference models for on-the-fly classification.  
 - **Distributed Caching**: Supporting scalable deployments for high-traffic or cluster-based environments.
 
-## Acknowledgments
+# Acknowledgments
 
 We extend our gratitude to the maintainers of foundational GIS libraries such as Rasterio [@rasterio], rio-tiler [@rio-tiler], Mercantile [@mercantile], and FastAPI [@fastapi]. We also thank colleagues and mentors at Paris Lodron University of Salzburg and in the Copernicus Masters in Digital Earth program for their insights and support.
 
-## References
+# References
