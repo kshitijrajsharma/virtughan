@@ -45,6 +45,11 @@ Once partial reads are loaded, VirtuGhan applies user-defined formulas or filter
 
 The processed tiles (e.g., PNG or JPEG) can be cached. If an identical tile request recurs, VirtuGhan serves it directly from the cache—improving performance and lowering bandwidth usage. As zoom levels shift, the system adjusts how the partial reads are resampled, ensuring minimal repeated data access. 
 
+
+# Figures
+
+![Flowchart-virtughan](https://github.com/user-attachments/assets/cc6a67af-01ca-40d6-8442-1a32b5593e2e)
+
 ## Future Directions
 
 - **Mosaicking**: Automating multi-scene merges for larger coverage areas.  
