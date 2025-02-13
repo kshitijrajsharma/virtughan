@@ -57,6 +57,9 @@ The processed tiles (e.g., PNG or JPEG) can be cached. If an identical tile requ
 - **Plugins and ML Integration**: Allowing advanced user-defined band math or machine-learning inference models for on-the-fly classification.  
 - **Distributed Caching**: Supporting scalable deployments for high-traffic or cluster-based environments.
 
+# Application Areas
+VirtuGhan enables real-time geospatial data processing for various Earth observation applications. It helps monitor environmental changes like deforestation, glacial lake expansion, urban heat islands, and wildfires without requiring extensive data storage. In disaster response, it provides rapid analysis of floods, landslides, cyclones, and earthquakes. Urban planners can analyze land use, infrastructure growth, and air quality. AI integration supports automated land classification, object detection, and biodiversity tracking. It also aids security efforts, including border monitoring and conflict damage assessment. As an open-source platform, VirtuGhan enhances accessibility for citizen science, environmental advocacy, and academic research. By prioritizing computation over storage, it offers a cost-effective and scalable alternative to traditional geospatial tools.
+
 # Acknowledgments
 
 We extend our gratitude to the maintainers of foundational GIS libraries such as Rasterio [@rasterio], rio-tiler [@rio-tiler], Mercantile [@mercantile], and FastAPI [@fastapi]. We also thank colleagues and mentors at Paris Lodron University of Salzburg and in the Copernicus Masters in Digital Earth program for their insights and support.
