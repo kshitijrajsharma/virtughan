@@ -56,6 +56,7 @@ VirtuGhan already enables users to retrieve and process only the necessary image
 - **Additional Sensors**: Adding Landsat, MODIS, and commercial satellite data.  
 - **Plugins and ML Integration**: Allowing advanced user-defined band math or machine-learning inference models for on-the-fly classification.  
 - **Distributed Caching**: Supporting scalable deployments for high-traffic or cluster-based environments.
+
 These future developments will increase VirtuGhan’s flexibility, efficiency, and usability, making large-scale Earth observation data processing more accessible and effective across various domains.
 
 # Application Areas
