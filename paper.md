@@ -47,18 +47,18 @@ The processed tiles (e.g., PNG or JPEG) can be cached. If an identical tile requ
 
 ![Flowchart-virtughan](flowchart-virtughan2.png)
 
+# Application Areas
+VirtuGhan enables real-time geospatial data processing for various Earth observation applications. It helps monitor environmental changes like deforestation, glacial lake expansion, urban heat islands, and wildfires without requiring extensive data storage. In disaster response, it provides rapid analysis of floods, landslides, cyclones, and earthquakes. Urban planners can analyze land use, infrastructure growth, and air quality. AI integration on VirtuGhan obtained datasets can support automated land classification, object detection, and biodiversity tracking. It also aids security efforts, including border monitoring and conflict damage assessment. As an open-source platform, VirtuGhan enhances accessibility for citizen science, environmental advocacy, and academic research.
+
 ## Future Directions
 
-VirtuGhan already enables users to retrieve and process only the necessary image tiles on demand, reducing storage and computational overhead. To further enhance its capabilities, several key improvements are planned, enabling VirtuGhan to handle larger datasets, integrate more data sources, and support advanced analytics while maintaining its lightweight framework.
+VirtuGhan already enables users to retrieve and process only the necessary image tiles on demand, reducing storage and computational overhead. To further enhance its capabilities, several key improvements are planned, enabling VirtuGhan to integrate more data sources, and support advanced analytics while maintaining its lightweight framework.
 - **Mosaicking**: Automating multi-scene merges for larger coverage areas.  
 - **Additional Sensors**: Adding Landsat, MODIS, and commercial satellite data.  
 - **Plugins and ML Integration**: Allowing advanced user-defined band math or machine-learning inference models for on-the-fly classification.  
 - **Distributed Caching**: Supporting scalable deployments for high-traffic or cluster-based environments.
 
-These future developments will increase VirtuGhan’s flexibility, efficiency, and usability, making large-scale Earth observation data processing more accessible and effective across various domains.
-
-# Application Areas
-VirtuGhan enables real-time geospatial data processing for various Earth observation applications. It helps monitor environmental changes like deforestation, glacial lake expansion, urban heat islands, and wildfires without requiring extensive data storage. In disaster response, it provides rapid analysis of floods, landslides, cyclones, and earthquakes. Urban planners can analyze land use, infrastructure growth, and air quality. AI integration on VirtuGhan obtained datasets can support automated land classification, object detection, and biodiversity tracking. It also aids security efforts, including border monitoring and conflict damage assessment. As an open-source platform, VirtuGhan enhances accessibility for citizen science, environmental advocacy, and academic research. 
+These future developments will increase VirtuGhan’s flexibility, efficiency, and usability, making large-scale Earth observation data processing more accessible and effective across various domains. 
 
 # Acknowledgments
 
