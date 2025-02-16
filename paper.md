@@ -46,7 +46,7 @@ The processed tiles (e.g., PNG or JPEG) can be cached. If an identical tile requ
 
 # Figures
 
-![Flowchart-virtughan](flowchart-virtughan.png)
+![Flowchart-virtughan](flowchart-virtughan1.jpg)
 
 ## Future Directions
 
