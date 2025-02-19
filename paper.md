@@ -20,16 +20,13 @@ bibliography: paper.bib
 
 # Summary
 
-We introduce **VirtuGhan**, a Python-based geospatial data pipeline designed for on-the-fly computations on raster tiles. By leveraging Cloud-Optimized GeoTIFFs (COGs) and SpatioTemporal Asset Catalog (STAC) endpoints [@stacspec], VirtuGhan enables real-time data processing at multiple zoom levels and time dimensions. VirtuGhan focses on on-demand tile computation, computes results on demand, minimizing data transfers and infrastructure overhead [@rio-tiler; @mercantile] for entire scene. This approach is cost-effective because only the necessary tiles (i.e., bounding boxes of interest) are read & computation is applied on tiles when fetching from source imagery [@sentinel2cogs]. The framework supports user-defined band math, multi-temporal analyses, partial reads from Cloud Optimized Sentinel-2 data, and a caching mechanism for repeat requests [@fastapi]. Ultimately, **VirtuGhan** provides a scalable, open-source platform for modern geospatial data analytics, running efficiently even on minimal hardware.
+**VirtuGhan** is a Python-based geospatial data pipeline designed for on-the-fly computations on raster tiles. By leveraging Cloud-Optimized GeoTIFFs (COGs) and SpatioTemporal Asset Catalog (STAC) endpoints [@stacspec], VirtuGhan enables real-time data processing across multiple zoom levels and time dimensions. VirtuGhan focuses on on-demand tile computation, dynamically computing results as needed while minimizing data transfers and infrastructure overhead for entire scenes [@rio-tiler; @mercantile]. This cost-effective approach ensures that only the necessary tiles (i.e., bounding boxes of interest) are retrieved, with computations applied directly during data access [@sentinel2cogs]. The framework supports user-defined band math, multi-temporal analyses, and partial reads from Cloud-Optimized Sentinel-2 data, along with a caching mechanism to optimize repeated requests [@fastapi]. Ultimately, VirtuGhan provides a scalable, open-source platform for modern geospatial data analytics, offering efficient, and real-time processing. Its optimized tile-based computation allows it to run efficiently even on minimal hardware, making large-scale satellite imagery processing more accessible for researchers, analysts, and developers.
 
 # Statement of Need
 
-Large-scale Earth Observation (EO) analytics often demand substantial storage and processing power, especially when frequently querying large satellite datasets at varied resolutions. Traditional pipelines that store entire scenes or “data cubes” comes with disadvantage of  cost it takes to maintain. **VirtuGhan** addresses this gap by:
+Big Earth Data, with its high-resolution, multi-temporal satellite imagery, poses growing challenges for storage and real-time processing, often exceeding traditional workflows' capacities [@sudmanns]. As EO data volumes expand, efficient management strategies are needed to address rising computational and storage demands. Data cubes have emerged as a structured approach to managing large-scale EO datasets, facilitating efficient data access and analysis through precomputed storage architectures [@giuliani]. However, data cubes often store pre-aggregated or processed data layers, which can lead to increased storage requirements and may not support real-time data updates effectively. This approach can result in inefficiencies, as the storage of multiple processed layers extends the storage burden. Additionally, pre-computation is done on entire images rather than individual tiles, storing pre-aggregated layers for later analysis [@sudmanns]. This approach improves query efficiency but also increases memory usage and computational load, potentially allocating resources to areas that may not always be relevant. While cloud-based EO platforms like Google Earth Engine offer scalable solutions, they require significant infrastructure, limiting accessibility.
 
-- Retrieving and processing only the tiles required, reducing bandwidth, storage, and memory usage.
-- Applying the computation while fetching the tile for a same area of interest in multiple hierarchy of tiles
-- Providing a virtual “data cube” model in which pixel transformations are computed on-the-fly, negating the need to store massive multi-band, multi-temporal archives.  
-- Facilitating google earth engine alike computation, interactive geospatial exploration for scientists, engineers, and data analysts who need to quickly visualize or process recent satellite data without incurring large cloud-computing costs in different zoom levels of same area.
+VirtuGhan was designed to overcome these challenges by providing a scalable and efficient solution. It optimizes data processing by retrieving and computing only the necessary image tiles on demand, minimizing storage needs and computational overhead. This enables efficient, real-time analysis at multiple zoom levels while eliminating the need for large-scale precomputed datasets. By prioritizing computation over storage, VirtuGhan provides a lightweight, scalable, and cost-effective alternative to traditional EO data cubes and cloud-based processing platforms.
 
 ## Implementation
 
@@ -48,17 +45,23 @@ The processed tiles (e.g., PNG or JPEG) can be cached. If an identical tile requ
 
 # Figures
 
-![Flowchart-virtughan](flowchart-virtughan.png)
+![Flowchart-virtughan](flowchart-virtughan2.png)
+
+# Application Areas
+VirtuGhan enables real-time geospatial data processing for various Earth observation applications. It helps monitor environmental changes like deforestation, glacial lake expansion, urban heat islands, and wildfires without requiring extensive data storage. In disaster response, it provides rapid analysis of floods, landslides, cyclones, and earthquakes. Urban planners can analyze land use, infrastructure growth, and air quality. AI integration on VirtuGhan obtained datasets can support automated land classification, object detection, and biodiversity tracking. It also aids security efforts, including border monitoring and conflict damage assessment. As an open-source platform, VirtuGhan enhances accessibility for citizen science, environmental advocacy, and academic research.
 
 ## Future Directions
 
+VirtuGhan already enables users to retrieve and process only the necessary image tiles on demand, reducing storage and computational overhead. To further enhance its capabilities, several key improvements are planned, enabling VirtuGhan to integrate more data sources, and support advanced analytics while maintaining its lightweight framework.
 - **Mosaicking**: Automating multi-scene merges for larger coverage areas.  
 - **Additional Sensors**: Adding Landsat, MODIS, and commercial satellite data.  
 - **Plugins and ML Integration**: Allowing advanced user-defined band math or machine-learning inference models for on-the-fly classification.  
 - **Distributed Caching**: Supporting scalable deployments for high-traffic or cluster-based environments.
 
+These future developments will increase VirtuGhan’s flexibility, efficiency, and usability, making large-scale Earth observation data processing more accessible and effective across various domains. 
+
 # Acknowledgments
 
-We extend our gratitude to the maintainers of foundational GIS libraries such as Rasterio [@rasterio], rio-tiler [@rio-tiler], Mercantile [@mercantile], and FastAPI [@fastapi]. We also thank colleagues and mentors at Paris Lodron University of Salzburg and in the Copernicus Masters in Digital Earth program for their insights and support.
+We extend our gratitude to the maintainers of foundational GIS libraries such as Rasterio [@rasterio], rio-tiler [@rio-tiler], Mercantile [@mercantile], and FastAPI [@fastapi]. Additionally, we are grateful to our colleagues and mentors at the Copernicus Masters in Digital Earth program, co-funded by the European Union and hosted at Paris Lodron University of Salzburg, for their valuable insights and support. A special thanks to Associate Professor Dirk Tiede and Dr. Martin Sudmanns for their guidance on existing data cube methodologies.
 
 # References
