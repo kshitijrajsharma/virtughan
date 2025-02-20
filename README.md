@@ -149,6 +149,31 @@ Inorder to setup project , follow [here](./docs/install.md)
 
 - https://registry.opendata.aws/sentinel-2-l2a-cogs/ COGS Stac API for sentinel-2
 
+## Contribute
+
+Liked the concept? Want to be part of it ?  
+
+If you have experience with **JavaScript**, **FastAPI**, building geospatial **Python** libraries , we’d love your contributions! But you don’t have to be a coder to help—spreading the word is just as valuable.  
+
+### How You Can Contribute ?
+
+✅ **Code Contributions**  
+- Fork the repository and submit a PR with improvements, bug fixes, or features. Use commitizen for your commits
+- Help us refine our **development guidelines** !  
+
+✅ **Documentation & Testing**  
+- Improve our docs to make it easier for others to get started.  
+- Test features and report issues to help us build a robust system.  
+
+✅ **Spread the Word**  
+- Share the project on social media or among developer communities.  
+- Bring in more contributors who might be interested!  
+
+💙 **Support Us**  
+If you love what we’re building, consider buying us a coffee ☕ to keep the project going!  
+
+[![Buy Us a Coffee](https://img.shields.io/badge/Buy%20Us%20a%20Coffee-Support-blue?style=flat&logo=buy-me-a-coffee)](your-coffee-link-here)  
+
 
 ## Acknowledgment
 
