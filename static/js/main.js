@@ -195,6 +195,9 @@ document.addEventListener('DOMContentLoaded', function() {
   
             if(Object.keys(drawnItems._layers).length > 0){
               // console.log(drawnItems);
+              if(rectangle){
+                map.removeLayer(rectangle);
+              }
               map.removeLayer(drawnItems);
               export_params_bbox_changed = false;
             }
