@@ -108,7 +108,7 @@ function updateDrawnItemBbox(layer){
           [lat - radiusInDegrees, lng - radiusInDegrees], // Southwest corner
           [lat + radiusInDegrees, lng + radiusInDegrees]  // Northeast corner
         ];      
-        rectangle = L.rectangle(bounds, {color: "blue", weight: 1, fillOpacity: 0.1}).addTo(map);
+        rectangle = L.rectangle(bounds, {fillOpacity: 0.1, opacity: 0.6}).addTo(map);
     }
   }
 
