@@ -112,6 +112,15 @@ map.on(L.Draw.Event.CREATED, function (event) {
     drawnItems.addLayer(layer);
     // console.log("entered here - created");
     updateDrawnItemBbox(layer);
+
+    var geojson = layer.toGeoJSON();
+
+    // Calculate the area using turf.js
+    var area = turf.area(geojson);
+
+    // Convert area to square kilometers (optional)
+    var areaKm2 = area / 1000000;
+    console.log('Area: ' + areaKm2.toFixed(2) + ' square kilometers');
 });
 
       
