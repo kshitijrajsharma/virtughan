@@ -231,6 +231,34 @@ var map = L.map("map").setView([28.202082, 83.987222], 10);
         document.getElementById("zoom-level").textContent = map.getZoom();
       });
 
+      function loadTiles(){
+        if (liveLayer) {
+          map.removeLayer(liveLayer);
+        }
+
+        var checkedTimeseriesSearch = document.getElementById("timeSeries_search").checked;
+        
+        var encodedUrl_tiles = `/tile/{z}/{x}/{y}?start_date=${encodeURIComponent(tile_params.startDate)}&end_date=${encodeURIComponent(tile_params.endDate)}&cloud_cover=${encodeURIComponent(tile_params.cloudCover)}&formula=${encodeURIComponent(tile_params.formula)}&band1=${encodeURIComponent(tile_params.band1)}&band2=${encodeURIComponent(tile_params.band2)}&timeseries=${encodeURIComponent(tile_params.timeseries)}`;
+        if(checkedTimeseriesSearch){
+          encodedUrl_tiles += `&operation=${encodeURIComponent(tile_params.operation)}`;
+        }
+        liveLayer = L.tileLayer(
+          encodedUrl_tiles,
+          {
+            tileSize: 256,
+            opacity: 0.8,
+            zIndex: 5,
+            maxZoom: 22,
+            maxNativeZoom:22,
+            attribution:
+              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          }
+        );
+
+        showLoaderOnMap(liveLayer, false);
+        liveLayer.addTo(map);
+      }
+
       document
         .getElementById("search-button")
         .addEventListener("click", function () {
@@ -450,31 +478,7 @@ var map = L.map("map").setView([28.202082, 83.987222], 10);
               document.getElementById("sidebar").style.display = "block";
 
              
-                if (liveLayer) {
-                  map.removeLayer(liveLayer);
-                }
-
-                var checkedTimeseriesSearch = document.getElementById("timeSeries_search").checked;
-                
-                var encodedUrl_tiles = `/tile/{z}/{x}/{y}?start_date=${encodeURIComponent(tile_params.startDate)}&end_date=${encodeURIComponent(tile_params.endDate)}&cloud_cover=${encodeURIComponent(tile_params.cloudCover)}&formula=${encodeURIComponent(tile_params.formula)}&band1=${encodeURIComponent(tile_params.band1)}&band2=${encodeURIComponent(tile_params.band2)}&timeseries=${encodeURIComponent(tile_params.timeseries)}`;
-                if(checkedTimeseriesSearch){
-                  encodedUrl_tiles += `&operation=${encodeURIComponent(tile_params.operation)}`;
-                }
-                liveLayer = L.tileLayer(
-                  encodedUrl_tiles,
-                  {
-                    tileSize: 256,
-                    opacity: 0.8,
-                    zIndex: 5,
-                    maxZoom: 22,
-                    maxNativeZoom:22,
-                    attribution:
-                      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                  }
-                );
-
-                showLoaderOnMap(liveLayer, false);
-                liveLayer.addTo(map);
+                loadTiles();
 
                 initializeTransparency();
               
