@@ -245,7 +245,7 @@ downloading = false;
         if (computeLayer) {
             map.removeLayer(computeLayer);
         }
-        downloading = true; // for loader to load until it downloads file
+        showLoaderOnMap(null, true);// for loader to load until it downloads file
 
         fetch(tifUrl)
           .then(response => response.arrayBuffer())
@@ -299,6 +299,7 @@ downloading = false;
                        // Get continuous color
                   }
               });
+              
               showLoaderOnMap(computeLayer, false);
               map.addLayer(computeLayer);
               updateLegend(selectedPalette);
