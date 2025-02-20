@@ -21,7 +21,7 @@ function showMessage(type, message) {
 
     setTimeout(function() {
         hideMessage();
-    }, 8000); // automatically close after 8 seconds
+    }, 10000); // automatically close after certain seconds
 }
 
 // Function to hide message boxes
