@@ -152,7 +152,7 @@ var map = L.map("map").setView([28.202082, 83.987222], 10);
         const loaderControl = new LoaderControl({ position: 'topleft' });
         loaderControl.addTo(map);
 
-      function showLoaderOnMap(layer){
+      function showLoaderOnMap(layer, downloading){
         console.log("entered");
         // Show loader when tiles start loading
         layer.on('loading', () => {
@@ -163,6 +163,13 @@ var map = L.map("map").setView([28.202082, 83.987222], 10);
         layer.on('load', () => {
           loaderControl.getContainer().style.display = 'none';
         });
+
+        if(downloading){
+          loaderControl.getContainer().style.display = 'block';
+        }
+        else{
+          loaderControl.getContainer().style.display = 'none';
+        }
       }
 
       var geojsonLayer;
@@ -460,7 +467,7 @@ var map = L.map("map").setView([28.202082, 83.987222], 10);
                   }
                 );
 
-                showLoaderOnMap(liveLayer);
+                showLoaderOnMap(liveLayer, false);
                 liveLayer.addTo(map);
 
                 initializeTransparency();
