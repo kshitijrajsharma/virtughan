@@ -262,6 +262,9 @@ var map = L.map("map").setView([28.202082, 83.987222], 10);
       document
         .getElementById("search-button")
         .addEventListener("click", function () {
+          //track button click google analytics
+          trackLiveViewButtonClick("LiveViewButton");
+
           //goto next tab to show result
           document.getElementById("resultTab").click();
           document.getElementById("layerSwitcherContainer").classList.remove("hidden");

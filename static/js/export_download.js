@@ -1,6 +1,9 @@
 var completed_log = false;
 downloading = false;
       document.getElementById("export-map-view-button").addEventListener('click', function() {
+        //track button click google analytics
+        trackExportButtonClick("visualizeAndExportButton");
+
         completed_log = false;
         var analyzeChecked = document.getElementById("analyze-data").checked;
         var smartFilters = document.getElementById("smart-filters").checked;
