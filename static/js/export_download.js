@@ -267,8 +267,9 @@ downloading = false;
         fetch(tifUrl)
           .then(response => {
             if (!response.ok) {
+              showLoaderOnMap(null, false);
                 if (response.status == 404) {
-                  showMessage('warning', '404 Not Found: The requested file does not exist.')
+                  showMessage('warning', '404 Not Found: Couldnot load data on map. The requested file does not exist.')
                 } else {
                   showMessage('warning', `HTTP error! Status: ${response.status}`)  
                 }
