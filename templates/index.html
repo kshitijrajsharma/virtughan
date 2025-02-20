@@ -327,6 +327,23 @@
 
 </script>
 
+<!-- track clicks -->
+<script>
+  function trackLiveViewButtonClick(buttonId) {
+    gtag('event', 'click', {
+      'event_category': 'Live View Button Clicks',
+      'event_label': buttonId
+    });
+  }
+  function trackExportButtonClick(buttonId) {
+    gtag('event', 'click', {
+      'event_category': 'Visualize and Export Button Clicks',
+      'event_label': buttonId
+    });
+  }
+</script>
+
+
 <!-- Google Analytics End -->
 
   <body>
