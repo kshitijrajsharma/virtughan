@@ -20,9 +20,13 @@ function showMessage(type, message) {
     }
 
     if(type != 'error'){
+        document.getElementById('warning_error').innerText = 'Warning!';
         setTimeout(function() {
             hideMessage();
         }, 10000); // automatically close after certain seconds
+    }
+    else{
+        document.getElementById('warning_error').innerText = 'Error!';
     }
 }
 
