@@ -1,5 +1,6 @@
 //draw start 
 var drawToolbar;   
+var rectangle;
 document.addEventListener('DOMContentLoaded', function() {
   drawToolbar = document.querySelector('.leaflet-draw-toolbar');
   if (drawToolbar) {
@@ -41,25 +42,34 @@ var drawHandlers = {
 document.getElementById('draw-point').addEventListener('click', function () {
     // Clear existing layers before drawing a new one
     drawnItems.clearLayers();
+    if(rectangle){
+      map.removeLayer(rectangle);
+    }
     drawHandlers.point.enable();
 });
 document.getElementById('draw-polygon').addEventListener('click', function () {
     // Clear existing layers before drawing a new one
     drawnItems.clearLayers();
+    if(rectangle){
+      map.removeLayer(rectangle);
+    }
     drawHandlers.polygon.enable();
 });
 document.getElementById('draw-rectangle').addEventListener('click', function () {
     // Clear existing layers before drawing a new one
     drawnItems.clearLayers();
+    if(rectangle){
+      map.removeLayer(rectangle);
+    }
     drawHandlers.rectangle.enable();
 });
 
-// Convert radius in meters to degrees 
-function metersToDegrees(meters) { 
+// Convert radius in kilometers to degrees 
+function metersToDegrees(kilometers) { 
     const earthRadius = 6371000; // in meters 
     const degToRad = Math.PI / 180; 
     const radToDeg = 180 / Math.PI; 
-    const deltaDeg = meters / (earthRadius * degToRad); 
+    const deltaDeg = kilometers / (earthRadius * degToRad); 
     return deltaDeg * radToDeg; 
 }
 
@@ -79,8 +89,8 @@ function updateDrawnItemBbox(layer){
 
     } else { //for markers
         // console.log("entered else");
-        var radiusInMeters = 500; // Example radius in meters
-        var radiusInDegrees = metersToDegrees(radiusInMeters);
+        var radiusInKiloMeters = 100; // radius in kilometers
+        var radiusInDegrees = metersToDegrees(radiusInKiloMeters);
 
         var latlng = layer.getLatLng();
         var lat = latlng.lat;
@@ -93,6 +103,12 @@ function updateDrawnItemBbox(layer){
         if (drawToolbar) {
           drawToolbar.style.display = 'none';
         }
+
+        var bounds = [
+          [lat - radiusInDegrees, lng - radiusInDegrees], // Southwest corner
+          [lat + radiusInDegrees, lng + radiusInDegrees]  // Northeast corner
+        ];      
+        rectangle = L.rectangle(bounds, {fillOpacity: 0.1, opacity: 0.6}).addTo(map);
     }
   }
 
@@ -107,7 +123,9 @@ map.on(L.Draw.Event.DRAWSTART, function (e) {
 map.on(L.Draw.Event.CREATED, function (event) {
     // Clear existing layers before adding the new layer
     drawnItems.clearLayers();
-
+    if(rectangle){
+      map.removeLayer(rectangle);
+    }
     var layer = event.layer;
     drawnItems.addLayer(layer);
     // console.log("entered here - created");
@@ -121,6 +139,11 @@ map.on(L.Draw.Event.CREATED, function (event) {
     // Convert area to square kilometers (optional)
     var areaKm2 = area / 1000000;
     console.log('Area: ' + areaKm2.toFixed(2) + ' square kilometers');
+
+    if(areaKm2 > 500){
+      // showMessage('success', "message");
+      showMessage('warning', "Please Select Smaller Area of Interest. Eg. smaller than 500 SQ.Km.");
+    }
 });
 
       
