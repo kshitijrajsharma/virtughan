@@ -25,6 +25,10 @@ https://pypi.org/project/VirtuGhan/
 pip install VirtuGhan
 ```
 
+### Basic Usage 
+
+Follow Notebook [Here](https://github.com/kshitijrajsharma/virtughan/blob/master/VirtuGhan_Python_Usage_Example.ipynb)
+
 ## Purpose
 
 ### 1. Efficient On-the-Fly Tile Computation
