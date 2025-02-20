@@ -172,7 +172,7 @@ If you have experience with **JavaScript**, **FastAPI**, building geospatial **P
 💙 **Support Us**  
 If you love what we’re building, consider buying us a coffee ☕ to keep the project going!  
 
-[![Buy Us a Coffee](https://img.shields.io/badge/Buy%20Us%20a%20Coffee-Support-blue?style=flat&logo=buy-me-a-coffee)](your-coffee-link-here)  
+[![Buy Us a Coffee](https://img.shields.io/badge/Buy%20Us%20a%20Coffee-Support-blue?style=flat&logo=buy-me-a-coffee)](#)  
 
 
 ## Acknowledgment
