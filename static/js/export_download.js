@@ -38,8 +38,21 @@ var completed_log = false;
           document.getElementById("colorPalettes").classList.add("hidden");
         }
 
-        
-        
+        //show warning if the area of bbox is greater than 500 SQ Km.
+        var bbox_rectangle = L.rectangle(bounds, {fillOpacity: 0.1, opacity: 0.6});
+        var geojson = bbox_rectangle.toGeoJSON();
+
+        // Calculate the area using turf.js
+        var area = turf.area(geojson);
+
+        // Convert area to square kilometers (optional)
+        var areaKm2 = area / 1000000;
+        // console.log('Area: ' + areaKm2.toFixed(2) + ' square kilometers');
+
+        if(areaKm2 > 500){
+          // showMessage('success', "message");
+          showMessage('warning', "Zoom in and reduce the size of your area of interest. <br/> Eg. smaller AOI than 500 SQ.Km. Sorry, this is due to limited server specs.");
+        }
         
         var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&timeseries=${encodeURIComponent(export_params.timeseries)}&smart_filters=${export_params.smart_filters}`;
 
