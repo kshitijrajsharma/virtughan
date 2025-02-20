@@ -39,6 +39,9 @@ downloading = false;
           document.getElementById("colorPalettes").classList.add("hidden");
         }
 
+        //remove legend if there is a legend
+        document.getElementById("legend").classList.add("hidden");
+
         //show warning if the area of bbox is greater than 500 SQ Km.
         // var aoiText = document.getElementById("selected-filter-value-bbox").innerText;
         //  console.log(export_params.bbox);
