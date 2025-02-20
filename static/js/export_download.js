@@ -53,6 +53,7 @@ var completed_log = false;
           // showMessage('success', "message");
           showMessage('warning', "Zoom in and reduce the size of your area of interest. <br/> Eg. smaller AOI than 500 SQ.Km. Sorry, this is due to limited server specs.");
         }
+        //show warning end.
         
         var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&timeseries=${encodeURIComponent(export_params.timeseries)}&smart_filters=${export_params.smart_filters}`;
 
