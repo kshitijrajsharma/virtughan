@@ -13,15 +13,17 @@ function showMessage(type, message) {
         successMessage.classList.remove('hidden');
         messageContent.innerHTML = message;
         warningMessage.classList.add('hidden');
-    } else if (type === 'warning') {
+    } else if (type === 'warning' || type === 'error') {
         successMessage.classList.add('hidden');
         warningContent.innerHTML = message;
         warningMessage.classList.remove('hidden');
     }
 
-    setTimeout(function() {
-        hideMessage();
-    }, 10000); // automatically close after certain seconds
+    if(type != 'error'){
+        setTimeout(function() {
+            hideMessage();
+        }, 10000); // automatically close after certain seconds
+    }
 }
 
 // Function to hide message boxes

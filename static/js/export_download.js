@@ -269,9 +269,9 @@ downloading = false;
             if (!response.ok) {
               showLoaderOnMap(null, false);
                 if (response.status == 404) {
-                  showMessage('warning', '404 Not Found: Couldnot load data on map. The requested file does not exist.')
+                  showMessage('error', '404 Not Found: Couldnot load data on map. The requested file does not exist.')
                 } else {
-                  showMessage('warning', `HTTP error! Status: ${response.status}`)  
+                  showMessage('error', `HTTP error! Status: ${response.status}`)  
                 }
               }
               return response.arrayBuffer();
