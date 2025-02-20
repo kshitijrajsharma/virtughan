@@ -46,6 +46,8 @@ document.getElementById('draw-point').addEventListener('click', function () {
       map.removeLayer(rectangle);
     }
     drawHandlers.point.enable();
+    drawHandlers.polygon.disable();
+    drawHandlers.rectangle.disable();
 });
 document.getElementById('draw-polygon').addEventListener('click', function () {
     // Clear existing layers before drawing a new one
@@ -53,7 +55,9 @@ document.getElementById('draw-polygon').addEventListener('click', function () {
     if(rectangle){
       map.removeLayer(rectangle);
     }
+    drawHandlers.point.disable();
     drawHandlers.polygon.enable();
+    drawHandlers.rectangle.disable();
 });
 document.getElementById('draw-rectangle').addEventListener('click', function () {
     // Clear existing layers before drawing a new one
@@ -61,6 +65,8 @@ document.getElementById('draw-rectangle').addEventListener('click', function () 
     if(rectangle){
       map.removeLayer(rectangle);
     }
+    drawHandlers.point.disable();
+    drawHandlers.polygon.disable();
     drawHandlers.rectangle.enable();
 });
 
@@ -112,8 +118,9 @@ function updateDrawnItemBbox(layer){
     }
   }
 
+let activeDrawHandler = null;
 // Event listener for the drawstart event 
-map.on(L.Draw.Event.DRAWSTART, function (e) {
+map.on(L.Draw.Event.DRAWSTART, function (e) {  
   if (drawToolbar) {
     drawToolbar.style.display = 'block';
   }
