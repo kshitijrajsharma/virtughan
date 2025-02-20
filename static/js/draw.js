@@ -138,7 +138,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
 
     // Convert area to square kilometers (optional)
     var areaKm2 = area / 1000000;
-    console.log('Area: ' + areaKm2.toFixed(2) + ' square kilometers');
+    // console.log('Area: ' + areaKm2.toFixed(2) + ' square kilometers');
 
     if(areaKm2 > 500){
       // showMessage('success', "message");
