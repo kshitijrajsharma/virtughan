@@ -89,7 +89,7 @@ function updateDrawnItemBbox(layer){
 
     } else { //for markers
         // console.log("entered else");
-        var radiusInKiloMeters = 100; // radius in kilometers
+        var radiusInKiloMeters = 80; // radius in kilometers
         var radiusInDegrees = metersToDegrees(radiusInKiloMeters);
 
         var latlng = layer.getLatLng();
