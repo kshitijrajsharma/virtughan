@@ -265,7 +265,16 @@ downloading = false;
         showLoaderOnMap(null, true);// for loader to load until it downloads file
 
         fetch(tifUrl)
-          .then(response => response.arrayBuffer())
+          .then(response => {
+            if (!response.ok) {
+                if (response.status == 404) {
+                  showMessage('warning', '404 Not Found: The requested file does not exist.')
+                } else {
+                  showMessage('warning', `HTTP error! Status: ${response.status}`)  
+                }
+              }
+              return response.arrayBuffer();
+          })
           .then(arrayBuffer => {
             parseGeoraster(arrayBuffer).then(georaster => {
               downloading = false; //remove loader afer file is downloaded.
@@ -329,6 +338,9 @@ downloading = false;
               
               initializeTransparency();
           });
+        }).catch((error) => {
+          console.log("error downloading data", error);
+          showLoaderOnMap(null, false);
         });
       }
 
