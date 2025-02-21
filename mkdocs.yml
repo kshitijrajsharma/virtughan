@@ -33,10 +33,13 @@ nav:
   - Getting Started:
     - Installation: install.md
     - Usage: usage.md
-  - Examples:
-    - Basic Usage: examples/usage.ipynb
-  - User Guide:
-    - Understanding COG: cog.md
+  - Examples: examples/usage.ipynb
+  - Package Reference:
+    - Extract: src/extract.md
+    - Tile: src/tile.md
+    - Engine: src/engine.md
+    - Utils: src/utils.md
+  - Learn about COG: cog.md
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -64,3 +67,8 @@ plugins:
           options:
             show_source: true
             show_root_heading: true
+            show_signature_annotations: true
+            docstring_style: google
+            docstring_section_style: table
+            members_order: source
+            show_if_no_docstring: true
