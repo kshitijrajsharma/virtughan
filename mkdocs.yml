@@ -33,7 +33,8 @@ nav:
   - Getting Started:
     - Installation: install.md
     - Usage: usage.md
-  - Examples: examples/usage.ipynb
+  - Examples:
+    - Basic Usage: examples/usage.ipynb
   - Package Reference:
     - Extract: src/extract.md
     - Tile: src/tile.md
