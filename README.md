@@ -29,7 +29,7 @@ pip install VirtuGhan
 
 ### Basic Usage 
 
-Follow Notebook [Here](https://github.com/kshitijrajsharma/virtughan/blob/master/VirtuGhan_Python_Usage_Example.ipynb)
+Follow Notebook [Here](https://github.com/kshitijrajsharma/virtughan/blob/master/docs/examples/usage.ipynb)
 
 
 ### Background
