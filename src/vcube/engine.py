@@ -25,6 +25,10 @@ matplotlib.use("Agg")
 
 
 class VCubeProcessor:
+    """
+    Processor for virtual computation cubes.
+    """
+
     def __init__(
         self,
         bbox,
@@ -42,6 +46,25 @@ class VCubeProcessor:
         workers=1,
         smart_filter=True,
     ):
+        """
+        Initialize the VCubeProcessor.
+
+        Parameters:
+        bbox (list): Bounding box coordinates [min_lon, min_lat, max_lon, max_lat].
+        start_date (str): Start date for the data extraction (YYYY-MM-DD).
+        end_date (str): End date for the data extraction (YYYY-MM-DD).
+        cloud_cover (int): Maximum allowed cloud cover percentage.
+        formula (str): Formula to apply to the bands.
+        band1 (str): First band for the formula.
+        band2 (str): Second band for the formula.
+        operation (str): Operation to apply to the time series.
+        timeseries (bool): Whether to generate a time series.
+        output_dir (str): Directory to save the output files.
+        log_file (file): File to log the processing.
+        cmap (str): Colormap to apply to the results.
+        workers (int): Number of parallel workers.
+        smart_filter (bool): Whether to apply smart filtering to the images.
+        """
         self.bbox = bbox
         self.start_date = start_date
         self.end_date = end_date
@@ -64,7 +87,16 @@ class VCubeProcessor:
         self.use_smart_filter = smart_filter
 
     def fetch_process_custom_band(self, band1_url, band2_url):
-        """Fetch and process custom band data."""
+        """
+        Fetch and process custom band data.
+
+        Parameters:
+        band1_url (str): URL of the first band.
+        band2_url (str): URL of the second band.
+
+        Returns:
+        tuple: Processed result, CRS, transform, and band URL.
+        """
         try:
             with rasterio.open(band1_url) as band1_cog:
                 min_x, min_y, max_x, max_y = self._transform_bbox(band1_cog.crs)
@@ -103,6 +135,15 @@ class VCubeProcessor:
             return None, None, None
 
     def _remove_overlapping_sentinel2_tiles(self, features):
+        """
+        Remove overlapping Sentinel-2 tiles.
+
+        Parameters:
+        features (list): List of features to process.
+
+        Returns:
+        list: List of non-overlapping features.
+        """
         zone_counts = {}
         # lets see how many zones we have in total images
         for feature in features:
@@ -124,15 +165,46 @@ class VCubeProcessor:
         return list(filtered_features.values())
 
     def _transform_bbox(self, crs):
+        """
+        Transform the bounding box coordinates to the specified CRS.
+
+        Parameters:
+        crs (str): Coordinate reference system to transform to.
+
+        Returns:
+        tuple: Transformed bounding box coordinates (min_x, min_y, max_x, max_y).
+        """
         transformer = Transformer.from_crs("epsg:4326", crs, always_xy=True)
         min_x, min_y = transformer.transform(self.bbox[0], self.bbox[1])
         max_x, max_y = transformer.transform(self.bbox[2], self.bbox[3])
         return min_x, min_y, max_x, max_y
 
     def _calculate_window(self, cog, min_x, min_y, max_x, max_y):
+        """
+        Calculate the window for reading the data from the COG.
+
+        Parameters:
+        cog (rasterio.io.DatasetReader): COG dataset reader.
+        min_x (float): Minimum x-coordinate.
+        min_y (float): Minimum y-coordinate.
+        max_x (float): Maximum x-coordinate.
+        max_y (float): Maximum y-coordinate.
+
+        Returns:
+        rasterio.windows.Window: Window for reading the data.
+        """
         return from_bounds(min_x, min_y, max_x, max_y, cog.transform)
 
     def _is_window_out_of_bounds(self, window):
+        """
+        Check if the window is out of bounds.
+
+        Parameters:
+        window (rasterio.windows.Window): Window to check.
+
+        Returns:
+        bool: True if the window is out of bounds, False otherwise.
+        """
         return (
             window.col_off < 0
             or window.row_off < 0
@@ -141,6 +213,15 @@ class VCubeProcessor:
         )
 
     def _get_band_urls(self, features):
+        """
+        Get the URLs of the bands to be processed.
+
+        Parameters:
+        features (list): List of features containing the band URLs.
+
+        Returns:
+        tuple: List of URLs for band1 and band2.
+        """
         band1_urls = [feature["assets"][self.band1]["href"] for feature in features]
         band2_urls = (
             [feature["assets"][self.band2]["href"] for feature in features]
@@ -150,6 +231,9 @@ class VCubeProcessor:
         return band1_urls, band2_urls
 
     def _process_images(self):
+        """
+        Process the images and compute the results.
+        """
         features = search_stac_api(
             self.bbox,
             self.start_date,
@@ -220,7 +304,13 @@ class VCubeProcessor:
                         self._save_intermediate_image(result, image_name)
 
     def _save_intermediate_image(self, result, image_name):
+        """
+        Save an intermediate image.
 
+        Parameters:
+        result (numpy.ndarray): Array of the result to save.
+        image_name (str): Name of the image file.
+        """
         output_file = os.path.join(self.output_dir, f"{image_name}_result.tif")
         self._save_geotiff(result, output_file)
         self.intermediate_images.append(output_file)
@@ -229,6 +319,13 @@ class VCubeProcessor:
         )
 
     def _save_geotiff(self, data, output_file):
+        """
+        Save the data as a GeoTIFF file.
+
+        Parameters:
+        data (numpy.ndarray): Array of data to save.
+        output_file (str): Path to the output file.
+        """
         nodata_value = -9999
         data = np.where(np.isnan(data), nodata_value, data)
 
@@ -248,7 +345,12 @@ class VCubeProcessor:
                 dst.write(data[band - 1], band)
 
     def _aggregate_results(self):
+        """
+        Aggregate the results over time.
 
+        Returns:
+        numpy.ndarray: Aggregated result.
+        """
         sorted_dates_and_results = sorted(
             zip(self.dates, self.result_list), key=lambda x: x[0]
         )
@@ -301,12 +403,28 @@ class VCubeProcessor:
         return aggregated_result
 
     def save_aggregated_result_with_colormap(self, result_aggregate, output_file):
+        """
+        Save the aggregated result with a colormap.
+
+        Parameters:
+        result_aggregate (numpy.ndarray): Aggregated result to save.
+        output_file (str): Path to the output file.
+        """
         result_aggregate = np.ma.masked_invalid(result_aggregate)
         image = self._create_image(result_aggregate)
         self._plot_result(image, output_file)
         self._save_geotiff(result_aggregate, output_file)
 
     def _create_image(self, data):
+        """
+        Create an image from the data.
+
+        Parameters:
+        data (numpy.ndarray): Array of data to create the image from.
+
+        Returns:
+        numpy.ndarray: Image array.
+        """
         if data.shape[0] == 1:
             result_normalized = (data[0] - data[0].min()) / (
                 data[0].max() - data[0].min()
@@ -324,6 +442,13 @@ class VCubeProcessor:
             return image_array.astype(np.uint8)
 
     def _plot_result(self, image, output_file):
+        """
+        Plot the result and save it as an image.
+
+        Parameters:
+        image (numpy.ndarray): Image array to plot.
+        output_file (str): Path to the output file.
+        """
         plt.figure(figsize=(10, 10))
         plt.imshow(image)
         plt.title(f"Aggregated {self.operation} Calculation")
@@ -345,6 +470,17 @@ class VCubeProcessor:
         plt.close()
 
     def _pad_array(self, array, target_shape, fill_value=np.nan):
+        """
+        Pad the array to the target shape.
+
+        Parameters:
+        array (numpy.ndarray): Array to pad.
+        target_shape (tuple): Target shape to pad to.
+        fill_value (float): Value to use for padding.
+
+        Returns:
+        numpy.ndarray: Padded array.
+        """
         pad_width = [
             (0, max(0, target - current))
             for current, target in zip(array.shape, target_shape)
@@ -352,6 +488,16 @@ class VCubeProcessor:
         return np.pad(array, pad_width, mode="constant", constant_values=fill_value)
 
     def add_text_to_image(self, image_path, text):
+        """
+        Add text to an image.
+
+        Parameters:
+        image_path (str): Path to the image file.
+        text (str): Text to add to the image.
+
+        Returns:
+        str: Path to the image file with the added text.
+        """
         with rasterio.open(image_path) as src:
             image_array = (
                 src.read(1)
@@ -376,6 +522,14 @@ class VCubeProcessor:
 
     @staticmethod
     def create_gif(image_list, output_path, duration_per_image=1):
+        """
+        Create a GIF from a list of images.
+
+        Parameters:
+        image_list (list): List of image file paths.
+        output_path (str): Path to the output GIF file.
+        duration_per_image (int): Duration per image in the GIF (seconds).
+        """
         sorted_image_list = sorted(image_list)
 
         images = [Image.open(image_path) for image_path in sorted_image_list]
@@ -397,6 +551,9 @@ class VCubeProcessor:
         print(f"Saved timeseries GIF to {output_path}")
 
     def compute(self):
+        """
+        Compute the results based on the provided parameters.
+        """
         print("Engine starting...")
         os.makedirs(self.output_dir, exist_ok=True)
         if not self.band1:

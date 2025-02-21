@@ -37,6 +37,10 @@ VALID_BANDS = {
 
 
 class ExtractProcessor:
+    """
+    Processor for extracting and saving bands from satellite images.
+    """
+
     def __init__(
         self,
         bbox,
@@ -50,6 +54,21 @@ class ExtractProcessor:
         zip_output=False,
         smart_filter=True,
     ):
+        """
+        Initialize the ExtractProcessor.
+
+        Parameters:
+        bbox (list): Bounding box coordinates [min_lon, min_lat, max_lon, max_lat].
+        start_date (str): Start date for the data extraction (YYYY-MM-DD).
+        end_date (str): End date for the data extraction (YYYY-MM-DD).
+        cloud_cover (int): Maximum allowed cloud cover percentage.
+        bands_list (list): List of bands to extract.
+        output_dir (str): Directory to save the extracted bands.
+        log_file (file): File to log the extraction process.
+        workers (int): Number of parallel workers.
+        zip_output (bool): Whether to zip the output files.
+        smart_filter (bool): Whether to apply smart filtering to the images.
+        """
         self.bbox = bbox
         self.start_date = start_date
         self.end_date = end_date
@@ -66,6 +85,9 @@ class ExtractProcessor:
         self._validate_bands_list()
 
     def _validate_bands_list(self):
+        """
+        Validate the list of bands to ensure they are valid.
+        """
         invalid_bands = [band for band in self.bands_list if band not in VALID_BANDS]
         if invalid_bands:
             raise ValueError(
@@ -74,15 +96,46 @@ class ExtractProcessor:
             )
 
     def _transform_bbox(self, crs):
+        """
+        Transform the bounding box coordinates to the specified CRS.
+
+        Parameters:
+        crs (str): Coordinate reference system to transform to.
+
+        Returns:
+        tuple: Transformed bounding box coordinates (min_x, min_y, max_x, max_y).
+        """
         transformer = Transformer.from_crs("epsg:4326", crs, always_xy=True)
         min_x, min_y = transformer.transform(self.bbox[0], self.bbox[1])
         max_x, max_y = transformer.transform(self.bbox[2], self.bbox[3])
         return min_x, min_y, max_x, max_y
 
     def _calculate_window(self, cog, min_x, min_y, max_x, max_y):
+        """
+        Calculate the window for reading the data from the COG.
+
+        Parameters:
+        cog (rasterio.io.DatasetReader): COG dataset reader.
+        min_x (float): Minimum x-coordinate.
+        min_y (float): Minimum y-coordinate.
+        max_x (float): Maximum x-coordinate.
+        max_y (float): Maximum y-coordinate.
+
+        Returns:
+        rasterio.windows.Window: Window for reading the data.
+        """
         return from_bounds(min_x, min_y, max_x, max_y, cog.transform)
 
     def _is_window_out_of_bounds(self, window):
+        """
+        Check if the window is out of bounds.
+
+        Parameters:
+        window (rasterio.windows.Window): Window to check.
+
+        Returns:
+        bool: True if the window is out of bounds, False otherwise.
+        """
         return (
             window.col_off < 0
             or window.row_off < 0
@@ -91,6 +144,15 @@ class ExtractProcessor:
         )
 
     def _get_band_urls(self, features):
+        """
+        Get the URLs of the bands to be extracted.
+
+        Parameters:
+        features (list): List of features containing the band URLs.
+
+        Returns:
+        list: List of band URLs.
+        """
         band_urls = [
             [feature["assets"][band]["href"] for band in self.bands_list]
             for feature in features
@@ -98,6 +160,16 @@ class ExtractProcessor:
         return band_urls
 
     def _fetch_and_save_bands(self, band_urls, feature_id):
+        """
+        Fetch and save the bands from the given URLs.
+
+        Parameters:
+        band_urls (list): List of band URLs.
+        feature_id (str): Feature ID for naming the output file.
+
+        Returns:
+        str: Path to the saved GeoTIFF file.
+        """
         try:
             bands = []
             bands_meta = []
@@ -160,6 +232,14 @@ class ExtractProcessor:
             return None
 
     def _save_geotiff(self, bands, output_file, bands_meta=None):
+        """
+        Save the bands as a GeoTIFF file.
+
+        Parameters:
+        bands (numpy.ndarray): Array of bands to save.
+        output_file (str): Path to the output file.
+        bands_meta (list): List of metadata for the bands.
+        """
 
         band_shape = bands.shape
         nodata_value = -9999
@@ -182,6 +262,9 @@ class ExtractProcessor:
                     dst.set_band_description(band, bands_meta[band - 1])
 
     def extract(self):
+        """
+        Extract the bands from the satellite images and save them as GeoTIFF files.
+        """
         print("Extracting bands...")
         os.makedirs(self.output_dir, exist_ok=True)
 

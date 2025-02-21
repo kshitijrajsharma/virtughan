@@ -24,11 +24,31 @@ matplotlib.use("Agg")
 
 
 class TileProcessor:
+    """
+    Processor for generating and caching tiles from satellite images.
+    """
+
     def __init__(self, cache_time=60):
+        """
+        Initialize the TileProcessor.
+
+        Parameters:
+        cache_time (int): Cache time in seconds.
+        """
         self.cache_time = cache_time
 
     @staticmethod
     def apply_colormap(result, colormap_str):
+        """
+        Apply a colormap to the result.
+
+        Parameters:
+        result (numpy.ndarray): Array of results to apply the colormap to.
+        colormap_str (str): Name of the colormap to apply.
+
+        Returns:
+        PIL.Image.Image: Image with the applied colormap.
+        """
         result_normalized = (result - result.min()) / (result.max() - result.min())
         colormap = plt.get_cmap(colormap_str)
         result_colored = colormap(result_normalized)
@@ -37,6 +57,19 @@ class TileProcessor:
 
     @staticmethod
     async def fetch_tile(url, x, y, z):
+        """
+        Fetch a tile from the given URL.
+
+        Parameters:
+        url (str): URL of the tile.
+        x (int): X coordinate of the tile.
+        y (int): Y coordinate of the tile.
+        z (int): Zoom level of the tile.
+
+        Returns:
+        numpy.ndarray: Array of the tile data.
+        """
+
         def read_tile():
             with COGReader(url) as cog:
                 tile, _ = cog.tile(x, y, z)
@@ -60,6 +93,26 @@ class TileProcessor:
         latest: bool = True,
         operation: str = "median",
     ) -> bytes:
+        """
+        Generate and cache a tile.
+
+        Parameters:
+        x (int): X coordinate of the tile.
+        y (int): Y coordinate of the tile.
+        z (int): Zoom level of the tile.
+        start_date (str): Start date for the data extraction (YYYY-MM-DD).
+        end_date (str): End date for the data extraction (YYYY-MM-DD).
+        cloud_cover (int): Maximum allowed cloud cover percentage.
+        band1 (str): First band for the formula.
+        band2 (str): Second band for the formula.
+        formula (str): Formula to apply to the bands.
+        colormap_str (str): Name of the colormap to apply.
+        latest (bool): Whether to use the latest image.
+        operation (str): Operation to apply to the time series.
+
+        Returns:
+        bytes: Image bytes of the generated tile.
+        """
         tile = mercantile.Tile(x, y, z)
         bbox = mercantile.bounds(tile)
         bbox_geojson = mapping(box(bbox.west, bbox.south, bbox.east, bbox.north))

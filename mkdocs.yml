@@ -1,0 +1,66 @@
+site_name: VirtuGhan Documentation
+site_description: Documentation for VirtuGhan - A Virtual Computation Cube
+repo_url: https://github.com/kshitijrajsharma/VirtuGhan
+repo_name: kshitijrajsharma/VirtuGhan
+# docs_dir: "docs"
+site_dir: "build"
+site_author: Kshitij Raj Sharma
+site_url: https://kshitijrajsharma.github.io/VirtuGhan/
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: install.md
+    - Usage: usage.md
+  - Examples:
+    - Basic Usage: examples/usage.ipynb
+  - User Guide:
+    - Understanding COG: cog.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path: .
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+      title: Page contents
+      
+plugins:
+  - search
+  - mkdocs-jupyter
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: true
+            show_root_heading: true
