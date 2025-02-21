@@ -1,6 +1,6 @@
 # VirtuGhan
 
-<img src="./static/img/virtughan-logo.png" alt="VirtuGhan Logo" width="100" height="100"> 
+<img src="https://github.com/user-attachments/assets/e7ba177c-cd5e-453c-9790-679d7f83e5a7" alt="VirtuGhan Logo" width="100" height="100"> 
 
 ![Tests Passing](https://img.shields.io/badge/tests-passing-brightgreen)
 ![Build Status](https://img.shields.io/github/actions/workflow/status/kshitijrajsharma/VirtuGhan/tests.yml?branch=master)
