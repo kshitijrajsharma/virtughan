@@ -12,7 +12,9 @@
 ![Dependencies](https://img.shields.io/librariesio/release/pypi/virtughan)
 ![Last Commit](https://img.shields.io/github/last-commit/kshitijrajsharma/VirtuGhan)
 
- Name is combination of two words `virtual` & `cube` , where `cube` translated to Nepali word `घन`,  also known as virtual computation cube. You can test demo of this project for Sentinel2 data at : https://virtughan.live/ 
+ Name is combination of two words `virtual` & `cube` , where `cube` translated to Nepali word `घन`,  also known as virtual computation cube.
+
+**Demo** : https://virtughan.live/ 
 
 
 ### Install 
