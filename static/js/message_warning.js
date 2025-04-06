@@ -30,10 +30,26 @@ function showMessage(type, time, message) {
     }
 
     if(type == 'message'){
-        document.getElementById('success_and_message').innerText = 'Info!';
+        document.getElementById('success_and_message').innerText = 'Info!'; 
+        document.getElementById('success-message').classList.remove("bg-green-100");
+        document.getElementById('success-message').classList.remove("border-green-400");
+        document.getElementById('success-message').classList.remove("text-green-700");
+
+        document.getElementById('success-message').classList.add("bg-gray-50");
+        document.getElementById('success-message').classList.add("border-gray-400");
+        document.getElementById('success-message').classList.add("text-gray-700");
     }
     else if(type == 'success'){
         document.getElementById('success_and_message').innerText = 'Success!';
+
+        document.getElementById('success-message').classList.remove("bg-gray-50");
+        document.getElementById('success-message').classList.remove("border-gray-400");
+        document.getElementById('success-message').classList.remove("text-gray-700");
+
+        document.getElementById('success-message').classList.add("bg-green-100");
+        document.getElementById('success-message').classList.add("border-green-400");
+        document.getElementById('success-message').classList.add("text-green-700");
+
     }
 
 }
