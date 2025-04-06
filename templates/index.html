@@ -1535,16 +1535,20 @@
         document.getElementById('download-result-image').addEventListener('click', downloadResult);
         document.getElementById('download-band-image').addEventListener('click', function(){
           console.log("entered");
-          downloadFile('static/export/tiff_files.zip');
-          trackRawDataDownload('static/export/tiff_files.zip');
+          const uid = localStorage.getItem('UID');
+
+          downloadFile('static/export/'+uid+'/tiff_files.zip');
+          trackRawDataDownload('static/export/'+uid+'/tiff_files.zip');
         });
       });
 
       function downloadResult() {
         const analyzeChecked = document.getElementById('analyze-data').checked;
+        const uid = localStorage.getItem('UID');
+
         if(!analyzeChecked){ //if download checked
-          downloadFile('static/export/tiff_files.zip');
-          trackTimeSeriesDownload('static/export/tiff_files.zip'); //google analytics tracking
+          downloadFile('static/export/'+uid+'/tiff_files.zip');
+          trackTimeSeriesDownload('static/export/'+uid+'/tiff_files.zip'); //google analytics tracking
         }
         else{
           const operationChecked = document.getElementById('operation').checked;
@@ -1552,20 +1556,20 @@
           
           if (operationChecked && !timeSeriesChecked) {
             // Download .tif file for operation
-            // window.location.href = 'static/export/custom_band_output_aggregate.tif';
-            downloadFile('static/export/custom_band_output_aggregate.tif');
-            trackResultDownload('static/export/custom_band_output_aggregate.tif');//google analytics tracking
+            // window.location.href = 'static/export/'+uid+'/custom_band_output_aggregate.tif';
+            downloadFile('static/export/'+uid+'/custom_band_output_aggregate.tif');
+            trackResultDownload('static/export/'+uid+'/custom_band_output_aggregate.tif');//google analytics tracking
           } else if (timeSeriesChecked && !operationChecked) {
             // Download .zip file for time series
-            // window.location.href = 'static/export/tiff_files.zip';
-            downloadFile('static/export/tiff_files.zip');
+            // window.location.href = 'static/export/'+uid+'/tiff_files.zip';
+            downloadFile('static/export/'+uid+'/tiff_files.zip');
           } else if (operationChecked && timeSeriesChecked) {
             // Download both files
-            downloadFile('static/export/custom_band_output_aggregate.tif');
-            downloadFile('static/export/tiff_files.zip');
+            downloadFile('static/export/'+uid+'/custom_band_output_aggregate.tif');
+            downloadFile('static/export/'+uid+'/tiff_files.zip');
 
-            trackResultDownload('static/export/custom_band_output_aggregate.tif');
-            trackTimeSeriesDownload('static/export/tiff_files.zip');
+            trackResultDownload('static/export/'+uid+'/custom_band_output_aggregate.tif');
+            trackTimeSeriesDownload('static/export/'+uid+'/tiff_files.zip');
           }
 
         }
