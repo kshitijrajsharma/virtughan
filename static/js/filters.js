@@ -150,3 +150,69 @@ document.addEventListener('DOMContentLoaded', (event) => {
       document.getElementById("operation_menu").value = "median";
     }
     setDefaultFiltersExport();
+
+
+
+// Helper function to log date values and automatically tick smart filters if date range is high.
+function handleDateChange(event) {
+  const id = event.target.id;
+  // const value = event.target.value;
+  // console.log(`Changed: ${id} = ${value}`);
+
+  if(id == 'start-date-export' || id == 'end-date-export'){
+    var start_date_export = document.getElementById('start-date-export').value;
+    var end_date_export = document.getElementById('end-date-export').value;
+
+    const startDate = new Date(start_date_export);
+    const endDate = new Date(end_date_export);
+
+    const diffTime = endDate - startDate; // in milliseconds
+    const diffDays = diffTime / (1000 * 60 * 60 * 24); // convert to days
+
+    console.log(`Difference in days export: ${diffDays}`);
+
+    if(diffDays > 90){
+      document.getElementById("smart-filters").checked = true;
+      showMessage('message', 30000, "Smart Filters Automatically Applied since date filters exceed 90 days. If you want all the images between this range, manually turn off smart filters below. No need to worry, it is just a message.");
+    }
+    else{
+      document.getElementById("smart-filters").checked = false;
+    }
+
+  }
+  else{ //id should be start-date and end-date
+
+    // var start_date = document.getElementById('start-date').value;
+    // var end_date = document.getElementById('end-date').value;
+
+    // const startDate = new Date(start_date);
+    // const endDate = new Date(end_date);
+
+    // const diffTime = endDate - startDate; // in milliseconds
+    // const diffDays = diffTime / (1000 * 60 * 60 * 24); // convert to days
+
+    // console.log(`Difference in days: ${diffDays}`);
+
+    // if(diffDays > 90){
+
+    // }
+    
+  }
+}
+
+// Add event listeners after DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  const dateInputs = [
+    'start-date',
+    'end-date',
+    'start-date-export',
+    'end-date-export'
+  ];
+
+  dateInputs.forEach(id => {
+    const input = document.getElementById(id);
+    if (input) {
+      input.addEventListener('change', handleDateChange);
+    }
+  });
+});

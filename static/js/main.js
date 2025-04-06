@@ -288,6 +288,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   //loader script end
+
+
+  // Function to handle icon clicks
+function handleInfoClick(event) {
+  const title = event.target.title;
+  // console.log('Info clicked:', title);
+  // You can show a tooltip, modal, toast, etc. here
+  showMessage('message', 30000, title);
+}
+
+// Wait until DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  const infoIcons = document.querySelectorAll('.info-icons');
+  infoIcons.forEach(icon => {
+    icon.style.cursor = 'pointer';
+    icon.addEventListener('click', handleInfoClick);
+  });
+});
+
   
       
 

@@ -474,7 +474,7 @@
                 </div>
               </div>
               <div class="pb-4">
-                <label class="block text-sm/6 font-medium text-gray-900 pb-1" >Select Cloud Cover <i title = "Less than the input value in percentage" class="fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
+                <label class="block text-sm/6 font-medium text-gray-900 pb-1" >Select Cloud Cover <i title = "Less than the input value in percentage" class="info-icons fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
                 
                 <div class="bg-white mt-4">
                   <div class="relative bg-inherit">
@@ -484,7 +484,7 @@
               </div>
 
               <div class="mb-4 mt-2">
-                <label class="block text-sm font-medium text-gray-800 pb-1">Select Time Dimension <i title = "If not checked, latest image from time range will be processed by default." class="fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
+                <label class="block text-sm font-medium text-gray-800 pb-1">Select Time Dimension <i title = "If not checked, latest image from time range will be processed by default." class="info-icons fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
                 <div class="flex items-center">
                   <input id="timeSeries_search" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600">
                   <label for="timeSeries_search" class="ml-2 text-sm text-gray-600">Analyze data over time</label>
@@ -654,7 +654,7 @@
               <!-- Content for Tab 3 -->
               <div id="sidebar1" class = "overflow-y-scroll custom-scrollbar  p-4 tab-scrollable-content" style = "max-height: 550px;">
                <div class = "pb-4">
-                <label class="block text-sm font-medium text-gray-800 pb-2">Select Area of Interest <i title = "Select the area within map window or draw" class="fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
+                <label class="block text-sm font-medium text-gray-800 pb-2">Select Area of Interest <i title = "Select the area within map window or draw" class="info-icons fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
                 <!-- dropdown start -->
                 <div class="relative mt-2">
                   <button id="select-button-bbox" type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label">
@@ -726,7 +726,7 @@
                 </div>
 
                 <div class="rounded-md shadow-sm mb-6">
-                  <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-800">Select Action <i title = "Analyze will help to perform operations and download directly downloads the original image bands" class="fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
+                  <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-800">Select Action <i title = "Analyze will help to perform operations and download directly downloads the original image bands" class="info-icons fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
                   <div class="flex items-center space-x-4">
                     <div class="flex items-center p-2">
                       <input type="radio" id="analyze-data" name="option" value="analyze" class="radio-action form-radio h-4 w-4 text-blue-600" checked>
@@ -878,7 +878,7 @@
                               </div>
                           </li>
                           <li class="p-2 border-b border-gray-200">
-                              <label class="block text-sm/6 font-medium text-gray-700 pb-1">Select Cloud Cover <i title = "Less than the input value in percentage" class="fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
+                              <label class="block text-sm/6 font-medium text-gray-700 pb-1">Select Cloud Cover <i title = "Less than the input value in percentage" class="info-icons fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
                               <div class="bg-white mt-4">
                                   <div class="relative bg-inherit">
                                       <input type="number" style="font-size:14px;" id="cloud-cover-export" name="" value="50" class="peer bg-transparent h-10 w-full rounded-lg text-gray-600 placeholder-transparent ring-1 px-2 ring-gray-200 focus:ring-sky-600 focus:outline-none focus:border-rose-600" placeholder="Cloud Cover"/>
@@ -922,7 +922,7 @@
 
                 
                 <div id = "smartFiltersContainer" class="mb-4 mt-2">
-                  <label class="block text-sm font-medium text-gray-800 pb-1">Smart Filters <i title = "if enabled chooses weekly image for frequency upto 2 months, monthly for up to 1 year , quarterly up to 3 years and semi-annually for more than 3 years. For each period it selects least cloud cover image" class="fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
+                  <label class="block text-sm font-medium text-gray-800 pb-1">Smart Filters <i title = "if enabled chooses weekly image for frequency upto 2 months, monthly for up to 1 year , quarterly up to 3 years and semi-annually for more than 3 years. For each period it selects least cloud cover image" class="info-icons fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
                   <div class="flex items-center">
                     <input id="smart-filters" type="checkbox" name="option" class="output_type form-radio h-4 w-4 text-blue-600">
                     <label for="smart-filters" class="ml-2 text-sm text-gray-600">Enable Smart Filters</label>
@@ -948,12 +948,12 @@
 
   </div>
   <!-- message box start -->
-<div id="message-boxes" class="absolute hidden z-50  mt-2 ml-0 md:ml-[45%]" style = "">
+<div id="message-boxes" class="absolute hidden z-50  mt-2 ml-0 md:ml-[45%] md:mr-[10%]" style = "">
   <div class="bg-transparent flex items-center justify-center">
       <div>
           <!-- Success Message Box -->
           <div id="success-message" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-              <strong class="font-bold">Success!</strong> <br/>
+              <strong id = "success_and_message" class="font-bold">Success!</strong> <br/>
               <span class="block sm:inline" id="message-cont">Your operation was completed successfully.</span>
               <span class="absolute top-0 right-0 mt-2 mr-2 close-button-message" role="button">
                   <svg class="fill-current h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M14.707 5.293a1 1 0 00-1.414 0L10 8.586 6.707 5.293a1 1 0 10-1.414 1.414L8.586 10l-3.293 3.293a1 1 0 001.414 1.414L10 11.414l3.293 3.293a1 1 0 001.414-1.414L11.414 10l3.293-3.293a1 1 0 000-1.414z"/></svg>
