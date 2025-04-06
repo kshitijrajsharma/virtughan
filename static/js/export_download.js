@@ -112,6 +112,12 @@ downloading = false;
         .then(response => response.json()) 
         .then(data => {
           console.log('Success:', data);
+
+          // Store the UID in localStorage
+          if (data.uid) {
+            localStorage.setItem('UID', data.uid);
+          }
+
         })
         .catch((error) => {
           console.error('Error:', error);
@@ -127,7 +133,12 @@ downloading = false;
         //show the progress to the user
         
         function checkProcessingStatus() {
-          fetch('/logs', { 
+          const uid = localStorage.getItem('UID');
+          // console.log("UID: ", uid)
+
+          const logUrl = "/logs?uid="+uid;
+
+          fetch(logUrl, { 
             method: 'GET' 
           })
             .then(response => response.text())
@@ -144,7 +155,7 @@ downloading = false;
                     if(analyzeChecked){
                       document.getElementById("layerSwitcherBox").classList.remove("hidden");
                       if(document.getElementById("operation").checked){
-                        plotGeoTIFF('static/export/custom_band_output_aggregate.tif');
+                        plotGeoTIFF('static/export/'+uid+'/custom_band_output_aggregate.tif');
                         completed_log = true;
                       }
                     }
