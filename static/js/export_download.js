@@ -74,7 +74,7 @@ downloading = false;
   
           if(areaKm2 > 500){
             // showMessage('success', "message");
-            showMessage('warning', "Zoom in or reduce the size of your area of interest. <br/> Eg. smaller AOI than 500 SQ.Km. Sorry, this is due to limited server specs.");
+            showMessage('warning', 10000, "Zoom in or reduce the size of your area of interest. <br/> Eg. smaller AOI than 500 SQ.Km. Sorry, this is due to limited server specs.");
           }
           else{ // if aoi area is fine
         
@@ -283,9 +283,9 @@ downloading = false;
             if (!response.ok) {
               showLoaderOnMap(null, false);
                 if (response.status == 404) {
-                  showMessage('error', '404 Not Found: Couldnot load data on map. The requested file does not exist.')
+                  showMessage('error', 0, '404 Not Found: Couldnot load data on map. The requested file does not exist.')
                 } else {
-                  showMessage('error', `HTTP error! Status: ${response.status}`)  
+                  showMessage('error', 0, `HTTP error! Status: ${response.status}`)  
                 }
               }
               return response.arrayBuffer();

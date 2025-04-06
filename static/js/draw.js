@@ -149,7 +149,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
 
     if(areaKm2 > 500){
       // showMessage('success', "message");
-      showMessage('warning', "Please Select Smaller Area of Interest. Eg. smaller than 500 SQ.Km.");
+      showMessage('warning', 10000, "Please Select Smaller Area of Interest. Eg. smaller than 500 SQ.Km.");
     }
 });
 

@@ -1,5 +1,5 @@
 // Function to show message boxes
-function showMessage(type, message) {
+function showMessage(type, time, message) {
     var messageBoxes = document.getElementById('message-boxes');
     var successMessage = document.getElementById('success-message');
     var warningMessage = document.getElementById('warning-message');
@@ -9,7 +9,7 @@ function showMessage(type, message) {
     messageBoxes.classList.remove('hidden');
     messageBoxes.classList.add('z-50'); // Set higher z-index using Tailwind
 
-    if (type === 'success') {
+    if (type === 'success' || type === 'message') {
         successMessage.classList.remove('hidden');
         messageContent.innerHTML = message;
         warningMessage.classList.add('hidden');
@@ -23,11 +23,19 @@ function showMessage(type, message) {
         document.getElementById('warning_error').innerText = 'Warning!';
         setTimeout(function() {
             hideMessage();
-        }, 10000); // automatically close after certain seconds
+        }, time); // automatically close after certain seconds
     }
     else{
         document.getElementById('warning_error').innerText = 'Error!';
     }
+
+    if(type == 'message'){
+        document.getElementById('success_and_message').innerText = 'Info!';
+    }
+    else if(type == 'success'){
+        document.getElementById('success_and_message').innerText = 'Success!';
+    }
+
 }
 
 // Function to hide message boxes
