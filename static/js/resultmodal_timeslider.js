@@ -26,9 +26,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
   function preloadImages(images, callback) {
       
       let loadedCount = 0;
+      const uid = localStorage.getItem('UID');
+    //   console.log("UID: ", uid)
+
       images.forEach((src, index) => {
           const img = new Image();
-          img.src = `static/export/${src}`;
+          img.src = `static/export/${uid}/${src}`;
           img.onload = () => {
               loadedCount++;
               loadedImages[index] = img;
@@ -70,6 +73,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
       const operationChecked = document.getElementById('operation').checked;
       const timeSeriesChecked = document.getElementById('timeSeries').checked;
       document.getElementById("operationTabButton").click();
+
+      const uid = localStorage.getItem('UID');
       
       if (operationChecked && !timeSeriesChecked) {
           startLoader("operationContainer");
@@ -78,7 +83,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
           document.getElementById('timeSeriesContainer').classList.add('hidden');
           document.getElementById('timeSeriesTrendContainer').classList.add('hidden');
           document.getElementById('tabs').classList.add('hidden');
-          document.getElementById('operationImageView').src = 'static/export/custom_band_output_aggregate_colormap.png';
+          document.getElementById('operationImageView').src = 'static/export/'+uid+'/custom_band_output_aggregate_colormap.png';
           document.getElementById('operationDateDisplay').textContent = '';
           document.getElementById('timeSliderModal').classList.remove('hidden');
           
@@ -94,10 +99,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
           document.getElementById('tabs').classList.remove('hidden');
           document.getElementById('operationTabButton').classList.add('hidden');
           document.getElementById('timeSliderModal').classList.remove('hidden');
-          document.getElementById('trendImageView').src = 'static/export/values_over_time.png';
+          document.getElementById('trendImageView').src = 'static/export/'+uid+'/values_over_time.png';
 
           // Fetch data
-          const urlLists = '/list-files';
+          const urlLists = '/list-files?uid='+uid;
           fetch(urlLists, { method: 'GET' })
               .then(response => response.json())
               .then(data => {
@@ -132,13 +137,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
           document.getElementById('timeSeriesTrendContainer').classList.add('hidden');
           document.getElementById('timeSliderModal').classList.remove('hidden');
           // Load operation image initially
-          document.getElementById('operationImageView').src = 'static/export/custom_band_output_aggregate_colormap.png';
+          document.getElementById('operationImageView').src = 'static/export/'+uid+'/custom_band_output_aggregate_colormap.png';
           document.getElementById('operationDateDisplay').textContent = '';
 
-          document.getElementById('trendImageView').src = 'static/export/values_over_time.png';
+          document.getElementById('trendImageView').src = 'static/export/'+uid+'/values_over_time.png';
 
           // Fetch data for time series
-          const urlLists = '/list-files';
+          const urlLists = '/list-files?uid='+uid;
           fetch(urlLists, { method: 'GET' })
               .then(response => response.json())
               .then(data => {
@@ -171,7 +176,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
           document.getElementById('operationContainer').classList.remove('hidden');
           document.getElementById('timeSeriesContainer').classList.add('hidden');
           document.getElementById('timeSeriesTrendContainer').classList.add('hidden');
-          // document.getElementById('operationImageView').src = 'static/export/custom_band_output_aggregate_colormap.png';
+          // document.getElementById('operationImageView').src = 'static/export/'+uid+'/custom_band_output_aggregate_colormap.png';
           document.getElementById('operationDateDisplay').textContent = '';
       } else if (tab === 'timeSeries') {
           document.getElementById('operationContainer').classList.add('hidden');
