@@ -5,6 +5,8 @@ import os
 import shutil
 import sys
 import time
+import uuid
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 
 import matplotlib
@@ -34,23 +36,31 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-REQUEST_TIMEOUT = 2 * 60  ## seconds
+EXPIRY_DURATION_HOURS = int(os.getenv("EXPIRY_DURATION_HOURS", 1))
+EXPIRY_DURATION = timedelta(hours=EXPIRY_DURATION_HOURS)
+REQUEST_TIMEOUT = int(os.getenv("REQUEST_TIMEOUT", 120))
+STATIC_EXPORT_DIR = os.getenv("STATIC_EXPORT_DIR", "static/export")
+STATIC_DIR = os.getenv("STATIC_DIR", "static")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    asyncio.create_task(cleanup_expired_folders())
+    yield
 
 
 @app.middleware("http")
 async def timeout_middleware(request: Request, call_next):
     try:
-
         return await asyncio.wait_for(call_next(request), timeout=REQUEST_TIMEOUT)
     except asyncio.TimeoutError:
-
         return JSONResponse(
             {"detail": "Request processing exceeded the time limit."},
             status_code=HTTP_504_GATEWAY_TIMEOUT,
         )
 
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 templates = Jinja2Templates(directory="templates")
 
@@ -70,8 +80,8 @@ with open("data/sentinel-2-bands.json") as f:
 
 
 @app.get("/list-files")
-async def list_files():
-    directory = "static/export"
+async def list_files(uid: str):
+    directory = f"{STATIC_EXPORT_DIR}/{uid}"
     if not os.path.exists(directory):
         raise HTTPException(status_code=404, detail="Directory not found")
 
@@ -85,8 +95,8 @@ async def list_files():
 
 
 @app.get("/logs")
-async def get_logs():
-    log_file = "static/runtime.log"
+async def get_logs(uid: str):
+    log_file = f"{STATIC_EXPORT_DIR}/{uid}/runtime.log"
     if os.path.exists(log_file):
         with open(log_file, "r") as file:
             logs = file.readlines()[-30:]
@@ -97,7 +107,7 @@ async def get_logs():
 
 @app.get("/sentinel2-bands")
 async def get_sentinel2_bands(
-    band: str = Query(None, description="Band name to filter")
+    band: str = Query(None, description="Band name to filter"),
 ):
     if band:
         if band in sentinel2_assets:
@@ -170,12 +180,15 @@ async def compute_aoi_over_time(
             },
             status_code=400,
         )
-    # print("Received request for formula : ", formula)
     bbox = list(map(float, bbox.split(",")))
 
-    output_dir = "static/export"
+    uid = datetime.now().strftime("%Y%m%d%H%M%S") + "_" + str(uuid.uuid4())[:6]
+
+    output_dir = f"{STATIC_EXPORT_DIR}/{uid}"
     if os.path.exists(output_dir):
         shutil.rmtree(output_dir)
+    os.makedirs(output_dir, exist_ok=True)
+
     background_tasks.add_task(
         run_computation,
         bbox,
@@ -190,7 +203,7 @@ async def compute_aoi_over_time(
         output_dir,
         smart_filter,
     )
-    return {"message": f"Processing started in background : {output_dir}"}
+    return {"message": f"Processing started in background: {output_dir}", "uid": uid}
 
 
 async def run_computation(
@@ -206,11 +219,10 @@ async def run_computation(
     output_dir,
     smart_filter,
 ):
-    log_file = "static/runtime.log"
+    log_file = f"{output_dir}/runtime.log"
     if os.path.exists(log_file):
         os.remove(log_file)
     with open(log_file, "a") as f:
-
         sys.stdout = f
 
         print("Starting processing...")
@@ -236,7 +248,6 @@ async def run_computation(
             print(f"Error processing : {e}")
 
         finally:
-            # Final garbage collection
             gc.collect()
 
 
@@ -335,8 +346,10 @@ async def get_tile(
 
         return Response(content=image_bytes, media_type="image/png", headers=headers)
     except Exception as ex:
-        raise ex
-        return JSONResponse(content={"error": "Computation Error"}, status_code=504)
+        # raise ex
+        return JSONResponse(
+            content={"error": f"Computation Error:  {str(ex)}"}, status_code=504
+        )
 
 
 @app.get("/image-download")
@@ -362,7 +375,9 @@ async def extract_raw_bands_as_image(
         False, description="Should smart filter be applied ? (default: False)"
     ),
 ):
-    output_dir = "static/export"
+    uid = datetime.now().strftime("%Y%m%d%H%M%S") + "_" + str(uuid.uuid4())[:8]
+
+    output_dir = f"{STATIC_EXPORT_DIR}/{uid}"
     bbox = list(map(float, bbox.split(",")))
 
     if os.path.exists(output_dir):
@@ -379,13 +394,16 @@ async def extract_raw_bands_as_image(
         output_dir,
         smart_filter,
     )
-    return {"message": f"Raw band extraction started in background: {output_dir}"}
+    return {
+        "message": f"Raw band extraction started in background: {output_dir}",
+        "uid": uid,
+    }
 
 
 async def run_image_download(
     bbox, start_date, end_date, cloud_cover, bands_list, output_dir, smart_filter
 ):
-    log_file = "static/runtime.log"
+    log_file = f"{output_dir}/runtime.log"
     if os.path.exists(log_file):
         os.remove(log_file)
     with open(log_file, "a") as f:
@@ -412,3 +430,19 @@ async def run_image_download(
 
         finally:
             gc.collect()
+
+
+async def cleanup_expired_folders():
+    while True:
+        now = datetime.now()
+        os.makedirs(STATIC_EXPORT_DIR, exist_ok=True)
+        for folder_name in os.listdir(STATIC_EXPORT_DIR):
+            folder_path = os.path.join(STATIC_EXPORT_DIR, folder_name)
+            if os.path.isdir(folder_path):
+                folder_creation_time = datetime.strptime(
+                    folder_name.split("_")[0], "%Y%m%d%H%M%S"
+                )
+                if now - folder_creation_time > EXPIRY_DURATION:
+                    shutil.rmtree(folder_path)
+                    print(f"Deleted expired folder: {folder_path}")
+        await asyncio.sleep(1 * 60 * 60)  # Run the cleanup task every 1 hours
