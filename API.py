@@ -172,6 +172,31 @@ async def compute_aoi_over_time(
             status_code=400,
         )
 
+    if band1 not in sentinel2_assets.keys():
+        return JSONResponse(
+            content={"error": f"Band '{band1}' not found in Sentinel-2 bands"},
+            status_code=400,
+        )
+    
+    if band2 and band2 not in sentinel2_assets.keys():
+        return JSONResponse(
+            content={"error": f"Band '{band2}' not found in Sentinel-2 bands"},
+            status_code=400,
+        )
+    
+    if band2 and band1 != band2:
+        band1_gsd = sentinel2_assets[band1].get("gsd")
+        band2_gsd = sentinel2_assets[band2].get("gsd")
+        
+        if band1_gsd != band2_gsd:
+            return JSONResponse(
+                content={
+                    "error": f"Band resolution mismatch: '{band1}' has {band1_gsd}m resolution while '{band2}' has {band2_gsd}m resolution"
+                },
+                status_code=400,
+            )
+
+
     valid_operations = ["mean", "median", "max", "min", "std", "sum", "var"]
     if operation and operation not in valid_operations:
         return JSONResponse(
@@ -245,6 +270,7 @@ async def run_computation(
             print(f"Processing completed. Results saved in {output_dir}")
 
         except Exception as e:
+            # raise e
             print(f"Error processing : {e}")
 
         finally:
