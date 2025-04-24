@@ -228,8 +228,10 @@ async def compute_aoi_over_time(
         output_dir,
         smart_filter,
     )
-    return {"message": f"Processing started in background: {output_dir}", "uid": uid}
-
+    return JSONResponse(
+        content={"message": f"Processing started in background: {output_dir}", "uid": uid},
+        status_code=201
+    )
 
 async def run_computation(
     bbox,
