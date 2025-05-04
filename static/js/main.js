@@ -233,8 +233,11 @@ document.addEventListener('DOMContentLoaded', function() {
   //if template provided options clicked eg. NDVI, NDWI
   document.querySelectorAll('.template-filters').forEach(function(item) {
       item.addEventListener('click', function() {
-        sentinel2_checked = document.getElementById("sentinel2_radio").checked;
-        landsat_checked = document.getElementById("landsat_radio").checked;
+        sentinel2_search_checked = document.getElementById("sentinel2_radio_search").checked;
+        landsat_search_checked = document.getElementById("landsat_radio_search").checked;
+  
+        sentinel2_export_checked = document.getElementById("sentinel2_radio_export").checked;
+        landsat_export_checked = document.getElementById("landsat_radio_export").checked;
         
           const templateText = item.querySelector('.template-filters-value').getAttribute('value');
           // console.log(templateText); 
@@ -250,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
           }
 
           var nir;
-          if(sentinel2_checked){
+          if(sentinel2_search_checked || sentinel2_export_checked){
             nir = "nir";
           }
           else{

@@ -1,26 +1,33 @@
 document.addEventListener('DOMContentLoaded', (event) => {
   document.querySelectorAll('.radio-action-sat').forEach((radio) => {
     radio.addEventListener('change', function(event){
-      sentinel2_checked = document.getElementById("sentinel2_radio").checked;
-      landsat_checked = document.getElementById("landsat_radio").checked;
+      sentinel2_search_checked = document.getElementById("sentinel2_radio_search").checked;
+      landsat_search_checked = document.getElementById("landsat_radio_search").checked;
 
-      console.log("sentinel_checked"+sentinel2_checked);
-      console.log("landsat_checked"+landsat_checked);
+      sentinel2_export_checked = document.getElementById("sentinel2_radio_export").checked;
+      landsat_export_checked = document.getElementById("landsat_radio_export").checked;
 
-      if(landsat_checked){
+      console.log("sentinel_export_checked"+sentinel2_export_checked);
+      console.log("landsat_export_checked"+landsat_export_checked);
+
+      if(landsat_search_checked){
         tile_params.band2 = "nir08";
         tile_params.source = "landsat";
-
-        export_params.band2 = "nir08";
-        export_params.source = "landsat";
 
         console.log(tile_params.band2);
 
       }
-      else{
+      if(landsat_export_checked){
+        export_params.band2 = "nir08";
+        export_params.source = "landsat";
+      }
+
+      if(sentinel2_search_checked){
         tile_params.band2 = "nir";
         tile_params.source = "sentinel2";
+      }
 
+      if(sentinel2_export_checked){
         export_params.band2 = "nir";
         export_params.source = "sentinel2";
       }

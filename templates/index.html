@@ -397,14 +397,14 @@
               <div id = "filterOption_search" class = "pb-4">
 
                 <div class="rounded-md shadow-sm mb-6">
-                  <label id="select_satellite" class="block text-sm/6 font-medium text-gray-800">Select Satellite <i title = "Select the satellite" class="info-icons fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
+                  <label id="select_satellite_search" class="block text-sm/6 font-medium text-gray-800">Select Satellite <i title = "Select the satellite" class="info-icons fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
                   <div class="flex items-center space-x-4">
                     <div class="flex items-center p-2">
-                      <input type="radio" id="sentinel2_radio" name="option" value="sentinel2_r" class="radio-action-sat form-radio h-4 w-4 text-blue-600" checked >
+                      <input type="radio" id="sentinel2_radio_search" name="option" value="sentinel2_r" class="radio-action-sat form-radio h-4 w-4 text-blue-600" checked >
                       <label for="sentinel2_r" class="ml-2 text-sm text-gray-700">Sentinel2</label>
                     </div>
                     <div class="flex items-center">
-                      <input type="radio" id="landsat_radio" name="option" value="landsat_r" class="radio-action-sat form-radio h-4 w-4 text-blue-600">
+                      <input type="radio" id="landsat_radio_search" name="option" value="landsat_r" class="radio-action-sat form-radio h-4 w-4 text-blue-600">
                       <label for="landsat_r" class="ml-2 text-sm text-gray-700">Landsat</label>
                     </div>
                   </div>
@@ -669,6 +669,21 @@
               <!-- Content for Tab 3 -->
               <div id="sidebar1" class = "overflow-y-scroll custom-scrollbar  p-4 tab-scrollable-content" style = "max-height: 550px;">
                <div class = "pb-4">
+
+                <div class="rounded-md shadow-sm mb-6">
+                  <label id="select_satellite_export" class="block text-sm/6 font-medium text-gray-800">Select Satellite <i title = "Select the satellite" class="info-icons fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
+                  <div class="flex items-center space-x-4">
+                    <div class="flex items-center p-2">
+                      <input type="radio" id="sentinel2_radio_export" name="option" value="sentinel2_r" class="radio-action-sat form-radio h-4 w-4 text-blue-600" checked >
+                      <label for="sentinel2_r" class="ml-2 text-sm text-gray-700">Sentinel2</label>
+                    </div>
+                    <div class="flex items-center">
+                      <input type="radio" id="landsat_radio_export" name="option" value="landsat_r" class="radio-action-sat form-radio h-4 w-4 text-blue-600">
+                      <label for="landsat_r" class="ml-2 text-sm text-gray-700">Landsat</label>
+                    </div>
+                  </div>
+                </div>                
+
                 <label class="block text-sm font-medium text-gray-800 pb-2">Select Area of Interest <i title = "Select the area within map window or draw" class="info-icons fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
                 <!-- dropdown start -->
                 <div class="relative mt-2">

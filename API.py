@@ -92,6 +92,9 @@ async def read_about(request: Request):
 with open("data/sentinel-2-bands.json") as f:
     sentinel2_assets = json.load(f)
 
+with open("data/landsat-bands.json") as f:
+    landsat_assets = json.load(f)
+
 
 @app.get("/list-files")
 async def list_files(uid: str):
@@ -189,22 +192,25 @@ async def compute_aoi_over_time(
             status_code=400,
         )
 
-    if band1 not in sentinel2_assets.keys():
+    # Select appropriate asset dictionary
+    assets = sentinel2_assets if source == "sentinel2" else landsat_assets
+
+    if band1 not in assets:
         return JSONResponse(
-            content={"error": f"Band '{band1}' not found in Sentinel-2 bands"},
+            content={"error": f"Band '{band1}' not found in {source.capitalize()} bands"},
             status_code=400,
         )
-    
-    if band2 and band2 not in sentinel2_assets.keys():
+
+    if band2 and band2 not in assets:
         return JSONResponse(
-            content={"error": f"Band '{band2}' not found in Sentinel-2 bands"},
+            content={"error": f"Band '{band2}' not found in {source.capitalize()} bands"},
             status_code=400,
         )
-    
+
+    # Only compare gsd if both bands exist and are different
     if band2 and band1 != band2:
-        band1_gsd = sentinel2_assets[band1].get("gsd")
-        band2_gsd = sentinel2_assets[band2].get("gsd")
-        
+        band1_gsd = assets[band1].get("gsd")
+        band2_gsd = assets[band2].get("gsd")
         if band1_gsd != band2_gsd:
             return JSONResponse(
                 content={
@@ -212,6 +218,8 @@ async def compute_aoi_over_time(
                 },
                 status_code=400,
             )
+
+
 
 
     valid_operations = ["mean", "median", "max", "min", "std", "sum", "var"]
