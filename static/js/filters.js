@@ -1,4 +1,36 @@
 document.addEventListener('DOMContentLoaded', (event) => {
+  document.querySelectorAll('.radio-action-sat').forEach((radio) => {
+    radio.addEventListener('change', function(event){
+      sentinel2_checked = document.getElementById("sentinel2_radio").checked;
+      landsat_checked = document.getElementById("landsat_radio").checked;
+
+      console.log("sentinel_checked"+sentinel2_checked);
+      console.log("landsat_checked"+landsat_checked);
+
+      if(landsat_checked){
+        tile_params.band2 = "nir08";
+        tile_params.source = "landsat";
+
+        export_params.band2 = "nir08";
+        export_params.source = "landsat";
+
+        console.log(tile_params.band2);
+
+      }
+      else{
+        tile_params.band2 = "nir";
+        tile_params.source = "sentinel2";
+
+        export_params.band2 = "nir";
+        export_params.source = "sentinel2";
+      }
+
+    })
+  })
+})
+
+
+document.addEventListener('DOMContentLoaded', (event) => {
     document.querySelectorAll('.radio-action').forEach((radio) => {
       radio.addEventListener('change', function(event){
         analyze_checked = document.getElementById("analyze-data").checked;

@@ -78,7 +78,7 @@ downloading = false;
           }
           else{ // if aoi area is fine
         
-        var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&timeseries=${encodeURIComponent(export_params.timeseries)}&smart_filters=${export_params.smart_filters}`;
+        var url_compute = `/export?source=${export_params.source}&bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&timeseries=${encodeURIComponent(export_params.timeseries)}&smart_filters=${export_params.smart_filters}`;
 
         //if operation and timeseries should not be sent in url. 
         // var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}`;

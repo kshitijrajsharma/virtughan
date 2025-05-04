@@ -395,6 +395,21 @@
               <!-- <h2 class="text-base/7 font-semibold text-gray-900">Apply Filters</h2>
               <p class="mt-1 text-sm/6 text-gray-600">Select the filters you want to apply.</p> -->
               <div id = "filterOption_search" class = "pb-4">
+
+                <div class="rounded-md shadow-sm mb-6">
+                  <label id="select_satellite" class="block text-sm/6 font-medium text-gray-800">Select Satellite <i title = "Select the satellite" class="info-icons fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
+                  <div class="flex items-center space-x-4">
+                    <div class="flex items-center p-2">
+                      <input type="radio" id="sentinel2_radio" name="option" value="sentinel2_r" class="radio-action-sat form-radio h-4 w-4 text-blue-600" checked >
+                      <label for="sentinel2_r" class="ml-2 text-sm text-gray-700">Sentinel2</label>
+                    </div>
+                    <div class="flex items-center">
+                      <input type="radio" id="landsat_radio" name="option" value="landsat_r" class="radio-action-sat form-radio h-4 w-4 text-blue-600">
+                      <label for="landsat_r" class="ml-2 text-sm text-gray-700">Landsat</label>
+                    </div>
+                  </div>
+                </div>
+
                 <label id="listbox-label_search" class="block text-sm/6 font-medium text-gray-900">Filter Option <span class="text-lg text-black-600">*</span></label>
                 <div class="relative mt-2">
                   <button id="select-button_search" type="button" class="cursor-pointer grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label_search">

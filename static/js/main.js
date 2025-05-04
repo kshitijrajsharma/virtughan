@@ -233,6 +233,9 @@ document.addEventListener('DOMContentLoaded', function() {
   //if template provided options clicked eg. NDVI, NDWI
   document.querySelectorAll('.template-filters').forEach(function(item) {
       item.addEventListener('click', function() {
+        sentinel2_checked = document.getElementById("sentinel2_radio").checked;
+        landsat_checked = document.getElementById("landsat_radio").checked;
+        
           const templateText = item.querySelector('.template-filters-value').getAttribute('value');
           // console.log(templateText); 
           var param;
@@ -245,15 +248,23 @@ document.addEventListener('DOMContentLoaded', function() {
             // console.log("no this is search");
             param = tile_params;
           }
+
+          var nir;
+          if(sentinel2_checked){
+            nir = "nir";
+          }
+          else{
+            nir = "nir08";
+          }
   
         if(templateText == "NDVI"){
           param.formula = "(band2 - band1) / (band2 + band1)";
           param.band1 = 'red';
-          param.band2 = 'nir';
+          param.band2 = nir;
         }
         else if(templateText == "NDWI"){
           param.formula = "(band2 - band1) / (band2 + band1)";
-          param.band1 = 'nir';
+          param.band1 = nir;
           param.band2 = 'green';
         }
         else if(templateText == "visual"){
