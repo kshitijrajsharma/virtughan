@@ -516,7 +516,7 @@
                     <option value="std" class="text-gray-600">Std</option>
                     <option value="sum" class="text-gray-600">Sum</option>
                     <option value="var" class="text-gray-600">Variance</option>
-                    <option value="mode" class="text-gray-600">Mode</option>
+                    <!-- <option value="mode" class="text-gray-600">Mode</option> -->
                 </select>
             </div>
 
@@ -854,25 +854,6 @@
                     </button>
                     <div id="dropdownMenuBands" class="hidden absolute mt-2 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
                       <div id = "list_of_bands" class="max-h-60 overflow-auto custom-scrollbar">
-                        <!-- <label class="flex items-center px-3 py-2"><input type="checkbox" value="VISUAL" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">VISUAL Bands</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="RED" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">RED</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="GREEN" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">GREEN</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="BLUE" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">BLUE</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="NIR" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">NIR</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="SWIR22" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">SWIR22</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="REDEDGE2" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">REDEDGE2</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="REDEDGE3" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">REDEDGE3</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="REDEDGE1" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">REDEDGE1</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="SWIR16" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">SWIR16</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="WVP" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">WVP</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="NIR08" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">NIR08</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="AOT" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">AOT</span></label>
-        
-                        <label class="block px-3 py-2 font-semibold text-gray-700 text-sm">Semantic Bands</label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="COASTAL" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">COASTAL</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="NIR09" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">NIR09</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="CLOUD" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">CLOUD</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="SNOW" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">SNOW</span></label> -->
                       </div>
                     </div>
                   </div>
@@ -1024,57 +1005,13 @@
               <div class="w-full md:w-1/2 mb-4 md:mb-0">
                   <label class="block text-sm font-medium text-gray-700">Band 1</label>
                   <select id="band1" style="border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md max-h-[52px] overflow-y-auto custom-scrollbar">
-                    <!-- <option value="">Select Band 1</option>
-                    <optgroup id="band1_options" label="Bands"> -->
-                      <!-- <option value="RED">RED</option>
-                      <option value="GREEN">GREEN</option>
-                      <option value="BLUE">BLUE</option>
-                      <option value="VISUAL">VISUAL</option>
-                      <option value="NIR">NIR</option>
-                      <option value="SWIR22">SWIR22</option>
-                      <option value="REDEDGE2">REDEDGE2</option>
-                      <option value="REDEDGE3">REDEDGE3</option>
-                      <option value="REDEDGE1">REDEDGE1</option>
-                      <option value="SWIR16">SWIR16</option>
-                      <option value="WVP">WVP</option>
-                      <option value="NIR08">NIR08</option>
-                      <option value="SCL">SCL</option>
-                      <option value="AOT">AOT</option>
-                    </optgroup>
-                    <optgroup label="Semantic Bands">
-                      <option value="COASTAL">COASTAL</option>
-                      <option value="NIR09">NIR09</option>
-                      <option value="CLOUD">CLOUD</option>
-                      <option value="SNOW">SNOW</option>
-                    </optgroup>-->
+                   
                   </select>                   
               </div>
               <div class="w-full md:w-1/2">
                   <label class="block text-sm font-medium text-gray-700">Band 2</label>
                   <select id="band2" style="border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                    <!-- <option value="">Select Band 1</option>
-                    <optgroup label="Bands">
-                      <option value="RED">RED</option>
-                      <option value="GREEN">GREEN</option>
-                      <option value="BLUE">BLUE</option>
-                      <option value="VISUAL">VISUAL</option>
-                      <option value="NIR">NIR</option>
-                      <option value="SWIR22">SWIR22</option>
-                      <option value="REDEDGE2">REDEDGE2</option>
-                      <option value="REDEDGE3">REDEDGE3</option>
-                      <option value="REDEDGE1">REDEDGE1</option>
-                      <option value="SWIR16">SWIR16</option>
-                      <option value="WVP">WVP</option>
-                      <option value="NIR08">NIR08</option>
-                      <option value="SCL">SCL</option>
-                      <option value="AOT">AOT</option>
-                    </optgroup>
-                    <optgroup label="Semantic Bands">
-                      <option value="COASTAL">COASTAL</option>
-                      <option value="NIR09">NIR09</option>
-                      <option value="CLOUD">CLOUD</option>
-                      <option value="SNOW">SNOW</option>
-                    </optgroup> -->
+                    
                   </select>
                   
               </div>
