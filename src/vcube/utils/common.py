@@ -78,6 +78,7 @@ async def search_stac_api_async(bbox_geojson, start_date, end_date, cloud_cover,
     list: List of features found in the search.
     """
     search_url = _choose_stac_url(collection).rstrip("/") + "/search"
+    
     print("------------------------")
     print(search_url)
 

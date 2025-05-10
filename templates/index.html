@@ -853,8 +853,8 @@
                        Select Bands
                     </button>
                     <div id="dropdownMenuBands" class="hidden absolute mt-2 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
-                      <div class="max-h-60 overflow-auto custom-scrollbar">
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="VISUAL" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">VISUAL Bands</span></label>
+                      <div id = "list_of_bands" class="max-h-60 overflow-auto custom-scrollbar">
+                        <!-- <label class="flex items-center px-3 py-2"><input type="checkbox" value="VISUAL" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">VISUAL Bands</span></label>
                         <label class="flex items-center px-3 py-2"><input type="checkbox" value="RED" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">RED</span></label>
                         <label class="flex items-center px-3 py-2"><input type="checkbox" value="GREEN" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">GREEN</span></label>
                         <label class="flex items-center px-3 py-2"><input type="checkbox" value="BLUE" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">BLUE</span></label>
@@ -866,15 +866,13 @@
                         <label class="flex items-center px-3 py-2"><input type="checkbox" value="SWIR16" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">SWIR16</span></label>
                         <label class="flex items-center px-3 py-2"><input type="checkbox" value="WVP" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">WVP</span></label>
                         <label class="flex items-center px-3 py-2"><input type="checkbox" value="NIR08" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">NIR08</span></label>
-                        <!-- <label class="flex items-center px-3 py-2"><input type="checkbox" value="SCL" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">SCL</span></label> -->
                         <label class="flex items-center px-3 py-2"><input type="checkbox" value="AOT" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">AOT</span></label>
         
-                        <!-- Add more options as needed -->
                         <label class="block px-3 py-2 font-semibold text-gray-700 text-sm">Semantic Bands</label>
                         <label class="flex items-center px-3 py-2"><input type="checkbox" value="COASTAL" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">COASTAL</span></label>
                         <label class="flex items-center px-3 py-2"><input type="checkbox" value="NIR09" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">NIR09</span></label>
                         <label class="flex items-center px-3 py-2"><input type="checkbox" value="CLOUD" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">CLOUD</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="SNOW" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">SNOW</span></label>
+                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="SNOW" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">SNOW</span></label> -->
                       </div>
                     </div>
                   </div>
@@ -1637,9 +1635,12 @@
     });
 
     // Update button text with selected options
-    const checkboxes = dropdownMenu.querySelectorAll('.band-checkbox');
-    checkboxes.forEach(function(checkbox) {
-        checkbox.addEventListener('change', function() {
+    // const checkboxes = dropdownMenu.querySelectorAll('.band-checkbox');
+    // checkboxes.forEach(function(checkbox) {
+    //     checkbox.addEventListener('change', function() {
+      document.getElementById('list_of_bands').addEventListener('change', function (event) {
+        if (!event.target.classList.contains('band-checkbox')) return;
+            const checkboxes = dropdownMenu.querySelectorAll('.band-checkbox');
             const selectedOptions = Array.from(checkboxes).filter(chk => chk.checked).map(chk => chk.value);
             // console.log(selectedOptions);
             dropdownButton.innerHTML = selectedOptions.length > 0 ? selectedOptions.join(', ') : `<img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full mr-2">Select Bands`;
@@ -1667,7 +1668,7 @@
             document.getElementById("export-map-view-button").classList.add('bg-blue-700');
         });
     });
-});
+// });
 
 
   </script>

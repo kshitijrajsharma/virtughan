@@ -10,26 +10,42 @@ document.addEventListener('DOMContentLoaded', (event) => {
       console.log("sentinel_export_checked"+sentinel2_export_checked);
       console.log("landsat_export_checked"+landsat_export_checked);
 
-      if(landsat_search_checked){
+      const tabPanel = this.closest('.tab-panel');
+    
+      // Get all tab panels and tab buttons
+      const tabPanels = Array.from(document.querySelectorAll('.tab-panel'));
+      const tabButtons = Array.from(document.querySelectorAll('.tab'));
+
+      // Find index of the current tab panel
+      const tabIndex = tabPanels.indexOf(tabPanel);
+      const parentTabId = tabButtons[tabIndex]?.id;
+
+      console.log(parentTabId);
+
+      if(landsat_search_checked  && parentTabId == "filterTab"){
         tile_params.band2 = "nir08";
         tile_params.source = "landsat";
 
         console.log(tile_params.band2);
 
       }
-      if(landsat_export_checked){
+      if(landsat_export_checked && parentTabId == "exportTab"){
         export_params.band2 = "nir08";
         export_params.source = "landsat";
+
+        renderBands('landsat');//function in main
       }
 
-      if(sentinel2_search_checked){
+      if(sentinel2_search_checked  && parentTabId == "filterTab"){
         tile_params.band2 = "nir";
         tile_params.source = "sentinel2";
       }
 
-      if(sentinel2_export_checked){
+      if(sentinel2_export_checked && parentTabId == "exportTab"){
         export_params.band2 = "nir";
         export_params.source = "sentinel2";
+
+        renderBands('sentinel2'); // function in main
       }
 
     })

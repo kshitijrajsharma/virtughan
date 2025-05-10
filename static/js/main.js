@@ -64,6 +64,78 @@ document.addEventListener('DOMContentLoaded', function() {
 
   //leftbar tab end
 
+
+  //band selection in image download start
+ 
+
+  function renderBands(satellite) {
+    const container = document.getElementById("list_of_bands");
+    container.innerHTML = ""; 
+
+    const sentinel2Bands = [
+      "VISUAL", "RED", "GREEN", "BLUE", "NIR", "SWIR22", "REDEDGE2", "REDEDGE3", "REDEDGE1",
+      "SWIR16", "WVP", "NIR08", "AOT",
+      { label: "Semantic Bands", type: "section" },
+      "COASTAL", "NIR09", "CLOUD", "SNOW"
+    ];
+  
+    const landsatBands = [
+      "COASTAL",
+      "VISUAL",
+      "BLUE",
+      "GREEN",
+      "RED",
+      "NIR08",
+      "SWIR16",
+      "SWIR22",
+      "LWIR11",
+      "LWIR12"
+    ];
+    
+    if(satellite == "landsat"){
+      bandList = landsatBands;
+    }
+    else if(satellite == "sentinel2"){
+      bandList = sentinel2Bands;
+    }
+
+    bandList.forEach(band => {
+      if (typeof band === "string") {
+        const label = document.createElement("label");
+        label.className = "flex items-center px-3 py-2";
+
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.value = band;
+        input.className = "form-checkbox h-4 w-4 text-blue-600 band-checkbox";
+
+        const span = document.createElement("span");
+        span.className = "ml-2 text-gray-700 text-sm";
+        span.textContent = band;
+
+        label.appendChild(input);
+        label.appendChild(span);
+        container.appendChild(label);
+      } else if (band.type === "section") {
+        const section = document.createElement("label");
+        section.className = "block px-3 py-2 font-semibold text-gray-700 text-sm";
+        section.textContent = band.label;
+        container.appendChild(section);
+      }
+    });
+  }
+
+  sentinel2_export_checked = document.getElementById("sentinel2_radio_export").checked;
+  landsat_export_checked = document.getElementById("landsat_radio_export").checked;
+      if (sentinel2_export_checked) {
+        renderBands('sentinel2');
+      } else if (landsat_export_checked) {
+        renderBands('landsat');
+      }
+
+  //band selection in image download end
+
+
 //band box change - advance filter (formula) start
 document.getElementById("band1").addEventListener("change", updateBandsBox);
 document.getElementById("band2").addEventListener("change", updateBandsBox);
@@ -230,6 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
+  
   //if template provided options clicked eg. NDVI, NDWI
   document.querySelectorAll('.template-filters').forEach(function(item) {
       item.addEventListener('click', function() {
@@ -238,6 +311,19 @@ document.addEventListener('DOMContentLoaded', function() {
   
         sentinel2_export_checked = document.getElementById("sentinel2_radio_export").checked;
         landsat_export_checked = document.getElementById("landsat_radio_export").checked;
+
+
+        const tabPanel = this.closest('.tab-panel');
+    
+        // Get all tab panels and tab buttons
+        const tabPanels = Array.from(document.querySelectorAll('.tab-panel'));
+        const tabButtons = Array.from(document.querySelectorAll('.tab'));
+
+        // Find index of the current tab panel
+        const tabIndex = tabPanels.indexOf(tabPanel);
+        const parentTabId = tabButtons[tabIndex]?.id;
+
+        console.log(parentTabId);
         
           const templateText = item.querySelector('.template-filters-value').getAttribute('value');
           // console.log(templateText); 
@@ -253,10 +339,17 @@ document.addEventListener('DOMContentLoaded', function() {
           }
 
           var nir;
-          if(sentinel2_search_checked || sentinel2_export_checked){
+          if(sentinel2_search_checked && parentTabId == "filterTab"){
             nir = "nir";
           }
-          else{
+          else if(landsat_search_checked && parentTabId == "filterTab"){
+            nir = "nir08";
+          }
+
+          if(sentinel2_export_checked && parentTabId == "exportTab"){
+            nir = "nir";
+          }
+          else if(landsat_export_checked && parentTabId == "exportTab"){
             nir = "nir08";
           }
   
@@ -276,6 +369,7 @@ document.addEventListener('DOMContentLoaded', function() {
           param.band2 = '';
         }
         
+        console.log(param.band2)
       });
   });
   //buttons and filters end
