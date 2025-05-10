@@ -5,9 +5,10 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import rasterio
+import rasterio as rio
 from PIL import Image
 from pyproj import Transformer
+from rasterio.warp import reproject
 from rasterio.windows import from_bounds
 
 # from scipy.stats import mode
@@ -88,7 +89,7 @@ class VCubeProcessor:
 
     def fetch_process_custom_band(self, band1_url, band2_url):
         """
-        Fetch and process custom band data.
+        Fetch and process custom band data, resampling if bands have different resolutions.
 
         Parameters:
         band1_url (str): URL of the first band.
@@ -97,42 +98,90 @@ class VCubeProcessor:
         Returns:
         tuple: Processed result, CRS, transform, and band URL.
         """
+
         try:
-            with rasterio.open(band1_url) as band1_cog:
+            with rio.open(band1_url) as band1_cog:
                 min_x, min_y, max_x, max_y = self._transform_bbox(band1_cog.crs)
                 band1_window = self._calculate_window(
                     band1_cog, min_x, min_y, max_x, max_y
                 )
 
                 if self._is_window_out_of_bounds(band1_window):
-                    return None, None, None
+                    return None, None, None, None
 
-                band1 = band1_cog.read(window=band1_window).astype(float)
+                band1_data = band1_cog.read(window=band1_window).astype(float)
+                band1_transform = band1_cog.window_transform(band1_window)
+                band1_height, band1_width = band1_data.shape[1], band1_data.shape[2]
 
                 if band2_url:
-                    with rasterio.open(band2_url) as band2_cog:
+                    with rio.open(band2_url) as band2_cog:
                         min_x, min_y, max_x, max_y = self._transform_bbox(band2_cog.crs)
                         band2_window = self._calculate_window(
                             band2_cog, min_x, min_y, max_x, max_y
                         )
 
                         if self._is_window_out_of_bounds(band2_window):
-                            return None, None, None
+                            return None, None, None, None
 
-                        band2 = band2_cog.read(window=band2_window).astype(float)
+                        band2_data = band2_cog.read(window=band2_window).astype(float)
+                        band2_transform = band2_cog.window_transform(band2_window)
+                        band2_height, band2_width = (
+                            band2_data.shape[1],
+                            band2_data.shape[2],
+                        )
+
+                        if band1_height != band2_height or band1_width != band2_width:
+                            band1_res = band1_transform[0]
+                            band2_res = band2_transform[0]
+
+                            if band1_res > band2_res:
+                                resampled_band2 = np.zeros_like(band1_data)
+
+                                resampled_band2, _ = reproject(
+                                    source=band2_data,
+                                    destination=resampled_band2,
+                                    src_transform=band2_transform,
+                                    src_crs=band2_cog.crs,
+                                    dst_transform=band1_transform,
+                                    dst_crs=band1_cog.crs,
+                                    resampling=rio.warp.Resampling.bilinear,
+                                    dst_shape=(band1_height, band1_width),
+                                )
+                                band2_data = resampled_band2
+                                transform = band1_transform
+                            else:
+                                resampled_band1 = np.zeros_like(band2_data)
+
+                                resampled_band1, _ = reproject(
+                                    source=band1_data,
+                                    destination=resampled_band1,
+                                    src_transform=band1_transform,
+                                    src_crs=band1_cog.crs,
+                                    dst_transform=band2_transform,
+                                    dst_crs=band2_cog.crs,
+                                    resampling=rio.warp.Resampling.bilinear,
+                                    dst_shape=(band2_height, band2_width),
+                                )
+                                band1_data = resampled_band1
+                                transform = band2_transform
+                        else:
+                            transform = band1_transform
+
+                        band1 = band1_data
+                        band2 = band2_data
                         result = eval(self.formula)
                 else:
-                    result = eval(self.formula) if band1.shape[0] == 1 else band1
+                    result = (
+                        eval(self.formula) if band1_data.shape[0] == 1 else band1_data
+                    )
+                    transform = band1_transform
 
-            return (
-                result,
-                band1_cog.crs,
-                band1_cog.window_transform(band1_window),
-                band1_url,
-            )
+            return result, band1_cog.crs, transform, band1_url
+
         except Exception as e:
+            raise e
             print(f"Error fetching image: {e}")
-            return None, None, None
+            return None, None, None, None
 
     def _remove_overlapping_sentinel2_tiles(self, features):
         """
@@ -329,7 +378,7 @@ class VCubeProcessor:
         nodata_value = -9999
         data = np.where(np.isnan(data), nodata_value, data)
 
-        with rasterio.open(
+        with rio.open(
             output_file,
             "w",
             driver="GTiff",
@@ -498,7 +547,7 @@ class VCubeProcessor:
         Returns:
         str: Path to the image file with the added text.
         """
-        with rasterio.open(image_path) as src:
+        with rio.open(image_path) as src:
             image_array = (
                 src.read(1)
                 if src.count == 1
