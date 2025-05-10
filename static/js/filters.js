@@ -232,10 +232,12 @@ function handleDateChange(event) {
 
     if(diffDays > 90){
       document.getElementById("smart-filters").checked = true;
+      export_params.smart_filter = true;
       showMessage('message', 30000, "Smart filters applied automatically since date filters exceed 90 days of date range. If you want all the images between this range, manually turn off smart filters below. No need to worry, it is just a message. This is due to our server limitation. ie to process lesser number of images.");
     }
     else{
       document.getElementById("smart-filters").checked = false;
+      export_params.smart_filter = false;
     }
 
   }

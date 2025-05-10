@@ -118,7 +118,7 @@ class LandsatProcessor(EngineCommon):
         features = remove_overlapping_landsat_tiles(features)
         print(f"Scenes after removing overlaps: {len(features)}")
 
-        print(self.use_smart_filter)
+        # print(self.use_smart_filter)
         if self.use_smart_filter:
             features = smart_filter_images(features, self.start_date, self.end_date)
             print(f"Scenes after smart filtering: {len(features)}")

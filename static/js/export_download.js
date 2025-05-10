@@ -95,7 +95,7 @@ downloading = false;
         
         // console.log(url_compute);
 
-        var download_url = `/image-download?source=${export_params.source}&bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&bands_list=${export_params.bands_list}&smart_filter=${smartFilter}`;
+        var download_url = `/image-download?source=${export_params.source}&bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&bands_list=${export_params.bands_list}&smart_filter=${export_params.smart_filter}`;
         
         
         var url;
