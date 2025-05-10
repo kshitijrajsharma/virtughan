@@ -7,12 +7,12 @@ import numpy as np
 import requests
 from shapely.geometry import box, shape
 
-# ✅ Earth Search STAC API endpoint
+# Earth Search STAC API endpoint
 EARTH_SEARCH_URL = "https://earth-search.aws.element84.com/v1"
 PC_STAC_URL   = "https://planetarycomputer.microsoft.com/api/stac/v1"
 
 def _choose_stac_url(collection: str) -> str:
-    # any landsat-* collection → use Planetary Computer STAC
+    # any landsat collection: use Planetary Computer STAC
     if collection.startswith("landsat"):
         return PC_STAC_URL
     return EARTH_SEARCH_URL

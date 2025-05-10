@@ -419,6 +419,7 @@ async def get_tile(
 @app.get("/image-download")
 async def extract_raw_bands_as_image(
     background_tasks: BackgroundTasks,
+    source: str = Query("sentinel2", description="Data source: sentinel2 or landsat"),
     bbox: str = Query(
         ..., description="Bounding box in the format 'west,south,east,north'"
     ),
@@ -474,7 +475,7 @@ async def run_image_download(
     with open(log_file, "a") as f:
         sys.stdout = f
 
-        processor_cls =  SentinelExtract if source == "landsat8" else LandsatExtract
+        processor_cls =  SentinelExtract if source == "sentinel2" else LandsatExtract
         print("Starting raw band extraction...")
         try:
             processor = processor_cls(

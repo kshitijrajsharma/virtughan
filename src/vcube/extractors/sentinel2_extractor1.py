@@ -7,6 +7,7 @@ import rasterio
 from rasterio.enums import Resampling
 from rasterio.warp import reproject
 from tqdm import tqdm
+import json
 
 from ..utils.common import (
     filter_intersected_features,
@@ -17,8 +18,6 @@ from ..utils.common import (
 from ..utils.sentinel2_utils import remove_overlapping_sentinel2_tiles
 from .extractor_common import ExtractorCommon
 
-
-# ✅ Sentinel-2 supported bands
 VALID_BANDS = {
     "red": "Red - 10m",
     "green": "Green - 10m",
@@ -35,11 +34,9 @@ VALID_BANDS = {
     "coastal": "Coastal - 60m",
     "nir09": "NIR 3 - 60m",
 }
-class ExtractProcessor(ExtractorCommon):
-    """
-    Processor for extracting Sentinel-2 bands.
-    """
 
+
+class ExtractProcessor(ExtractorCommon):
     def __init__(
         self,
         bbox,
@@ -65,7 +62,6 @@ class ExtractProcessor(ExtractorCommon):
         self.crs = None
         self.transform = None
         self.use_smart_filter = smart_filter
-
         self._validate_bands_list()
 
     def _validate_bands_list(self):
@@ -81,11 +77,13 @@ class ExtractProcessor(ExtractorCommon):
             [feature["assets"][band]["href"] for band in self.bands_list]
             for feature in features
         ]
+
     def _fetch_and_save_bands(self, band_urls, feature_id):
         try:
             bands = []
             bands_meta = []
             resolutions = []
+            dst_transform = None
 
             for band_url in band_urls:
                 with rasterio.open(band_url) as band_cog:
@@ -103,35 +101,35 @@ class ExtractProcessor(ExtractorCommon):
                     if self._is_window_out_of_bounds(band_window):
                         return None
 
-                    self.crs = band_cog.crs
-                    self.transform = band_cog.transform
-
                     band_data = band_cog.read(1, window=band_window).astype(float)
+                    transform = band_cog.window_transform(band_window)
 
                     if band_cog.res != lowest_resolution:
-                        scale_factor_x = band_cog.res[0] / lowest_resolution[0]
-                        scale_factor_y = band_cog.res[1] / lowest_resolution[1]
-                        band_data = reproject(
+                        scale_x = band_cog.res[0] / lowest_resolution[0]
+                        scale_y = band_cog.res[1] / lowest_resolution[1]
+                        transform *= rasterio.Affine.scale(scale_x, scale_y)
+                        band_data, _ = reproject(
                             source=band_data,
                             destination=np.empty(
                                 (
-                                    int(band_data.shape[0] * scale_factor_y),
-                                    int(band_data.shape[1] * scale_factor_x),
+                                    int(band_data.shape[0] * scale_y),
+                                    int(band_data.shape[1] * scale_x),
                                 ),
                                 dtype=band_data.dtype,
                             ),
-                            src_transform=band_cog.transform,
+                            src_transform=band_cog.window_transform(band_window),
                             src_crs=band_cog.crs,
-                            dst_transform=band_cog.transform
-                            * band_cog.transform.scale(scale_factor_x, scale_factor_y),
+                            dst_transform=transform,
                             dst_crs=band_cog.crs,
                             resampling=Resampling.average,
-                        )[0]
+                        )
 
                     bands.append(band_data)
                     bands_meta.append(band_url.split("/")[-1].split(".")[0])
+                    self.crs = band_cog.crs
+                    dst_transform = transform
 
-            print("Stacking Bands...")
+            self.transform = dst_transform
             stacked_bands = np.stack(bands)
             output_file = os.path.join(
                 self.output_dir, f"{feature_id}_bands_export.tif"
@@ -141,6 +139,7 @@ class ExtractProcessor(ExtractorCommon):
         except Exception as ex:
             print(f"Error fetching bands: {ex}")
             return None
+
     def extract(self):
         print("Extracting bands...")
         os.makedirs(self.output_dir, exist_ok=True)
@@ -185,7 +184,8 @@ class ExtractProcessor(ExtractorCommon):
                     file=self.log_file,
                 ):
                     result = future.result()
-                    result_lists.append(result)
+                    if result:
+                        result_lists.append(result)
         else:
             for band_urls, feature in tqdm(
                 zip(band_urls_list, overlapping_features_removed),
@@ -194,7 +194,8 @@ class ExtractProcessor(ExtractorCommon):
                 file=self.log_file,
             ):
                 result = self._fetch_and_save_bands(band_urls, feature["id"])
-                result_lists.append(result)
+                if result:
+                    result_lists.append(result)
 
         if self.zip_output:
             zip_files(

@@ -1,157 +1,172 @@
 {
-    "coastal": {
-      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "title": "Coastal - 30m",
-      "eo:bands": [
-        {
-          "name": "SR_B1",
-          "common_name": "coastal",
-          "center_wavelength": 0.44,
-          "full_width_half_max": 0.02
-        }
-      ],
-      "gsd": 30,
-      "raster:bands": [
-        {
-          "nodata": 0,
-          "data_type": "uint16",
-          "spatial_resolution": 30,
-          "scale": 0.0000275,
-          "offset": -0.2
-        }
-      ]
-    },
-    "blue": {
-      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "title": "Blue - 30m",
-      "eo:bands": [
-        {
-          "name": "SR_B2",
-          "common_name": "blue",
-          "center_wavelength": 0.48,
-          "full_width_half_max": 0.06
-        }
-      ],
-      "gsd": 30,
-      "raster:bands": [
-        {
-          "nodata": 0,
-          "data_type": "uint16",
-          "spatial_resolution": 30,
-          "scale": 0.0000275,
-          "offset": -0.2
-        }
-      ]
-    },
-    "green": {
-      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "title": "Green - 30m",
-      "eo:bands": [
-        {
-          "name": "SR_B3",
-          "common_name": "green",
-          "center_wavelength": 0.56,
-          "full_width_half_max": 0.06
-        }
-      ],
-      "gsd": 30,
-      "raster:bands": [
-        {
-          "nodata": 0,
-          "data_type": "uint16",
-          "spatial_resolution": 30,
-          "scale": 0.0000275,
-          "offset": -0.2
-        }
-      ]
-    },
-    "red": {
-      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "title": "Red - 30m",
-      "eo:bands": [
-        {
-          "name": "SR_B4",
-          "common_name": "red",
-          "center_wavelength": 0.65,
-          "full_width_half_max": 0.04
-        }
-      ],
-      "gsd": 30,
-      "raster:bands": [
-        {
-          "nodata": 0,
-          "data_type": "uint16",
-          "spatial_resolution": 30,
-          "scale": 0.0000275,
-          "offset": -0.2
-        }
-      ]
-    },
-    "nir08": {
-      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "title": "NIR - 30m",
-      "eo:bands": [
-        {
-          "name": "SR_B5",
-          "common_name": "nir08",
-          "center_wavelength": 0.86,
-          "full_width_half_max": 0.04
-        }
-      ],
-      "gsd": 30,
-      "raster:bands": [
-        {
-          "nodata": 0,
-          "data_type": "uint16",
-          "spatial_resolution": 30,
-          "scale": 0.0000275,
-          "offset": -0.2
-        }
-      ]
-    },
-    "swir16": {
-      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "title": "SWIR1 - 30m",
-      "eo:bands": [
-        {
-          "name": "SR_B6",
-          "common_name": "swir16",
-          "center_wavelength": 1.6,
-          "full_width_half_max": 0.08
-        }
-      ],
-      "gsd": 30,
-      "raster:bands": [
-        {
-          "nodata": 0,
-          "data_type": "uint16",
-          "spatial_resolution": 30,
-          "scale": 0.0000275,
-          "offset": -0.2
-        }
-      ]
-    },
-    "swir22": {
-      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
-      "title": "SWIR2 - 30m",
-      "eo:bands": [
-        {
-          "name": "SR_B7",
-          "common_name": "swir22",
-          "center_wavelength": 2.2,
-          "full_width_half_max": 0.2
-        }
-      ],
-      "gsd": 30,
-      "raster:bands": [
-        {
-          "nodata": 0,
-          "data_type": "uint16",
-          "spatial_resolution": 30,
-          "scale": 0.0000275,
-          "offset": -0.2
-        }
-      ]
-    }
+  "coastal": {
+    "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+    "title": "Coastal - 30m",
+    "eo:bands": [
+      {
+        "name": "SR_B1",
+        "common_name": "coastal",
+        "center_wavelength": 0.44,
+        "full_width_half_max": 0.02
+      }
+    ],
+    "gsd": 30,
+    "raster:bands": [
+      {
+        "nodata": 0,
+        "data_type": "uint16",
+        "spatial_resolution": 30
+      }
+    ]
+  },
+  "blue": {
+    "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+    "title": "Blue - 30m",
+    "eo:bands": [
+      {
+        "name": "SR_B2",
+        "common_name": "blue",
+        "center_wavelength": 0.48,
+        "full_width_half_max": 0.06
+      }
+    ],
+    "gsd": 30,
+    "raster:bands": [
+      {
+        "nodata": 0,
+        "data_type": "uint16",
+        "spatial_resolution": 30
+      }
+    ]
+  },
+  "green": {
+    "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+    "title": "Green - 30m",
+    "eo:bands": [
+      {
+        "name": "SR_B3",
+        "common_name": "green",
+        "center_wavelength": 0.56,
+        "full_width_half_max": 0.06
+      }
+    ],
+    "gsd": 30,
+    "raster:bands": [
+      {
+        "nodata": 0,
+        "data_type": "uint16",
+        "spatial_resolution": 30
+      }
+    ]
+  },
+  "red": {
+    "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+    "title": "Red - 30m",
+    "eo:bands": [
+      {
+        "name": "SR_B4",
+        "common_name": "red",
+        "center_wavelength": 0.65,
+        "full_width_half_max": 0.04
+      }
+    ],
+    "gsd": 30,
+    "raster:bands": [
+      {
+        "nodata": 0,
+        "data_type": "uint16",
+        "spatial_resolution": 30
+      }
+    ]
+  },
+  "nir08": {
+    "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+    "title": "Near Infrared - 30m",
+    "eo:bands": [
+      {
+        "name": "SR_B5",
+        "common_name": "nir08",
+        "center_wavelength": 0.86,
+        "full_width_half_max": 0.04
+      }
+    ],
+    "gsd": 30,
+    "raster:bands": [
+      {
+        "nodata": 0,
+        "data_type": "uint16",
+        "spatial_resolution": 30
+      }
+    ]
+  },
+  "swir16": {
+    "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+    "title": "Shortwave Infrared 1 - 30m",
+    "eo:bands": [
+      {
+        "name": "SR_B6",
+        "common_name": "swir16"
+      }
+    ],
+    "gsd": 30,
+    "raster:bands": [
+      {
+        "data_type": "uint16",
+        "spatial_resolution": 30
+      }
+    ]
+  },
+  "swir22": {
+    "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+    "title": "Shortwave Infrared 2 - 30m",
+    "eo:bands": [
+      {
+        "name": "SR_B7",
+        "common_name": "swir22"
+      }
+    ],
+    "gsd": 30,
+    "raster:bands": [
+      {
+        "data_type": "uint16",
+        "spatial_resolution": 30
+      }
+    ]
+  },
+  "lwir11": {
+    "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+    "title": "Thermal Infrared (Band 10) - 30m",
+    "eo:bands": [
+      {
+        "name": "ST_B10",
+        "common_name": "lwir11"
+      }
+    ],
+    "gsd": 30,
+    "raster:bands": [
+      {
+        "data_type": "int16",
+        "spatial_resolution": 30,
+        "scale": 0.00341802,
+        "offset": 149.0
+      }
+    ]
+  },
+  "st_trad": {
+    "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+    "title": "Thermal Radiance - 30m",
+    "eo:bands": [
+      {
+        "name": "ST_TRAD",
+        "common_name": "st_trad"
+      }
+    ],
+    "gsd": 30,
+    "raster:bands": [
+      {
+        "data_type": "float32",
+        "spatial_resolution": 30
+      }
+    ]
   }
-  
+}
