@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       if(landsat_search_checked  && parentTabId == "filterTab"){
         tile_params.band2 = "nir08";
         tile_params.source = "landsat";
+        populateSelectOptions('landsat')
 
         console.log(tile_params.band2);
 
@@ -34,11 +35,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
         export_params.source = "landsat";
 
         renderBands('landsat');//function in main
+        populateSelectOptions('landsat')
       }
 
       if(sentinel2_search_checked  && parentTabId == "filterTab"){
         tile_params.band2 = "nir";
         tile_params.source = "sentinel2";
+        populateSelectOptions('sentinel2')
       }
 
       if(sentinel2_export_checked && parentTabId == "exportTab"){
@@ -46,6 +49,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         export_params.source = "sentinel2";
 
         renderBands('sentinel2'); // function in main
+        populateSelectOptions('sentinel2')
       }
 
     })

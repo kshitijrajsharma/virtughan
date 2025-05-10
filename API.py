@@ -21,20 +21,11 @@ from starlette.status import HTTP_504_GATEWAY_TIMEOUT
 
 os.environ["AWS_NO_SIGN_REQUEST"] = "YES"
 
-# # from src.vcube.engine import VCubeProcessor
-# from src.vcube.engines.sentinel2_engine1 import VCubeProcessor
-# # from src.vcube.extract import ExtractProcessor
-# from src.vcube.extractors.sentinel2_extractor1 import ExtractProcessor
-# # from src.vcube.tile import TileProcessor
-# from src.vcube.tilers.sentinel2_tiler1 import TileProcessor
-# # from src.vcube.utils import search_stac_api_async
-# from src.vcube.utils.common import search_stac_api_async
-
-from src.vcube.engines.sentinel2_engine1 import VCubeProcessor as SentinelProcessor
+from src.vcube.engines.sentinel2_engine import VCubeProcessor as SentinelProcessor
 from src.vcube.engines.landsat89_engine import LandsatProcessor
-from src.vcube.extractors.sentinel2_extractor1 import ExtractProcessor as SentinelExtract
+from src.vcube.extractors.sentinel2_extractor import ExtractProcessor as SentinelExtract
 from src.vcube.extractors.landsat89_extractor import ExtractProcessor as LandsatExtract
-from src.vcube.tilers.sentinel2_tiler1 import TileProcessor as SentinelTile
+from src.vcube.tilers.sentinel2_tiler import TileProcessor as SentinelTile
 from src.vcube.tilers.landsat89_tiler import TileProcessor as LandsatTile
 from src.vcube.utils.common import search_stac_api_async
 

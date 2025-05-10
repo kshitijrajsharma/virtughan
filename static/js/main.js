@@ -66,31 +66,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
   //band selection in image download start
- 
+  const sentinel2Bands = [
+    "VISUAL", "RED", "GREEN", "BLUE", "NIR", "SWIR22", "REDEDGE2", "REDEDGE3", "REDEDGE1",
+    "SWIR16", "WVP", "NIR08", "AOT",
+    { label: "Semantic Bands", type: "section" },
+    "COASTAL", "NIR09", "CLOUD", "SNOW"
+  ];
+
+  const landsatBands = [
+    "VISUAL",
+    "BLUE",
+    "GREEN",
+    "RED",
+    "NIR08",
+    "SWIR16",
+    "SWIR22",
+    "LWIR11",
+    "LWIR12",
+    "COASTAL",
+  ];
 
   function renderBands(satellite) {
+    document.getElementById("dropdownButtonBands").innerHTML = `<img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full mr-2">Select Bands`;
+    document.getElementById("export-map-view-button").classList.add('bg-gray-500', 'pointer-events-none');
+    document.getElementById("export-map-view-button").classList.remove('bg-blue-700');
+
     const container = document.getElementById("list_of_bands");
     container.innerHTML = ""; 
-
-    const sentinel2Bands = [
-      "VISUAL", "RED", "GREEN", "BLUE", "NIR", "SWIR22", "REDEDGE2", "REDEDGE3", "REDEDGE1",
-      "SWIR16", "WVP", "NIR08", "AOT",
-      { label: "Semantic Bands", type: "section" },
-      "COASTAL", "NIR09", "CLOUD", "SNOW"
-    ];
-  
-    const landsatBands = [
-      "COASTAL",
-      "VISUAL",
-      "BLUE",
-      "GREEN",
-      "RED",
-      "NIR08",
-      "SWIR16",
-      "SWIR22",
-      "LWIR11",
-      "LWIR12"
-    ];
     
     if(satellite == "landsat"){
       bandList = landsatBands;
@@ -125,13 +127,78 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  sentinel2_export_checked = document.getElementById("sentinel2_radio_export").checked;
-  landsat_export_checked = document.getElementById("landsat_radio_export").checked;
-      if (sentinel2_export_checked) {
-        renderBands('sentinel2');
-      } else if (landsat_export_checked) {
-        renderBands('landsat');
+
+function populateSelectOptions(satellite) {
+  const band1Optgroup = document.getElementById("band1");
+  const band2Optgroup = document.getElementById("band2");
+
+  // Clear old options
+  band1Optgroup.innerHTML = '';
+  band2Optgroup.innerHTML = '';
+
+  const bandList = satellite === "landsat" ? landsatBands : sentinel2Bands;
+
+  // Separate standard and semantic bands
+  const standardBands = [];
+  const semanticBands = [];
+
+  bandList.forEach(b => {
+    if (typeof b === "string") {
+      standardBands.push(b);
+    } else if (b.type === "section") {
+      // Everything after this section is semantic
+      const index = bandList.indexOf(b);
+      for (let i = index + 1; i < bandList.length; i++) {
+        if (typeof bandList[i] === "string") {
+          semanticBands.push(bandList[i]);
+        }
       }
+    }
+  });
+
+
+  function appendOptions(optgroup, bands) {
+    bands.forEach(band => {
+      const option = document.createElement("option");
+      option.value = band;
+      option.textContent = band;
+      optgroup.appendChild(option);
+    });
+  }
+
+  appendOptions(band1Optgroup, standardBands);
+  appendOptions(band2Optgroup, standardBands);
+
+  if (semanticBands.length > 0) {
+    const semanticGroup1 = document.createElement("optgroup");
+    semanticGroup1.label = "Semantic Bands";
+    const semanticGroup2 = document.createElement("optgroup");
+    semanticGroup2.label = "Semantic Bands";
+
+    appendOptions(semanticGroup1, semanticBands);
+    appendOptions(semanticGroup2, semanticBands);
+
+    document.getElementById("band1").appendChild(semanticGroup1);
+    document.getElementById("band2").appendChild(semanticGroup2);
+    
+  }
+  document.getElementById("calculator_bands").innerHTML = satellite.toUpperCase()+" Bands";
+}
+
+
+sentinel2_export_checked = document.getElementById("sentinel2_radio_export").checked;
+landsat_export_checked = document.getElementById("landsat_radio_export").checked;
+    if (sentinel2_export_checked) {
+      renderBands('sentinel2');
+      populateSelectOptions('sentinel2')
+    } else if (landsat_export_checked) {
+      renderBands('landsat');
+      populateSelectOptions('landsat')
+    }
+
+
+
+
 
   //band selection in image download end
 
