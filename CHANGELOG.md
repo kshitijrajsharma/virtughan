@@ -1,3 +1,30 @@
+## 0.7.0 (2025-05-10)
+
+### Feat
+
+- messages displayed for information in addition to warning and errors.
+- enable smart filters automatically if date range is higher
+- parallel processing: multi user download, added uid
+- parallel processing: multi user uid on timeseries export
+- parallel processing: added uid on export and log
+
+### Fix
+
+- **bandversion**: fix inconsistent band version
+- return JSON response with status code for background processing initiation
+- add validation for Sentinel-2 bands and resolution mismatch
+- **mltiple**: multiple users support in the API
+- download visual bands option- auto rgb select
+- reset legend after new filters and export click
+- reset bbox polygon after draw to map window switch
+- draw switch -> multiple draw at same time
+- show warning on window showing even for draw
+
+### Refactor
+
+- js files for separate functions
+- filter and draw
+
 ## 0.6.1 (2025-02-05)
 
 ### Fix

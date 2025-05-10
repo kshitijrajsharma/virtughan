@@ -21,5 +21,5 @@ poetry install
 #### Run 
 
 ```bash
-poetry run uvicorn API:app --reload --workers 2
+poetry run uvicorn API:app --workers 2
 ```
