@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
       sentinel2_export_checked = document.getElementById("sentinel2_radio_export").checked;
       landsat_export_checked = document.getElementById("landsat_radio_export").checked;
 
-      console.log("sentinel_export_checked"+sentinel2_export_checked);
-      console.log("landsat_export_checked"+landsat_export_checked);
+      // console.log("sentinel_export_checked"+sentinel2_export_checked);
+      // console.log("landsat_export_checked"+landsat_export_checked);
 
       const tabPanel = this.closest('.tab-panel');
     
@@ -20,14 +20,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
       const tabIndex = tabPanels.indexOf(tabPanel);
       const parentTabId = tabButtons[tabIndex]?.id;
 
-      console.log(parentTabId);
+      // console.log(parentTabId);
 
       if(landsat_search_checked  && parentTabId == "filterTab"){
         tile_params.band2 = "nir08";
         tile_params.source = "landsat";
         populateSelectOptions('landsat')
 
-        console.log(tile_params.band2);
+        // console.log(tile_params.band2);
 
       }
       if(landsat_export_checked && parentTabId == "exportTab"){
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       radio.addEventListener('change', function(event){
         analyze_checked = document.getElementById("analyze-data").checked;
         download_checked = document.getElementById("download-data").checked;
-        console.log("changed");
+        // console.log("changed");
 
         if(analyze_checked){
           document.getElementById("band-list-container").classList.add("hidden");
@@ -228,7 +228,7 @@ function handleDateChange(event) {
     const diffTime = endDate - startDate; // in milliseconds
     const diffDays = diffTime / (1000 * 60 * 60 * 24); // convert to days
 
-    console.log(`Difference in days export: ${diffDays}`);
+    // console.log(`Difference in days export: ${diffDays}`);
 
     if(diffDays > 90){
       document.getElementById("smart-filters").checked = true;

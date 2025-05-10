@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const tabIndex = tabPanels.indexOf(tabPanel);
         const parentTabId = tabButtons[tabIndex]?.id;
 
-        console.log(parentTabId);
+        // console.log(parentTabId);
         
           const templateText = item.querySelector('.template-filters-value').getAttribute('value');
           // console.log(templateText); 
@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded', function() {
           param.band2 = '';
         }
         
-        console.log(param.band2)
+        // console.log(param.band2)
       });
   });
   //buttons and filters end

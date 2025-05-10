@@ -201,7 +201,7 @@ def aggregate_time_series(data, operation):
 
 def smart_filter_images(features, start_date: str, end_date: str):
     """
-    Apply smart filtering to the image collection, reduces the number of images for large timestamps.
+    Apply smart filtering to the image collection , reduces the number of images go through in large timestamps.
 
     Parameters:
     features (list): List of features to filter.
@@ -216,20 +216,24 @@ def smart_filter_images(features, start_date: str, end_date: str):
     total_days = (end - start).days
 
     if total_days <= 30 * 3:
+        # For a time range of up to 3 months, select 1 image per 4 days
         frequency = timedelta(days=4)
+
     elif total_days <= 365:
         frequency = timedelta(days=15)
+
     elif total_days <= 2 * 365:
         frequency = timedelta(days=30)
+
     elif total_days <= 3 * 365:
         frequency = timedelta(days=45)
     else:
+        # rest, select 1 image per 2 months
         frequency = timedelta(days=60)
 
     filtered_features = []
     last_selected_date = None
     best_feature = None
-
     print(
         f"""Filter from : {features[-1]["properties"]["datetime"].split("T")[0]} to : {features[0]["properties"]["datetime"].split("T")[0]}"""
     )
@@ -249,6 +253,7 @@ def smart_filter_images(features, start_date: str, end_date: str):
             ):
                 best_feature = feature
 
+    # Handle the last period
     if best_feature:
         filtered_features.append(best_feature)
 

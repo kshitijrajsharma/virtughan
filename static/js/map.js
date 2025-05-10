@@ -211,7 +211,7 @@ var map = L.map("map").setView([28.202082, 83.987222], 10);
         "operation": "median",
         "timeseries": "false",
         "bands_list":"",
-        "smart_filters":"false"
+        "smart_filter":"false"
       }
 
       // var formula = "(band2-band1)/(band2+band1)";
