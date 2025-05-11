@@ -1,9 +1,68 @@
 document.addEventListener('DOMContentLoaded', (event) => {
+  document.querySelectorAll('.radio-action-sat').forEach((radio) => {
+    radio.addEventListener('change', function(event){
+      sentinel2_search_checked = document.getElementById("sentinel2_radio_search").checked;
+      landsat_search_checked = document.getElementById("landsat_radio_search").checked;
+
+      sentinel2_export_checked = document.getElementById("sentinel2_radio_export").checked;
+      landsat_export_checked = document.getElementById("landsat_radio_export").checked;
+
+      // console.log("sentinel_export_checked"+sentinel2_export_checked);
+      // console.log("landsat_export_checked"+landsat_export_checked);
+
+      const tabPanel = this.closest('.tab-panel');
+    
+      // Get all tab panels and tab buttons
+      const tabPanels = Array.from(document.querySelectorAll('.tab-panel'));
+      const tabButtons = Array.from(document.querySelectorAll('.tab'));
+
+      // Find index of the current tab panel
+      const tabIndex = tabPanels.indexOf(tabPanel);
+      const parentTabId = tabButtons[tabIndex]?.id;
+
+      // console.log(parentTabId);
+
+      if(landsat_search_checked  && parentTabId == "filterTab"){
+        tile_params.band2 = "nir08";
+        tile_params.source = "landsat";
+        populateSelectOptions('landsat')
+
+        // console.log(tile_params.band2);
+
+      }
+      if(landsat_export_checked && parentTabId == "exportTab"){
+        export_params.band2 = "nir08";
+        export_params.source = "landsat";
+
+        renderBands('landsat');//function in main
+        populateSelectOptions('landsat')
+      }
+
+      if(sentinel2_search_checked  && parentTabId == "filterTab"){
+        tile_params.band2 = "nir";
+        tile_params.source = "sentinel2";
+        populateSelectOptions('sentinel2')
+      }
+
+      if(sentinel2_export_checked && parentTabId == "exportTab"){
+        export_params.band2 = "nir";
+        export_params.source = "sentinel2";
+
+        renderBands('sentinel2'); // function in main
+        populateSelectOptions('sentinel2')
+      }
+
+    })
+  })
+})
+
+
+document.addEventListener('DOMContentLoaded', (event) => {
     document.querySelectorAll('.radio-action').forEach((radio) => {
       radio.addEventListener('change', function(event){
         analyze_checked = document.getElementById("analyze-data").checked;
         download_checked = document.getElementById("download-data").checked;
-        console.log("changed");
+        // console.log("changed");
 
         if(analyze_checked){
           document.getElementById("band-list-container").classList.add("hidden");
@@ -169,14 +228,16 @@ function handleDateChange(event) {
     const diffTime = endDate - startDate; // in milliseconds
     const diffDays = diffTime / (1000 * 60 * 60 * 24); // convert to days
 
-    console.log(`Difference in days export: ${diffDays}`);
+    // console.log(`Difference in days export: ${diffDays}`);
 
     if(diffDays > 90){
       document.getElementById("smart-filters").checked = true;
+      export_params.smart_filter = true;
       showMessage('message', 30000, "Smart filters applied automatically since date filters exceed 90 days of date range. If you want all the images between this range, manually turn off smart filters below. No need to worry, it is just a message. This is due to our server limitation. ie to process lesser number of images.");
     }
     else{
       document.getElementById("smart-filters").checked = false;
+      export_params.smart_filter = false;
     }
 
   }
