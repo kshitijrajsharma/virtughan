@@ -19,10 +19,15 @@ from shapely.geometry import box, mapping
 from starlette.requests import Request
 from starlette.status import HTTP_504_GATEWAY_TIMEOUT
 
-from src.vcube.engine import VCubeProcessor
-from src.vcube.extract import ExtractProcessor
-from src.vcube.tile import TileProcessor
-from src.vcube.utils import search_stac_api_async
+os.environ["AWS_NO_SIGN_REQUEST"] = "YES"
+
+from src.vcube.engines.sentinel2_engine import VCubeProcessor as SentinelProcessor
+from src.vcube.engines.landsat89_engine import LandsatProcessor
+from src.vcube.extractors.sentinel2_extractor import ExtractProcessor as SentinelExtract
+from src.vcube.extractors.landsat89_extractor import ExtractProcessor as LandsatExtract
+from src.vcube.tilers.sentinel2_tiler import TileProcessor as SentinelTile
+from src.vcube.tilers.landsat89_tiler import TileProcessor as LandsatTile
+from src.vcube.utils.common import search_stac_api_async
 
 app = FastAPI()
 
@@ -78,6 +83,9 @@ async def read_about(request: Request):
 with open("data/sentinel-2-bands.json") as f:
     sentinel2_assets = json.load(f)
 
+with open("data/landsat-bands.json") as f:
+    landsat_assets = json.load(f)
+
 
 @app.get("/list-files")
 async def list_files(uid: str):
@@ -129,6 +137,9 @@ async def get_sentinel2_bands(
 @app.get("/export")
 async def compute_aoi_over_time(
     background_tasks: BackgroundTasks,
+    source: str = Query(
+        "sentinel2", description="Data source: sentinel2 or landsat"
+    ),
     bbox: str = Query(
         ..., description="Bounding box in the format 'west,south,east,north'"
     ),
@@ -172,22 +183,25 @@ async def compute_aoi_over_time(
             status_code=400,
         )
 
-    if band1 not in sentinel2_assets.keys():
+    # Select appropriate asset dictionary
+    assets = sentinel2_assets if source == "sentinel2" else landsat_assets
+
+    if band1 not in assets:
         return JSONResponse(
-            content={"error": f"Band '{band1}' not found in Sentinel-2 bands"},
+            content={"error": f"Band '{band1}' not found in {source.capitalize()} bands"},
             status_code=400,
         )
-    
-    if band2 and band2 not in sentinel2_assets.keys():
+
+    if band2 and band2 not in assets:
         return JSONResponse(
-            content={"error": f"Band '{band2}' not found in Sentinel-2 bands"},
+            content={"error": f"Band '{band2}' not found in {source.capitalize()} bands"},
             status_code=400,
         )
-    
+
+    # Only compare gsd if both bands exist and are different
     if band2 and band1 != band2:
-        band1_gsd = sentinel2_assets[band1].get("gsd")
-        band2_gsd = sentinel2_assets[band2].get("gsd")
-        
+        band1_gsd = assets[band1].get("gsd")
+        band2_gsd = assets[band2].get("gsd")
         if band1_gsd != band2_gsd:
             return JSONResponse(
                 content={
@@ -195,6 +209,8 @@ async def compute_aoi_over_time(
                 },
                 status_code=400,
             )
+
+
 
 
     valid_operations = ["mean", "median", "max", "min", "std", "sum", "var"]
@@ -216,6 +232,7 @@ async def compute_aoi_over_time(
 
     background_tasks.add_task(
         run_computation,
+        source,
         bbox,
         start_date,
         end_date,
@@ -234,6 +251,7 @@ async def compute_aoi_over_time(
     )
 
 async def run_computation(
+    source,
     bbox,
     start_date,
     end_date,
@@ -251,10 +269,10 @@ async def run_computation(
         os.remove(log_file)
     with open(log_file, "a") as f:
         sys.stdout = f
-
+        processor_cls = SentinelProcessor if source == "sentinel2" else LandsatProcessor
         print("Starting processing...")
         try:
-            processor = VCubeProcessor(
+            processor = processor_cls(
                 bbox=bbox,
                 start_date=start_date,
                 end_date=end_date,
@@ -281,6 +299,9 @@ async def run_computation(
 
 @app.get("/search")
 async def search_images(
+    source: str = Query(
+        "sentinel2", description="Data source: sentinel2 or landsat"
+    ),
     bbox: str = Query(
         ..., description="Bounding box in the format 'west,south,east,north'"
     ),
@@ -297,8 +318,10 @@ async def search_images(
     bbox_polygon = box(west, south, east, north)
     bbox_geojson = mapping(bbox_polygon)
 
+    collection = "sentinel-2-l2a" if source == "sentinel2" else "landsat-c2-l2"
+
     response = await search_stac_api_async(
-        bbox_geojson, start_date, end_date, cloud_cover
+        bbox_geojson, start_date, end_date, cloud_cover, collection
     )
 
     feature_collection = {"type": "FeatureCollection", "features": response}
@@ -310,6 +333,7 @@ async def get_tile(
     z: int,
     x: int,
     y: int,
+    source: str = Query("sentinel2", description="Data source: sentinel2 or landsat"),
     start_date: str = Query(None),
     end_date: str = Query(None),
     cloud_cover: int = Query(30),
@@ -349,7 +373,9 @@ async def get_tile(
 
     try:
         start_time = time.time()
-        tile_processor = TileProcessor()
+        # tile_processor = TileProcessor()
+        tile_processor_cls = SentinelTile if source == "sentinel2" else LandsatTile
+        tile_processor = tile_processor_cls()
         image_bytes, feature = await tile_processor.cached_generate_tile(
             x,
             y,
@@ -364,6 +390,7 @@ async def get_tile(
             operation=operation,
             latest=(timeseries is False),
         )
+
         computation_time = time.time() - start_time
 
         headers = {
@@ -383,6 +410,7 @@ async def get_tile(
 @app.get("/image-download")
 async def extract_raw_bands_as_image(
     background_tasks: BackgroundTasks,
+    source: str = Query("sentinel2", description="Data source: sentinel2 or landsat"),
     bbox: str = Query(
         ..., description="Bounding box in the format 'west,south,east,north'"
     ),
@@ -414,6 +442,7 @@ async def extract_raw_bands_as_image(
 
     background_tasks.add_task(
         run_image_download,
+        source,
         bbox,
         start_date,
         end_date,
@@ -429,7 +458,7 @@ async def extract_raw_bands_as_image(
 
 
 async def run_image_download(
-    bbox, start_date, end_date, cloud_cover, bands_list, output_dir, smart_filter
+    source,bbox, start_date, end_date, cloud_cover, bands_list, output_dir, smart_filter
 ):
     log_file = f"{output_dir}/runtime.log"
     if os.path.exists(log_file):
@@ -437,9 +466,10 @@ async def run_image_download(
     with open(log_file, "a") as f:
         sys.stdout = f
 
+        processor_cls =  SentinelExtract if source == "sentinel2" else LandsatExtract
         print("Starting raw band extraction...")
         try:
-            processor = ExtractProcessor(
+            processor = processor_cls(
                 bbox=bbox,
                 start_date=start_date,
                 end_date=end_date,

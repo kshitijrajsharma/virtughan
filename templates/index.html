@@ -395,6 +395,21 @@
               <!-- <h2 class="text-base/7 font-semibold text-gray-900">Apply Filters</h2>
               <p class="mt-1 text-sm/6 text-gray-600">Select the filters you want to apply.</p> -->
               <div id = "filterOption_search" class = "pb-4">
+
+                <div class="rounded-md shadow-sm mb-6">
+                  <label id="select_satellite_search" class="block text-sm/6 font-medium text-gray-800">Select Satellite <i title = "Select the satellite" class="info-icons fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
+                  <div class="flex items-center space-x-4">
+                    <div class="flex items-center p-2">
+                      <input type="radio" id="sentinel2_radio_search" name="select_satellite_search" value="sentinel2_r" class="radio-action-sat form-radio h-4 w-4 text-blue-600" checked >
+                      <label for="sentinel2_r" class="ml-2 text-sm text-gray-700">Sentinel2</label>
+                    </div>
+                    <div class="flex items-center">
+                      <input type="radio" id="landsat_radio_search" name="select_satellite_search" value="landsat_r" class="radio-action-sat form-radio h-4 w-4 text-blue-600">
+                      <label for="landsat_r" class="ml-2 text-sm text-gray-700">Landsat</label>
+                    </div>
+                  </div>
+                </div>
+
                 <label id="listbox-label_search" class="block text-sm/6 font-medium text-gray-900">Filter Option <span class="text-lg text-black-600">*</span></label>
                 <div class="relative mt-2">
                   <button id="select-button_search" type="button" class="cursor-pointer grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="listbox-label_search">
@@ -501,7 +516,7 @@
                     <option value="std" class="text-gray-600">Std</option>
                     <option value="sum" class="text-gray-600">Sum</option>
                     <option value="var" class="text-gray-600">Variance</option>
-                    <option value="mode" class="text-gray-600">Mode</option>
+                    <!-- <option value="mode" class="text-gray-600">Mode</option> -->
                 </select>
             </div>
 
@@ -654,6 +669,21 @@
               <!-- Content for Tab 3 -->
               <div id="sidebar1" class = "overflow-y-scroll custom-scrollbar  p-4 tab-scrollable-content" style = "max-height: 550px;">
                <div class = "pb-4">
+
+                <div class="rounded-md shadow-sm mb-6">
+                  <label id="select_satellite_export" class="block text-sm/6 font-medium text-gray-800">Select Satellite <i title = "Select the satellite" class="info-icons fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
+                  <div class="flex items-center space-x-4">
+                    <div class="flex items-center p-2">
+                      <input type="radio" id="sentinel2_radio_export" name="select_satellite_export" value="sentinel2_r" class="radio-action-sat form-radio h-4 w-4 text-blue-600" checked >
+                      <label for="sentinel2_r" class="ml-2 text-sm text-gray-700">Sentinel2</label>
+                    </div>
+                    <div class="flex items-center">
+                      <input type="radio" id="landsat_radio_export" name="select_satellite_export" value="landsat_r" class="radio-action-sat form-radio h-4 w-4 text-blue-600">
+                      <label for="landsat_r" class="ml-2 text-sm text-gray-700">Landsat</label>
+                    </div>
+                  </div>
+                </div>                
+
                 <label class="block text-sm font-medium text-gray-800 pb-2">Select Area of Interest <i title = "Select the area within map window or draw" class="info-icons fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
                 <!-- dropdown start -->
                 <div class="relative mt-2">
@@ -729,11 +759,11 @@
                   <label id="listbox-label_export" class="block text-sm/6 font-medium text-gray-800">Select Action <i title = "Analyze will help to perform operations and download directly downloads the original image bands" class="info-icons fa-regular fa-circle-question text-gray-500 text-xs"></i></label>
                   <div class="flex items-center space-x-4">
                     <div class="flex items-center p-2">
-                      <input type="radio" id="analyze-data" name="option" value="analyze" class="radio-action form-radio h-4 w-4 text-blue-600" checked>
+                      <input type="radio" id="analyze-data" name="analyze_download" value="analyze" class="radio-action form-radio h-4 w-4 text-blue-600" checked>
                       <label for="analyze" class="ml-2 text-sm text-gray-700">Analyze</label>
                     </div>
                     <div class="flex items-center">
-                      <input type="radio" id="download-data" name="option" value="download" class="radio-action form-radio h-4 w-4 text-blue-600">
+                      <input type="radio" id="download-data" name="analyze_download" value="download" class="radio-action form-radio h-4 w-4 text-blue-600">
                       <label for="download" class="ml-2 text-sm text-gray-700">Download</label>
                     </div>
                   </div>
@@ -823,28 +853,7 @@
                        Select Bands
                     </button>
                     <div id="dropdownMenuBands" class="hidden absolute mt-2 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
-                      <div class="max-h-60 overflow-auto custom-scrollbar">
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="VISUAL" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">VISUAL Bands</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="RED" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">RED</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="GREEN" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">GREEN</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="BLUE" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">BLUE</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="NIR" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">NIR</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="SWIR22" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">SWIR22</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="REDEDGE2" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">REDEDGE2</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="REDEDGE3" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">REDEDGE3</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="REDEDGE1" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">REDEDGE1</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="SWIR16" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">SWIR16</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="WVP" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">WVP</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="NIR08" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">NIR08</span></label>
-                        <!-- <label class="flex items-center px-3 py-2"><input type="checkbox" value="SCL" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">SCL</span></label> -->
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="AOT" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">AOT</span></label>
-        
-                        <!-- Add more options as needed -->
-                        <label class="block px-3 py-2 font-semibold text-gray-700 text-sm">Semantic Bands</label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="COASTAL" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">COASTAL</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="NIR09" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">NIR09</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="CLOUD" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">CLOUD</span></label>
-                        <label class="flex items-center px-3 py-2"><input type="checkbox" value="SNOW" class="form-checkbox h-4 w-4 text-blue-600 band-checkbox"><span class="ml-2 text-gray-700 text-sm">SNOW</span></label>
+                      <div id = "list_of_bands" class="max-h-60 overflow-auto custom-scrollbar">
                       </div>
                     </div>
                   </div>
@@ -991,62 +1000,18 @@
       
       <!-- Section for mapping bands -->
       <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700">Map Bands</label>
+          <label id = "calculator_bands" class="block text-sm font-medium text-gray-700">Map Bands</label>
           <div class="flex flex-col md:flex-row md:space-x-4">
               <div class="w-full md:w-1/2 mb-4 md:mb-0">
                   <label class="block text-sm font-medium text-gray-700">Band 1</label>
                   <select id="band1" style="border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md max-h-[52px] overflow-y-auto custom-scrollbar">
-                    <option value="">Select Band 1</option>
-                    <optgroup label="Bands">
-                      <option value="RED">RED</option>
-                      <option value="GREEN">GREEN</option>
-                      <option value="BLUE">BLUE</option>
-                      <option value="VISUAL">VISUAL</option>
-                      <option value="NIR">NIR</option>
-                      <option value="SWIR22">SWIR22</option>
-                      <option value="REDEDGE2">REDEDGE2</option>
-                      <option value="REDEDGE3">REDEDGE3</option>
-                      <option value="REDEDGE1">REDEDGE1</option>
-                      <option value="SWIR16">SWIR16</option>
-                      <option value="WVP">WVP</option>
-                      <option value="NIR08">NIR08</option>
-                      <option value="SCL">SCL</option>
-                      <option value="AOT">AOT</option>
-                    </optgroup>
-                    <optgroup label="Semantic Bands">
-                      <option value="COASTAL">COASTAL</option>
-                      <option value="NIR09">NIR09</option>
-                      <option value="CLOUD">CLOUD</option>
-                      <option value="SNOW">SNOW</option>
-                    </optgroup>
-                  </select>                  
+                   
+                  </select>                   
               </div>
               <div class="w-full md:w-1/2">
                   <label class="block text-sm font-medium text-gray-700">Band 2</label>
                   <select id="band2" style="border:1px solid #dedede;" class="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                    <option value="">Select Band 1</option>
-                    <optgroup label="Bands">
-                      <option value="RED">RED</option>
-                      <option value="GREEN">GREEN</option>
-                      <option value="BLUE">BLUE</option>
-                      <option value="VISUAL">VISUAL</option>
-                      <option value="NIR">NIR</option>
-                      <option value="SWIR22">SWIR22</option>
-                      <option value="REDEDGE2">REDEDGE2</option>
-                      <option value="REDEDGE3">REDEDGE3</option>
-                      <option value="REDEDGE1">REDEDGE1</option>
-                      <option value="SWIR16">SWIR16</option>
-                      <option value="WVP">WVP</option>
-                      <option value="NIR08">NIR08</option>
-                      <option value="SCL">SCL</option>
-                      <option value="AOT">AOT</option>
-                    </optgroup>
-                    <optgroup label="Semantic Bands">
-                      <option value="COASTAL">COASTAL</option>
-                      <option value="NIR09">NIR09</option>
-                      <option value="CLOUD">CLOUD</option>
-                      <option value="SNOW">SNOW</option>
-                    </optgroup>
+                    
                   </select>
                   
               </div>
@@ -1280,12 +1245,12 @@
         var checkedSmartFilter = document.getElementById("smart-filters").checked;
         
         if(checkedSmartFilter){
-          export_params.smart_filters = "true";
+          export_params.smart_filter = "true";
         }
         else{
-          export_params.smart_filters = "false";
+          export_params.smart_filter = "false";
         }
-        // console.log(export_params.smart_filters);
+        // console.log(export_params.smart_filter);
       })
     </script>
     <!-- smart filters script end -->
@@ -1607,9 +1572,12 @@
     });
 
     // Update button text with selected options
-    const checkboxes = dropdownMenu.querySelectorAll('.band-checkbox');
-    checkboxes.forEach(function(checkbox) {
-        checkbox.addEventListener('change', function() {
+    // const checkboxes = dropdownMenu.querySelectorAll('.band-checkbox');
+    // checkboxes.forEach(function(checkbox) {
+    //     checkbox.addEventListener('change', function() {
+      document.getElementById('list_of_bands').addEventListener('change', function (event) {
+        if (!event.target.classList.contains('band-checkbox')) return;
+            const checkboxes = dropdownMenu.querySelectorAll('.band-checkbox');
             const selectedOptions = Array.from(checkboxes).filter(chk => chk.checked).map(chk => chk.value);
             // console.log(selectedOptions);
             dropdownButton.innerHTML = selectedOptions.length > 0 ? selectedOptions.join(', ') : `<img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full mr-2">Select Bands`;
@@ -1637,7 +1605,7 @@
             document.getElementById("export-map-view-button").classList.add('bg-blue-700');
         });
     });
-});
+// });
 
 
   </script>
