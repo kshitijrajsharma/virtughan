@@ -14,6 +14,8 @@
 
  Name is combination of two words `virtual` & `cube` , where `cube` translated to Nepali word `घन`,  also known as virtual computation cube.
 
+https://www.canva.com/design/DAGr2qCzN-c/_a_SSjXKYbhLwF2EbTZ9gg/edit?utm_content=DAGr2qCzN-c&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
 **Demo** : https://virtughan.live/ 
 
 
