@@ -6,7 +6,7 @@ downloading = false;
 
         completed_log = false;
         var analyzeChecked = document.getElementById("analyze-data").checked;
-        var smartFilters = document.getElementById("smart-filters").checked;
+        var smartFilter = document.getElementById("smart-filters").checked;
 
         export_params.startDdate = document.getElementById("start-date-export").value;
         export_params.endDate = document.getElementById("end-date-export").value;
@@ -78,7 +78,7 @@ downloading = false;
           }
           else{ // if aoi area is fine
         
-        var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&timeseries=${encodeURIComponent(export_params.timeseries)}&smart_filters=${export_params.smart_filters}`;
+        var url_compute = `/export?source=${export_params.source}&bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}&timeseries=${encodeURIComponent(export_params.timeseries)}&smart_filter=${export_params.smart_filter}`;
 
         //if operation and timeseries should not be sent in url. 
         // var url_compute = `/export?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&formula=${encodeURIComponent(export_params.formula)}&band1=${encodeURIComponent(export_params.band1)}&band2=${encodeURIComponent(export_params.band2)}`;
@@ -95,7 +95,7 @@ downloading = false;
         
         // console.log(url_compute);
 
-        var download_url = `/image-download?bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&bands_list=${export_params.bands_list}&smart_filters=${smartFilters}`;
+        var download_url = `/image-download?source=${export_params.source}&bbox=${export_params.bbox}&start_date=${encodeURIComponent(export_params.startDdate)}&end_date=${encodeURIComponent(export_params.endDate)}&cloud_cover=${export_params.cloudCover}&bands_list=${export_params.bands_list}&smart_filter=${export_params.smart_filter}`;
         
         
         var url;

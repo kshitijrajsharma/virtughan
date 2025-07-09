@@ -187,6 +187,7 @@ var map = L.map("map").setView([28.202082, 83.987222], 10);
       var export_params_bbox_changed = false;
 
       var tile_params = {
+          "source": "sentinel2",
           "bbox": "",                  
           "startDate": "",         
           "endDate": "",           
@@ -199,6 +200,7 @@ var map = L.map("map").setView([28.202082, 83.987222], 10);
       }
 
       var export_params = {
+        "source": "sentinel2",
         "bbox": "",
         "startDdate": "2024-01-02",
         "endDate": "2025-01-01",
@@ -209,7 +211,7 @@ var map = L.map("map").setView([28.202082, 83.987222], 10);
         "operation": "median",
         "timeseries": "false",
         "bands_list":"",
-        "smart_filters":"false"
+        "smart_filter":"false"
       }
 
       // var formula = "(band2-band1)/(band2+band1)";
@@ -238,7 +240,7 @@ var map = L.map("map").setView([28.202082, 83.987222], 10);
 
         var checkedTimeseriesSearch = document.getElementById("timeSeries_search").checked;
         
-        var encodedUrl_tiles = `/tile/{z}/{x}/{y}?start_date=${encodeURIComponent(tile_params.startDate)}&end_date=${encodeURIComponent(tile_params.endDate)}&cloud_cover=${encodeURIComponent(tile_params.cloudCover)}&formula=${encodeURIComponent(tile_params.formula)}&band1=${encodeURIComponent(tile_params.band1)}&band2=${encodeURIComponent(tile_params.band2)}&timeseries=${encodeURIComponent(tile_params.timeseries)}`;
+        var encodedUrl_tiles = `/tile/{z}/{x}/{y}?source=${encodeURIComponent(tile_params.source)}&start_date=${encodeURIComponent(tile_params.startDate)}&end_date=${encodeURIComponent(tile_params.endDate)}&cloud_cover=${encodeURIComponent(tile_params.cloudCover)}&formula=${encodeURIComponent(tile_params.formula)}&band1=${encodeURIComponent(tile_params.band1)}&band2=${encodeURIComponent(tile_params.band2)}&timeseries=${encodeURIComponent(tile_params.timeseries)}`;
         if(checkedTimeseriesSearch){
           encodedUrl_tiles += `&operation=${encodeURIComponent(tile_params.operation)}`;
         }
@@ -346,7 +348,7 @@ var map = L.map("map").setView([28.202082, 83.987222], 10);
           }
 
           fetch(
-            `/search?bbox=${tile_params.bbox}&start_date=${tile_params.startDate}&end_date=${tile_params.endDate}&cloud_cover=${tile_params.cloudCover}`
+            `/search?source=${tile_params.source}&bbox=${tile_params.bbox}&start_date=${tile_params.startDate}&end_date=${tile_params.endDate}&cloud_cover=${tile_params.cloudCover}`
           )
             .then((response) => response.json())
             .then((data) => {

@@ -64,6 +64,145 @@ document.addEventListener('DOMContentLoaded', function() {
 
   //leftbar tab end
 
+
+  //band selection in image download start
+  const sentinel2Bands = [
+    "VISUAL", "RED", "GREEN", "BLUE", "NIR", "SWIR22", "REDEDGE2", "REDEDGE3", "REDEDGE1",
+    "SWIR16", "WVP", "NIR08", "AOT",
+    { label: "Semantic Bands", type: "section" },
+    "COASTAL", "NIR09", "CLOUD", "SNOW"
+  ];
+
+  const landsatBands = [
+    "VISUAL",
+    "BLUE",
+    "GREEN",
+    "RED",
+    "NIR08",
+    "SWIR16",
+    "SWIR22",
+    "LWIR11",
+    "LWIR12",
+    "COASTAL",
+  ];
+
+  function renderBands(satellite) {
+    document.getElementById("dropdownButtonBands").innerHTML = `<img src="static/img/select-icon.png" alt="" class="size-5 shrink-0 rounded-full mr-2">Select Bands`;
+    document.getElementById("export-map-view-button").classList.add('bg-gray-500', 'pointer-events-none');
+    document.getElementById("export-map-view-button").classList.remove('bg-blue-700');
+
+    const container = document.getElementById("list_of_bands");
+    container.innerHTML = ""; 
+    
+    if(satellite == "landsat"){
+      bandList = landsatBands;
+    }
+    else if(satellite == "sentinel2"){
+      bandList = sentinel2Bands;
+    }
+
+    bandList.forEach(band => {
+      if (typeof band === "string") {
+        const label = document.createElement("label");
+        label.className = "flex items-center px-3 py-2";
+
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.value = band;
+        input.className = "form-checkbox h-4 w-4 text-blue-600 band-checkbox";
+
+        const span = document.createElement("span");
+        span.className = "ml-2 text-gray-700 text-sm";
+        span.textContent = band;
+
+        label.appendChild(input);
+        label.appendChild(span);
+        container.appendChild(label);
+      } else if (band.type === "section") {
+        const section = document.createElement("label");
+        section.className = "block px-3 py-2 font-semibold text-gray-700 text-sm";
+        section.textContent = band.label;
+        container.appendChild(section);
+      }
+    });
+  }
+
+
+function populateSelectOptions(satellite) {
+  const band1Optgroup = document.getElementById("band1");
+  const band2Optgroup = document.getElementById("band2");
+
+  // Clear old options
+  band1Optgroup.innerHTML = '';
+  band2Optgroup.innerHTML = '';
+
+  const bandList = satellite === "landsat" ? landsatBands : sentinel2Bands;
+
+  // Separate standard and semantic bands
+  const standardBands = [];
+  const semanticBands = [];
+
+  bandList.forEach(b => {
+    if (typeof b === "string") {
+      standardBands.push(b);
+    } else if (b.type === "section") {
+      // Everything after this section is semantic
+      const index = bandList.indexOf(b);
+      for (let i = index + 1; i < bandList.length; i++) {
+        if (typeof bandList[i] === "string") {
+          semanticBands.push(bandList[i]);
+        }
+      }
+    }
+  });
+
+
+  function appendOptions(optgroup, bands) {
+    bands.forEach(band => {
+      const option = document.createElement("option");
+      option.value = band;
+      option.textContent = band;
+      optgroup.appendChild(option);
+    });
+  }
+
+  appendOptions(band1Optgroup, standardBands);
+  appendOptions(band2Optgroup, standardBands);
+
+  if (semanticBands.length > 0) {
+    const semanticGroup1 = document.createElement("optgroup");
+    semanticGroup1.label = "Semantic Bands";
+    const semanticGroup2 = document.createElement("optgroup");
+    semanticGroup2.label = "Semantic Bands";
+
+    appendOptions(semanticGroup1, semanticBands);
+    appendOptions(semanticGroup2, semanticBands);
+
+    document.getElementById("band1").appendChild(semanticGroup1);
+    document.getElementById("band2").appendChild(semanticGroup2);
+    
+  }
+  document.getElementById("calculator_bands").innerHTML = satellite.toUpperCase()+" Bands";
+}
+
+
+sentinel2_export_checked = document.getElementById("sentinel2_radio_export").checked;
+landsat_export_checked = document.getElementById("landsat_radio_export").checked;
+    if (sentinel2_export_checked) {
+      renderBands('sentinel2');
+      populateSelectOptions('sentinel2')
+    } else if (landsat_export_checked) {
+      renderBands('landsat');
+      populateSelectOptions('landsat')
+    }
+
+
+
+
+
+  //band selection in image download end
+
+
 //band box change - advance filter (formula) start
 document.getElementById("band1").addEventListener("change", updateBandsBox);
 document.getElementById("band2").addEventListener("change", updateBandsBox);
@@ -230,9 +369,29 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
+  
   //if template provided options clicked eg. NDVI, NDWI
   document.querySelectorAll('.template-filters').forEach(function(item) {
       item.addEventListener('click', function() {
+        sentinel2_search_checked = document.getElementById("sentinel2_radio_search").checked;
+        landsat_search_checked = document.getElementById("landsat_radio_search").checked;
+  
+        sentinel2_export_checked = document.getElementById("sentinel2_radio_export").checked;
+        landsat_export_checked = document.getElementById("landsat_radio_export").checked;
+
+
+        const tabPanel = this.closest('.tab-panel');
+    
+        // Get all tab panels and tab buttons
+        const tabPanels = Array.from(document.querySelectorAll('.tab-panel'));
+        const tabButtons = Array.from(document.querySelectorAll('.tab'));
+
+        // Find index of the current tab panel
+        const tabIndex = tabPanels.indexOf(tabPanel);
+        const parentTabId = tabButtons[tabIndex]?.id;
+
+        // console.log(parentTabId);
+        
           const templateText = item.querySelector('.template-filters-value').getAttribute('value');
           // console.log(templateText); 
           var param;
@@ -245,15 +404,30 @@ document.addEventListener('DOMContentLoaded', function() {
             // console.log("no this is search");
             param = tile_params;
           }
+
+          var nir;
+          if(sentinel2_search_checked && parentTabId == "filterTab"){
+            nir = "nir";
+          }
+          else if(landsat_search_checked && parentTabId == "filterTab"){
+            nir = "nir08";
+          }
+
+          if(sentinel2_export_checked && parentTabId == "exportTab"){
+            nir = "nir";
+          }
+          else if(landsat_export_checked && parentTabId == "exportTab"){
+            nir = "nir08";
+          }
   
         if(templateText == "NDVI"){
           param.formula = "(band2 - band1) / (band2 + band1)";
           param.band1 = 'red';
-          param.band2 = 'nir';
+          param.band2 = nir;
         }
         else if(templateText == "NDWI"){
           param.formula = "(band2 - band1) / (band2 + band1)";
-          param.band1 = 'nir';
+          param.band1 = nir;
           param.band2 = 'green';
         }
         else if(templateText == "visual"){
@@ -262,6 +436,7 @@ document.addEventListener('DOMContentLoaded', function() {
           param.band2 = '';
         }
         
+        // console.log(param.band2)
       });
   });
   //buttons and filters end
