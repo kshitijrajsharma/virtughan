@@ -1364,7 +1364,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><a href="https://colab.research.google.com/github/kshitijrajsharma/VirtuGhan/blob/master/VirtuGhan_Python_Usage_Example.ipynb" target="_parent"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"/></a></p>
+<p><a href="https://colab.research.google.com/github/kshitijrajsharma/VirtuGhan/blob/master/docs/examples/usage.ipynb" target="_parent"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"/></a></p>
 </div>
 </div>
 </div>
@@ -1430,7 +1430,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-2">
@@ -1450,9 +1450,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="n">start_date</span> <span class="o">=</span> <span class="s2">"2024-08-01"</span>
 <span class="n">end_date</span> <span class="o">=</span> <span class="s2">"2025-01-01"</span> <span class="c1"># Process two years worth of data</span>
 <span class="n">cloud_cover</span> <span class="o">=</span> <span class="mi">30</span>
-<span class="n">formula</span> <span class="o">=</span> <span class="s2">"(band2-band1)/(band2+band1)"</span>  <span class="c1"># NDVI formula</span>
-<span class="n">band1</span> <span class="o">=</span> <span class="s2">"red"</span>
-<span class="n">band2</span> <span class="o">=</span> <span class="s2">"nir"</span>
+<span class="n">formula</span> <span class="o">=</span> <span class="s2">"(band2-band1)/(band2+band1)"</span>  <span class="c1"># NDSI formula</span>
+<span class="n">band1</span> <span class="o">=</span> <span class="s2">"green"</span>
+<span class="n">band2</span> <span class="o">=</span> <span class="s2">"swir22"</span>
 <span class="n">operation</span> <span class="o">=</span> <span class="s2">"median"</span>
 <span class="n">output_dir</span> <span class="o">=</span> <span class="s2">"virtughan_output"</span>
 <span class="n">timeseries</span> <span class="o">=</span> <span class="kc">True</span>
@@ -1466,9 +1466,9 @@ bbox =  [83.97606554165884,28.197912265455415,83.99861638423164,28.2118309690441
 start_date = "2024-08-01"
 end_date = "2025-01-01" # Process two years worth of data
 cloud_cover = 30
-formula = "(band2-band1)/(band2+band1)"  # NDVI formula
-band1 = "red"
-band2 = "nir"
+formula = "(band2-band1)/(band2+band1)"  # NDSI formula
+band1 = "green"
+band2 = "swir22"
 operation = "median"
 output_dir = "virtughan_output"
 timeseries = True
@@ -1496,7 +1496,7 @@ smart_filter=False</div>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-3">
@@ -1538,7 +1538,7 @@ if os.path.exists(output_dir):
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="CodeMirror cm-s-jupyter">
 <div class="zeroclipboard-container">
 <clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-4">
@@ -1602,10 +1602,69 @@ Searching STAC .....
 Total scenes found: 28
 Scenes covering input area: 28
 Scenes after removing overlaps: 14
-Computing Band Calculation: 100%|██████████| 14/14 [01:25&lt;00:00,  6.12s/it]
-Aggregating results...
-Saving aggregated result with colormap...
+Computing Band Calculation:   0%|          | 0/14 [00:00&lt;?, ?it/s]
 </pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">UnboundLocalError</span>                         Traceback (most recent call last)
+Cell <span class="ansi-green-fg">In[3], line 17</span>
+<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-bold" style="color: rgb(0,135,0)">from</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,0,255)">vcube</span><span class="ansi-bold" style="color: rgb(0,0,255)">.</span><span class="ansi-bold" style="color: rgb(0,0,255)">engine</span><span style="color: rgb(188,188,188)"> </span><span class="ansi-bold" style="color: rgb(0,135,0)">import</span> VCubeProcessor
+<span class="ansi-green-intense-fg ansi-bold">      3</span> processor <span style="color: rgb(98,98,98)">=</span> VCubeProcessor(
+<span class="ansi-green-intense-fg ansi-bold">      4</span>     bbox,
+<span class="ansi-green-intense-fg ansi-bold">      5</span>     start_date,
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">     15</span>     smart_filter<span style="color: rgb(98,98,98)">=</span>smart_filter
+<span class="ansi-green-intense-fg ansi-bold">     16</span> )
+<span class="ansi-green-fg">---&gt; 17</span> <span class="ansi-yellow-bg">processor</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">compute</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
+
+File <span class="ansi-green-fg">~/foss/virtughan/src/vcube/engine.py:610</span>, in <span class="ansi-cyan-fg">VCubeProcessor.compute</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-intense-fg ansi-bold">    607</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">Exception</span>(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Band1 is required</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-green-intense-fg ansi-bold">    609</span> <span style="color: rgb(0,135,0)">print</span>(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Searching STAC .....</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-green-fg">--&gt; 610</span> <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">_process_images</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    612</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>result_list <span class="ansi-bold" style="color: rgb(175,0,255)">and</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>operation:
+<span class="ansi-green-intense-fg ansi-bold">    613</span>     <span style="color: rgb(0,135,0)">print</span>(<span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Aggregating results...</span><span style="color: rgb(175,0,0)">"</span>)
+
+File <span class="ansi-green-fg">~/foss/virtughan/src/vcube/engine.py:342</span>, in <span class="ansi-cyan-fg">VCubeProcessor._process_images</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-intense-fg ansi-bold">    334</span> <span class="ansi-bold" style="color: rgb(0,135,0)">else</span>:
+<span class="ansi-green-intense-fg ansi-bold">    335</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> band1_url, band2_url <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> tqdm(
+<span class="ansi-green-intense-fg ansi-bold">    336</span>         <span style="color: rgb(0,135,0)">zip</span>(band1_urls, band2_urls),
+<span class="ansi-green-intense-fg ansi-bold">    337</span>         total<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">len</span>(band1_urls),
+<span class="ansi-green-intense-fg ansi-bold">    338</span>         desc<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Computing Band Calculation</span><span style="color: rgb(175,0,0)">"</span>,
+<span class="ansi-green-intense-fg ansi-bold">    339</span>         file<span style="color: rgb(98,98,98)">=</span><span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>log_file,
+<span class="ansi-green-intense-fg ansi-bold">    340</span>     ):
+<span class="ansi-green-intense-fg ansi-bold">    341</span>         result, <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>crs, <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>transform, name_url <span style="color: rgb(98,98,98)">=</span> (
+<span class="ansi-green-fg">--&gt; 342</span>             <span class="ansi-yellow-bg" style="color: rgb(0,135,0)">self</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">fetch_process_custom_band</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">band1_url</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">band2_url</span><span class="ansi-yellow-bg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    343</span>         )
+<span class="ansi-green-intense-fg ansi-bold">    344</span>         <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> result <span class="ansi-bold" style="color: rgb(175,0,255)">is</span> <span class="ansi-bold" style="color: rgb(175,0,255)">not</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>:
+<span class="ansi-green-intense-fg ansi-bold">    345</span>             <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>result_list<span style="color: rgb(98,98,98)">.</span>append(result)
+
+File <span class="ansi-green-fg">~/foss/virtughan/src/vcube/engine.py:180</span>, in <span class="ansi-cyan-fg">VCubeProcessor.fetch_process_custom_band</span><span class="ansi-blue-fg">(self, band1_url, band2_url)</span>
+<span class="ansi-green-intense-fg ansi-bold">    177</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> result, band1_cog<span style="color: rgb(98,98,98)">.</span>crs, transform, band1_url
+<span class="ansi-green-intense-fg ansi-bold">    179</span> <span class="ansi-bold" style="color: rgb(0,135,0)">except</span> <span class="ansi-bold" style="color: rgb(215,95,95)">Exception</span> <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> e:
+<span class="ansi-green-fg">--&gt; 180</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> e
+<span class="ansi-green-intense-fg ansi-bold">    181</span>     <span style="color: rgb(0,135,0)">print</span>(<span style="color: rgb(175,0,0)">f</span><span style="color: rgb(175,0,0)">"</span><span style="color: rgb(175,0,0)">Error fetching image: </span><span class="ansi-bold" style="color: rgb(175,95,135)">{</span>e<span class="ansi-bold" style="color: rgb(175,95,135)">}</span><span style="color: rgb(175,0,0)">"</span>)
+<span class="ansi-green-intense-fg ansi-bold">    182</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">return</span> <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>, <span class="ansi-bold" style="color: rgb(0,135,0)">None</span>
+
+File <span class="ansi-green-fg">~/foss/virtughan/src/vcube/engine.py:101</span>, in <span class="ansi-cyan-fg">VCubeProcessor.fetch_process_custom_band</span><span class="ansi-blue-fg">(self, band1_url, band2_url)</span>
+<span class="ansi-green-intense-fg ansi-bold">     90</span> <span style="color: rgb(175,0,0)">"""</span>
+<span class="ansi-green-intense-fg ansi-bold">     91</span> <span style="color: rgb(175,0,0)">Fetch and process custom band data, resampling if bands have different resolutions.</span>
+<span class="ansi-green-intense-fg ansi-bold">     92</span> 
+<span class="ansi-green-fg">   (...)</span>
+<span class="ansi-green-intense-fg ansi-bold">     98</span> <span style="color: rgb(175,0,0)">tuple: Processed result, CRS, transform, and band URL.</span>
+<span class="ansi-green-intense-fg ansi-bold">     99</span> <span style="color: rgb(175,0,0)">"""</span>
+<span class="ansi-green-intense-fg ansi-bold">    100</span> <span class="ansi-bold" style="color: rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; 101</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">with</span> <span class="ansi-yellow-bg">rasterio</span><span style="color: rgb(98,98,98)">.</span>open(band1_url) <span class="ansi-bold" style="color: rgb(0,135,0)">as</span> band1_cog:
+<span class="ansi-green-intense-fg ansi-bold">    102</span>         min_x, min_y, max_x, max_y <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_transform_bbox(band1_cog<span style="color: rgb(98,98,98)">.</span>crs)
+<span class="ansi-green-intense-fg ansi-bold">    103</span>         band1_window <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">self</span><span style="color: rgb(98,98,98)">.</span>_calculate_window(
+<span class="ansi-green-intense-fg ansi-bold">    104</span>             band1_cog, min_x, min_y, max_x, max_y
+<span class="ansi-green-intense-fg ansi-bold">    105</span>         )
+
+<span class="ansi-red-fg">UnboundLocalError</span>: cannot access local variable 'rasterio' where it is not associated with a value</pre>
 </div>
 </div>
 </div>
