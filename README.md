@@ -155,19 +155,19 @@ If you have experience with **JavaScript**, **FastAPI**, building geospatial **P
 
 ### How You Can Contribute ?
 
-✅ **Code Contributions**  
+ **Code Contributions**  
 - Fork the repository and submit a PR with improvements, bug fixes, or features. Use commitizen for your commits
 - Help us refine our **development guidelines** !  
 
-✅ **Documentation & Testing**  
+ **Documentation & Testing**  
 - Improve our docs to make it easier for others to get started.  
 - Test features and report issues to help us build a robust system.  
 
-✅ **Spread the Word**  
+ **Spread the Word**  
 - Share the project on social media or among developer communities.  
 - Bring in more contributors who might be interested!  
 
-💙 **Support Us**  
+ **Support Us**  
 If you love what we’re building, consider buying us a coffee ☕ to keep the project going!  
 
 [![Buy Us a Coffee](https://img.shields.io/badge/Buy%20Us%20a%20Coffee-Support-blue?style=flat&logo=buy-me-a-coffee)](#)  
