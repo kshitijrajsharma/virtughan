@@ -3,14 +3,14 @@
 <img src="https://github.com/user-attachments/assets/e7ba177c-cd5e-453c-9790-679d7f83e5a7" alt="virtughan Logo" width="100" height="100"> 
 
 ![Tests Passing](https://img.shields.io/badge/tests-passing-brightgreen)
-![Build Status](https://img.shields.io/github/actions/workflow/status/kshitijrajsharma/virtughan/tests.yml?branch=master)
+![Build Status](https://img.shields.io/github/actions/workflow/status/virtughan/virtughan/tests.yml?branch=master)
 ![Website Status](https://img.shields.io/website-up-down-green-red/https/virtughan.live)
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)
 ![PyPI Version](https://img.shields.io/pypi/v/virtughan)
 ![Python Version](https://img.shields.io/pypi/pyversions/virtughan)
-![License](https://img.shields.io/github/license/kshitijrajsharma/virtughan)
+![License](https://img.shields.io/github/license/virtughan/virtughan)
 ![Dependencies](https://img.shields.io/librariesio/release/pypi/virtughan)
-![Last Commit](https://img.shields.io/github/last-commit/kshitijrajsharma/virtughan)
+![Last Commit](https://img.shields.io/github/last-commit/virtughan/virtughan)
 
  Name is combination of two words `virtual` & `cube` , where `cube` translated to Nepali word `घन`,  also known as virtual computation cube.
 
@@ -29,7 +29,7 @@ pip install virtughan
 
 ### Basic Usage 
 
-Follow Notebook [Here](https://github.com/kshitijrajsharma/virtughan/blob/master/docs/examples/usage.ipynb)
+Follow Notebook [Here](https://github.com/virtughan/virtughan/blob/master/docs/examples/usage.ipynb)
 
 
 ### Background

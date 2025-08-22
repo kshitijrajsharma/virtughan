@@ -2,7 +2,7 @@
 name = "virtughan"
 version = "1.0.1"
 description = "Virtual Computation Cube"
-authors = ["kshitijrajsharma <skshitizraj@gmail.com>"]
+authors = ["kshitijrajsharma <skshitizraj@gmail.com>", "geomatupen <upendra.oli59@gmail.com>"]
 readme = "README.md"
 packages = [
     { include = "virtughan", from = "src" }
