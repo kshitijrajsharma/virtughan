@@ -1,3 +1,9 @@
+## 1.0.1 (2025-08-22)
+
+### Fix
+
+- **renaming**: renames package
+
 ## 1.0.0 (2025-08-22)
 
 ### Refactor
