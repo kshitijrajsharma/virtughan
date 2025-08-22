@@ -1,3 +1,9 @@
+## 1.0.0 (2025-08-22)
+
+### Refactor
+
+- **package**: change package naming to avoid uppercase
+
 ## 0.7.0 (2025-05-10)
 
 ### Feat

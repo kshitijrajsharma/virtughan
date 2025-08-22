@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "virtughan"
-version = "0.7.0"
+version = "1.0.0"
 description = "Virtual Computation Cube"
 authors = ["kshitijrajsharma <skshitizraj@gmail.com>"]
 readme = "README.md"
