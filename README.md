@@ -1,6 +1,6 @@
-# VirtuGhan
+# virtughan
 
-<img src="https://github.com/user-attachments/assets/e7ba177c-cd5e-453c-9790-679d7f83e5a7" alt="VirtuGhan Logo" width="100" height="100"> 
+<img src="https://github.com/user-attachments/assets/e7ba177c-cd5e-453c-9790-679d7f83e5a7" alt="virtughan Logo" width="100" height="100"> 
 
 ![Tests Passing](https://img.shields.io/badge/tests-passing-brightgreen)
 ![Build Status](https://img.shields.io/github/actions/workflow/status/virtughan/virtughan/tests.yml?branch=master)
@@ -8,7 +8,7 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)
 ![PyPI Version](https://img.shields.io/pypi/v/virtughan)
 ![Python Version](https://img.shields.io/pypi/pyversions/virtughan)
-![License](https://img.shields.io/github/license/virtughan/virtuGhan)
+![License](https://img.shields.io/github/license/virtughan/virtughan)
 ![Dependencies](https://img.shields.io/librariesio/release/pypi/virtughan)
 ![Last Commit](https://img.shields.io/github/last-commit/virtughan/virtughan)
 
@@ -21,10 +21,10 @@
 
 As a python package : 
 
-https://pypi.org/project/VirtuGhan/ 
+https://pypi.org/project/virtughan/ 
 
 ```bash
-pip install VirtuGhan
+pip install virtughan
 ```
 
 ### Basic Usage 
@@ -60,7 +60,7 @@ This research explores how to perform real-time calculations on satellite images
 import mercantile
 from PIL import Image
 from io import BytesIO
-from vcube.tile import TileProcessor
+from virtughan.tile import TileProcessor
 
 lat, lon = 28.28139, 83.91866
 zoom_level = 12
@@ -99,9 +99,9 @@ While storing large images can offer some benefits, we believe that placing emph
 Example NDVI calculation 
 
 ```python
-from vcube.engine import VCubeProcessor
+from virtughan.engine import VirtughanProcessor
 
-processor = VCubeProcessor(
+processor = VirtughanProcessor(
     bbox=[83.84765625, 28.22697003891833, 83.935546875, 28.304380682962773],
     start_date="2023-01-01",
     end_date="2025-01-01",

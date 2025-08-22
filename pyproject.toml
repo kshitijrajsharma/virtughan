@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "VirtuGhan"
-version = "0.7.0"
+name = "virtughan"
+version = "1.0.1"
 description = "Virtual Computation Cube"
 authors = ["kshitijrajsharma <skshitizraj@gmail.com>", "geomatupen <upendra.oli59@gmail.com>"]
 readme = "README.md"
 packages = [
-    { include = "vcube", from = "src" }
+    { include = "virtughan", from = "src" }
 ]
 license = "GPL-3.0-or-later"
 

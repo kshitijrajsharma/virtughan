@@ -1,3 +1,3 @@
 # Utils Module
 
-::: vcube.utils
+::: virtughan.utils

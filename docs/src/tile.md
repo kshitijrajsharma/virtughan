@@ -1,3 +1,3 @@
 # Tile Module
 
-::: vcube.tile
+::: virtughan.tile

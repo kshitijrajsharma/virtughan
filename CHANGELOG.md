@@ -1,3 +1,15 @@
+## 1.0.1 (2025-08-22)
+
+### Fix
+
+- **renaming**: renames package
+
+## 1.0.0 (2025-08-22)
+
+### Refactor
+
+- **package**: change package naming to avoid uppercase
+
 ## 0.7.0 (2025-05-10)
 
 ### Feat
@@ -32,7 +44,7 @@
 - **band**: fixes bug on inconsistent band value stack
 - result view section tab issues fixed
 - **utils**: update print statement formatting in smart_filter_images function
-- **example**: update VirtuGhan version in usage example to 0.6.0
+- **example**: update virtughan version in usage example to 0.6.0
 
 ## 0.6.0 (2025-01-12)
 
@@ -42,7 +54,7 @@
 
 ### Fix
 
-- **example**: enable timeseries in VirtuGhan usage example
+- **example**: enable timeseries in virtughan usage example
 - **export**: fixes issue on export only
 
 ## 0.5.0 (2025-01-12)
@@ -70,7 +82,7 @@
 ### Fix
 
 - **graph**: fixes trend on graph with order of the images
-- **vcube**: change default operation to median and implement result aggregation with trend visualization
+- **virtughan**: change default operation to median and implement result aggregation with trend visualization
 - **tile**: enhance image filtering logic in smart_filter_images function
 - **tile**: handle empty results and improve error handling in TileProcessor
 - **workflow**: remove 'main' branch from Docker build and publish triggers
@@ -111,7 +123,7 @@
 ### Fix
 
 - **filter**: fixed bug on typo engine
-- **example**: update VirtuGhan version to 0.3.0 and adjust execution counts in usage example
+- **example**: update virtughan version to 0.3.0 and adjust execution counts in usage example
 
 ## 0.3.0 (2025-01-07)
 

@@ -25,7 +25,7 @@ from .utils import (
 matplotlib.use("Agg")
 
 
-class VCubeProcessor:
+class VirtughanProcessor:
     """
     Processor for virtual computation cubes.
     """
@@ -48,7 +48,7 @@ class VCubeProcessor:
         smart_filter=True,
     ):
         """
-        Initialize the VCubeProcessor.
+        Initialize the VirtughanProcessor.
 
         Parameters:
         bbox (list): Bounding box coordinates [min_lon, min_lat, max_lon, max_lat].
@@ -650,7 +650,7 @@ if __name__ == "__main__":
     workers = 1  # Number of parallel workers
     os.makedirs(output_dir, exist_ok=True)
 
-    processor = VCubeProcessor(
+    processor = VirtughanProcessor(
         bbox,
         start_date,
         end_date,

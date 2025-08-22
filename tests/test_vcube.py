@@ -6,13 +6,13 @@ import mercantile
 import pytest
 from PIL import Image
 
-from vcube.engine import VCubeProcessor
-from vcube.extract import ExtractProcessor
-from vcube.tile import TileProcessor
+from virtughan.engine import VirtughanProcessor
+from virtughan.extract import ExtractProcessor
+from virtughan.tile import TileProcessor
 
 
 @pytest.fixture(scope="module")
-def setup_vcube_processor():
+def setup_virtughan_processor():
     bbox = [83.84765625, 28.22697003891833, 83.935546875, 28.304380682962773]
     start_date = "2024-12-01"
     end_date = "2025-01-01"
@@ -29,7 +29,7 @@ def setup_vcube_processor():
     if os.path.exists(output_dir):
         shutil.rmtree(output_dir)
 
-    processor = VCubeProcessor(
+    processor = VirtughanProcessor(
         bbox,
         start_date,
         end_date,
@@ -45,8 +45,8 @@ def setup_vcube_processor():
     return processor
 
 
-def test_compute(setup_vcube_processor):
-    processor = setup_vcube_processor
+def test_compute(setup_virtughan_processor):
+    processor = setup_virtughan_processor
     processor.compute()
     # Check if output directory is created
     assert os.path.exists(processor.output_dir)
