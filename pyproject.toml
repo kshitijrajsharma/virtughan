@@ -5,7 +5,7 @@ description = "Virtual Computation Cube"
 authors = ["kshitijrajsharma <skshitizraj@gmail.com>"]
 readme = "README.md"
 packages = [
-    { include = "vcube", from = "src" }
+    { include = "virtughan", from = "src" }
 ]
 license = "GPL-3.0-or-later"
 

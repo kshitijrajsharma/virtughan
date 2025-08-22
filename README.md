@@ -60,7 +60,7 @@ This research explores how to perform real-time calculations on satellite images
 import mercantile
 from PIL import Image
 from io import BytesIO
-from vcube.tile import TileProcessor
+from virtughan.tile import TileProcessor
 
 lat, lon = 28.28139, 83.91866
 zoom_level = 12
@@ -99,9 +99,9 @@ While storing large images can offer some benefits, we believe that placing emph
 Example NDVI calculation 
 
 ```python
-from vcube.engine import VCubeProcessor
+from virtughan.engine import VirtughanProcessor
 
-processor = VCubeProcessor(
+processor = VirtughanProcessor(
     bbox=[83.84765625, 28.22697003891833, 83.935546875, 28.304380682962773],
     start_date="2023-01-01",
     end_date="2025-01-01",

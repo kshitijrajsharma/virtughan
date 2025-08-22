@@ -19,10 +19,10 @@ from shapely.geometry import box, mapping
 from starlette.requests import Request
 from starlette.status import HTTP_504_GATEWAY_TIMEOUT
 
-from src.vcube.engine import VCubeProcessor
-from src.vcube.extract import ExtractProcessor
-from src.vcube.tile import TileProcessor
-from src.vcube.utils import search_stac_api_async
+from src.virtughan.engine import VirtughanProcessor
+from src.virtughan.extract import ExtractProcessor
+from src.virtughan.tile import TileProcessor
+from src.virtughan.utils import search_stac_api_async
 
 app = FastAPI()
 
@@ -177,17 +177,17 @@ async def compute_aoi_over_time(
             content={"error": f"Band '{band1}' not found in Sentinel-2 bands"},
             status_code=400,
         )
-    
+
     if band2 and band2 not in sentinel2_assets.keys():
         return JSONResponse(
             content={"error": f"Band '{band2}' not found in Sentinel-2 bands"},
             status_code=400,
         )
-    
+
     if band2 and band1 != band2:
         band1_gsd = sentinel2_assets[band1].get("gsd")
         band2_gsd = sentinel2_assets[band2].get("gsd")
-        
+
         if band1_gsd != band2_gsd:
             return JSONResponse(
                 content={
@@ -195,7 +195,6 @@ async def compute_aoi_over_time(
                 },
                 status_code=400,
             )
-
 
     valid_operations = ["mean", "median", "max", "min", "std", "sum", "var"]
     if operation and operation not in valid_operations:
@@ -229,9 +228,13 @@ async def compute_aoi_over_time(
         smart_filter,
     )
     return JSONResponse(
-        content={"message": f"Processing started in background: {output_dir}", "uid": uid},
-        status_code=201
+        content={
+            "message": f"Processing started in background: {output_dir}",
+            "uid": uid,
+        },
+        status_code=201,
     )
+
 
 async def run_computation(
     bbox,
@@ -254,7 +257,7 @@ async def run_computation(
 
         print("Starting processing...")
         try:
-            processor = VCubeProcessor(
+            processor = VirtughanProcessor(
                 bbox=bbox,
                 start_date=start_date,
                 end_date=end_date,

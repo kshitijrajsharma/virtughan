@@ -76,7 +76,7 @@
 ### Fix
 
 - **graph**: fixes trend on graph with order of the images
-- **vcube**: change default operation to median and implement result aggregation with trend visualization
+- **virtughan**: change default operation to median and implement result aggregation with trend visualization
 - **tile**: enhance image filtering logic in smart_filter_images function
 - **tile**: handle empty results and improve error handling in TileProcessor
 - **workflow**: remove 'main' branch from Docker build and publish triggers
