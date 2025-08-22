@@ -32,7 +32,7 @@
 - **band**: fixes bug on inconsistent band value stack
 - result view section tab issues fixed
 - **utils**: update print statement formatting in smart_filter_images function
-- **example**: update VirtuGhan version in usage example to 0.6.0
+- **example**: update virtughan version in usage example to 0.6.0
 
 ## 0.6.0 (2025-01-12)
 
@@ -42,7 +42,7 @@
 
 ### Fix
 
-- **example**: enable timeseries in VirtuGhan usage example
+- **example**: enable timeseries in virtughan usage example
 - **export**: fixes issue on export only
 
 ## 0.5.0 (2025-01-12)
@@ -111,7 +111,7 @@
 ### Fix
 
 - **filter**: fixed bug on typo engine
-- **example**: update VirtuGhan version to 0.3.0 and adjust execution counts in usage example
+- **example**: update virtughan version to 0.3.0 and adjust execution counts in usage example
 
 ## 0.3.0 (2025-01-07)
 

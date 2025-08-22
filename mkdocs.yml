@@ -1,11 +1,11 @@
-site_name: VirtuGhan Documentation
-site_description: Documentation for VirtuGhan - A Virtual Computation Cube
-repo_url: https://github.com/kshitijrajsharma/VirtuGhan
-repo_name: kshitijrajsharma/VirtuGhan
+site_name: virtughan Documentation
+site_description: Documentation for virtughan - A Virtual Computation Cube
+repo_url: https://github.com/kshitijrajsharma/virtughan
+repo_name: kshitijrajsharma/virtughan
 # docs_dir: "docs"
 site_dir: "build"
 site_author: Kshitij Raj Sharma
-site_url: https://kshitijrajsharma.github.io/VirtuGhan/
+site_url: https://kshitijrajsharma.github.io/virtughan/
 
 theme:
   name: material

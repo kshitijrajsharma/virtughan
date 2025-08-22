@@ -1,16 +1,16 @@
-# VirtuGhan
+# virtughan
 
-<img src="https://github.com/user-attachments/assets/e7ba177c-cd5e-453c-9790-679d7f83e5a7" alt="VirtuGhan Logo" width="100" height="100"> 
+<img src="https://github.com/user-attachments/assets/e7ba177c-cd5e-453c-9790-679d7f83e5a7" alt="virtughan Logo" width="100" height="100"> 
 
 ![Tests Passing](https://img.shields.io/badge/tests-passing-brightgreen)
-![Build Status](https://img.shields.io/github/actions/workflow/status/kshitijrajsharma/VirtuGhan/tests.yml?branch=master)
+![Build Status](https://img.shields.io/github/actions/workflow/status/kshitijrajsharma/virtughan/tests.yml?branch=master)
 ![Website Status](https://img.shields.io/website-up-down-green-red/https/virtughan.live)
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)
 ![PyPI Version](https://img.shields.io/pypi/v/virtughan)
 ![Python Version](https://img.shields.io/pypi/pyversions/virtughan)
-![License](https://img.shields.io/github/license/kshitijrajsharma/VirtuGhan)
+![License](https://img.shields.io/github/license/kshitijrajsharma/virtughan)
 ![Dependencies](https://img.shields.io/librariesio/release/pypi/virtughan)
-![Last Commit](https://img.shields.io/github/last-commit/kshitijrajsharma/VirtuGhan)
+![Last Commit](https://img.shields.io/github/last-commit/kshitijrajsharma/virtughan)
 
  Name is combination of two words `virtual` & `cube` , where `cube` translated to Nepali word `घन`,  also known as virtual computation cube.
 
@@ -21,10 +21,10 @@
 
 As a python package : 
 
-https://pypi.org/project/VirtuGhan/ 
+https://pypi.org/project/virtughan/ 
 
 ```bash
-pip install VirtuGhan
+pip install virtughan
 ```
 
 ### Basic Usage 

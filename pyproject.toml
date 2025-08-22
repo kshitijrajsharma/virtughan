@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "VirtuGhan"
+name = "virtughan"
 version = "0.7.0"
 description = "Virtual Computation Cube"
 authors = ["kshitijrajsharma <skshitizraj@gmail.com>"]
